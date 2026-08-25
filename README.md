@@ -76,8 +76,16 @@ Tout est écrit sous `lake_local\` (même arborescence bronze/silver/gold), sans
 
 ## Déploiement Vercel
 
-Le dashboard est 100 % statique. Le `vercel.json` racine pointe vers `dashboard/site` :
-après un run complet, `npx vercel --prod` suffit.
+Le dashboard est 100 % statique. Le `vercel.json` racine sert `dashboard/site`
+(`outputDirectory` + `cleanUrls`), et le `.vercelignore` exclut `data/`,
+`lake_local/` et les caches. Après un run complet :
+
+```bash
+npx vercel --prod        # → https://nyc-taxi-xi.vercel.app/
+```
+
+En déploiement Git, `dashboard/site/` n'est **pas** ignoré : un simple push
+suffit après chaque `make site`.
 
 ## Points de conception
 

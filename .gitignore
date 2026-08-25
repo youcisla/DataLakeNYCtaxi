@@ -11,9 +11,6 @@ __pycache__/
 data/*
 lake_local/
 
-# Sorties du dashboard regenerees par make export && make site
-dashboard/site/
-
 # Docker / OS
 .DS_Store
 Thumbs.db

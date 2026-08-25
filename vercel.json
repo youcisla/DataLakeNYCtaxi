@@ -1,9 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "builds": [
-    { "src": "dashboard/site/**", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "dashboard/site/$1" }
-  ]
+  "cleanUrls": true,
+  "outputDirectory": "dashboard/site"
 }
