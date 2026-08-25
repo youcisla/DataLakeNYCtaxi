@@ -4,147 +4,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYC Taxi × Météo : DataLake Bronze · Silver · Gold</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b0d10; --bg2:#0e1114; --panel:#14181e; --panel2:#171c23;
-    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.16);
-    --text:#eceef1; --muted:#9aa3ad; --dim:#68717c;
-    --v-y:#fde725; --v-l:#a0da39; --v-g:#2db27d; --v-t:#21918c; --v-b:#365c8d; --v-p:#46327e;
-    --accent:var(--v-t); --accent2:var(--v-g);
-    --bronze:#cd7f32; --silver:#c0c5ce; --gold:var(--v-y);
-    --r:16px;
+    --bg:#0b1020; --panel:#121a2b; --panel2:#0f1626; --border:#1e2a41;
+    --text:#dbe4f0; --muted:#8fa1ba; --accent:#ffb703; --accent2:#06d6a0;
+    --blue:#118ab2; --rose:#ef476f; --violet:#9b5de5;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.55}
-  ::selection{background:var(--v-t);color:#04121a}
-  .mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
-  a{color:inherit}
-  h1,h2,h3,.brand,.num{font-family:"Space Grotesk","Segoe UI",sans-serif}
-
-  nav{position:sticky;top:0;z-index:50;display:flex;gap:6px;align-items:center;padding:12px 26px;
-      background:rgba(11,13,16,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-  nav .brand{font-weight:700;letter-spacing:.3px;margin-right:auto;display:flex;align-items:center;gap:10px}
-  nav .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
-  nav a{color:var(--muted);text-decoration:none;font-size:.88rem;padding:6px 11px;border-radius:999px;border:1px solid transparent}
-  nav a:hover{color:var(--text);border-color:var(--line2)}
-
-  header{max-width:1220px;margin:0 auto;padding:84px 28px 44px}
-  .kicker{font-family:"JetBrains Mono",monospace;color:var(--accent);text-transform:uppercase;
-          letter-spacing:3px;font-size:.74rem;font-weight:600}
-  h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.08;margin:14px 0 16px;letter-spacing:-.5px}
-  h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1.5px var(--v-y)}
-  .sub{max-width:840px;color:var(--muted);font-size:1.05rem}
-  .sub code{font-family:"JetBrains Mono",monospace;color:var(--v-g);font-size:.95em}
-  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
-  .badge{border:1px solid var(--line);background:var(--panel2);padding:7px 13px;border-radius:999px;
-         font-size:.82rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
+  .mono{font-family:ui-monospace,"Cascadia Code",Consolas,monospace}
+  a{color:var(--accent)}
+  nav{position:sticky;top:0;z-index:50;display:flex;gap:22px;align-items:center;padding:14px 28px;
+      background:rgba(11,16,32,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+  nav .brand{font-weight:700;color:var(--accent);letter-spacing:.4px}
+  nav a{color:var(--muted);text-decoration:none;font-size:.92rem}
+  nav a:hover{color:var(--text)}
+  header{max-width:1150px;margin:0 auto;padding:70px 28px 40px}
+  .kicker{color:var(--accent2);text-transform:uppercase;letter-spacing:2.5px;font-size:.78rem;font-weight:600}
+  h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.12;margin:10px 0 14px}
+  h1 em{color:var(--accent);font-style:normal}
+  .sub{max-width:820px;color:var(--muted);font-size:1.06rem}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .badge{border:1px solid var(--border);background:var(--panel2);padding:7px 13px;border-radius:999px;
+         font-size:.82rem;color:var(--muted)}
   .badge b{color:var(--text);font-weight:600}
-  .sw{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px}
-
-  main{max-width:1220px;margin:0 auto;padding:16px 28px 60px}
-  section{margin-top:76px;scroll-margin-top:70px}
-  .sec-head{display:flex;align-items:baseline;gap:16px;border-top:1px solid var(--line);padding-top:26px}
-  .sec-head .idx{font-family:"JetBrains Mono",monospace;color:var(--dim);font-size:.85rem}
-  h2{font-size:1.55rem;letter-spacing:-.3px}
-  .lead{color:var(--muted);margin:10px 0 8px;max-width:880px}
-  blockquote{border-left:3px solid var(--accent);background:var(--panel2);border-radius:0 12px 12px 0;
-             padding:13px 20px;color:var(--text);font-style:italic;margin:18px 0 6px;font-size:.97rem}
-
-  .layers{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;margin-top:28px}
-  .layer{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;
-         border-top:3px solid var(--tagc,var(--accent))}
-  .layer .tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-              padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--tagc) 14%,transparent);
-              color:var(--tagc);margin-bottom:12px}
-  .layer h3{margin-bottom:8px;font-size:1.06rem}
-  .layer p,.layer li{color:var(--muted);font-size:.89rem}
+  main{max-width:1150px;margin:0 auto;padding:20px 28px 60px}
+  section{margin-top:64px}
+  h2{font-size:1.65rem;margin-bottom:6px}
+  h2 .num{color:var(--accent);margin-right:10px}
+  .lead{color:var(--muted);margin-bottom:24px;max-width:850px}
+  /* --- couches --- */
+  .layers{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;margin-top:26px}
+  .layer{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--border);
+         border-radius:16px;padding:22px}
+  .layer .tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+              padding:4px 10px;border-radius:999px;margin-bottom:12px}
+  .layer.bronze .tag{background:rgba(205,127,50,.16);color:#cd7f32}
+  .layer.silver .tag{background:rgba(192,197,206,.14);color:#c0c5ce}
+  .layer.gold  .tag{background:rgba(255,183,3,.15);color:var(--accent)}
+  .layer h3{margin-bottom:8px;font-size:1.08rem}
+  .layer p{color:var(--muted);font-size:.9rem}
   .layer ul{margin-top:12px;list-style:none}
-  .layer li{padding-left:18px;position:relative;margin-top:6px}
-  .layer li::before{content:"◆";position:absolute;left:0;color:var(--tagc);font-size:.58rem;top:6px}
-  .arrow{align-self:center;color:var(--dim);font-size:1.5rem}
+  .layer li{font-size:.85rem;color:var(--muted);padding-left:18px;position:relative;margin-top:6px}
+  .layer li::before{content:"◆";position:absolute;left:0;color:var(--accent2);font-size:.6rem;top:5px}
+  .arrow{align-self:center;color:var(--accent);font-size:1.6rem}
   @media(max-width:900px){.layers{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}}
-  .cmd{margin-top:26px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
-       padding:15px 20px;color:#9fe8c8;font-family:"JetBrains Mono",monospace;overflow-x:auto;white-space:nowrap}
-  .cmd .cmt{color:var(--dim)}
-
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin-top:26px}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
-  .kpi::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--kc,var(--accent));opacity:.85}
-  .kpi .v{font-family:"JetBrains Mono",monospace;font-size:1.55rem;font-weight:600;letter-spacing:-.5px}
-  .kpi .l{color:var(--muted);font-size:.82rem;margin-top:4px;text-transform:uppercase;letter-spacing:.8px}
-
-  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-  @media(max-width:900px){.duo{grid-template-columns:1fr}}
-
-  .chart{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-top:14px}
-  .chart-pad{padding:10px}
-  .chart-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px 0;color:var(--muted);font-size:.9rem}
-  .chart-title b{color:var(--text);font-weight:600}
-  .takeaway{margin-top:14px;background:color-mix(in srgb,var(--v-g) 7%,transparent);border:1px solid color-mix(in srgb,var(--v-g) 25%,transparent);
-            border-radius:12px;padding:13px 18px;font-size:.94rem;color:var(--text)}
-  .takeaway::before{content:"Lecture : ";color:var(--v-g);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;margin-right:6px}
-  .empty{padding:34px;text-align:center;color:var(--muted)}
-
-  .controls{display:flex;gap:18px;row-gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
-  .controls>label{color:var(--dim);font-size:.82rem;text-transform:uppercase;letter-spacing:1px}
-  select{background:var(--panel);color:var(--text);border:1px solid var(--line2);border-radius:10px;
-         padding:8px 12px;font-size:.92rem;outline:none;cursor:pointer}
-  select:focus{border-color:var(--accent)}
-  .seg{display:inline-flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden}
-  .seg button{background:transparent;border:none;color:var(--muted);padding:8px 15px;font-size:.88rem;cursor:pointer}
-  .seg button.on{background:var(--accent);color:#04121a;font-weight:600}
-  .chips{display:flex;gap:8px;flex-wrap:wrap}
-  .chip{position:relative}
-  .chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
-  .chip span{display:inline-block;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);
-             color:var(--muted);font-size:.86rem;transition:.15s}
-  .chip input:checked + span{background:color-mix(in srgb,var(--cc,var(--v-t)) 20%,transparent);
-             border-color:var(--cc,var(--v-t));color:var(--text)}
-  .chip:hover span{border-color:var(--cc,var(--v-t))}
-  .hint{color:var(--dim);font-size:.8rem;margin-top:8px}
-
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-top:14px}
-  .card.warn{border-color:color-mix(in srgb,var(--v-y) 30%,transparent)}
-  .card .t{font-family:"Space Grotesk";font-weight:700;color:var(--v-y);margin-bottom:8px}
-
-  footer{border-top:1px solid var(--line);margin-top:90px;padding:36px 28px;text-align:center;color:var(--muted);font-size:.88rem}
-  footer .stack{margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .cmd{margin-top:26px;background:#0a0f1d;border:1px solid var(--border);border-radius:12px;
+       padding:16px 20px;color:#9fe8c8;overflow-x:auto;white-space:nowrap}
+  .cmd .cmt{color:var(--muted)}
+  /* --- KPI --- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:26px}
+  .kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+  .kpi .v{font-size:1.7rem;font-weight:700;color:var(--accent)}
+  .kpi .l{color:var(--muted);font-size:.84rem;margin-top:4px}
+  /* --- analyses --- */
+  blockquote{border-left:3px solid var(--accent);background:var(--panel2);border-radius:0 12px 12px 0;
+             padding:14px 20px;color:var(--text);font-style:italic;margin-bottom:20px}
+  .chart{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-top:18px}
+  .takeaway{margin-top:16px;background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.25);
+            border-radius:12px;padding:14px 18px;font-size:.95rem}
+  .takeaway::before{content:"Lecture : ";color:var(--accent2);font-weight:600}
+  .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+  .selbar{display:flex;gap:14px;align-items:center;margin-top:18px;flex-wrap:wrap}
+  .selbar label{color:var(--muted);font-size:.88rem}
+  .selbar select{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+                 color:var(--text);padding:8px 12px;font-size:.92rem;outline:none}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:18px}
+  .card.warn{border-color:rgba(255,183,3,.35)}
+  .card .t{font-weight:700;color:var(--accent);margin-bottom:8px}
+  footer{border-top:1px solid var(--border);margin-top:80px;padding:34px 28px;text-align:center;
+         color:var(--muted);font-size:.88rem}
+  footer .stack{margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
 
 <nav>
-  <span class="brand"><span class="dot"></span>DataLake · NYC Taxi × Météo</span>
-  <a href="#couches">Pipeline</a>
+  <span class="brand">◆ DataLake · NYC Taxi × Météo</span>
+  <a href="#couches">Les 3 couches</a>
   
-  <a href="#apercu-0">Aperçu</a>
   <a href="#analyse1-0">Suppléments</a>
-  <a href="#analyse2-0">Flux</a>
-  <a href="#analyse3-0">Prix/km</a>
+  <a href="#analyse2-0">Flux zones</a>
+  <a href="#analyse3-0">Prix / km</a>
   <a href="#analyse4-0">Activité</a>
   <a href="#analyse5-0">Météo</a>
   
 </nav>
 
 <header>
-  <div class="kicker">Pipeline médallion · Spark · MinIO · Viridis</div>
+  <div class="kicker">Pipeline médallion · Spark sur master réel · MinIO</div>
   <h1>Les taxis <em>New-Yorkais</em>,<br>dix-sept ans de schémas réconciliés</h1>
   <p class="sub">
     Yellow (2009), green et fhv (2016)&nbsp;: les fichiers TLC changent de schéma au fil des ans
     (GPS brut avant juillet&nbsp;2016, identifiants de zone ensuite, suppléments apparus
     progressivement). Un pipeline en une seule commande&nbsp;: ingestion telle quelle dans un stockage
-    objet, réconciliation distribuée avec Spark (<code>spark://spark-master:7077</code>),
-    agrégats métier, puis ce dashboard statique — dont toute la gamme chromatique est
-    dérivée de la palette <code>viridis</code>.
+    objet, réconciliation distribuée avec Spark connecté à un vrai master
+    (<code class="mono">spark://spark-master:7077</code>), agrégats métier, puis ce dashboard statique.
   </p>
   <div class="badges">
-    <span class="badge"><span class="sw" style="background:#cd7f32"></span>Bronze : parquets bruts <b>tels quels</b></span>
-    <span class="badge"><span class="sw" style="background:#c0c5ce"></span>Silver : schéma canonique typé</span>
-    <span class="badge"><span class="sw" style="background:var(--v-y)"></span>Gold : un mart JSON par analyse</span>
+    <span class="badge"><span class="sw" style="background:#cd7f32"></span>Bronze : parquets bruts <b>tels quels</b> (MinIO)</span>
+    <span class="badge"><span class="sw" style="background:#c0c5ce"></span>Silver : schéma canonique typé &amp; drift résolu</span>
+    <span class="badge"><span class="sw" style="background:#ffb703"></span>Gold : un mart JSON par analyse (MinIO)</span>
     <span class="badge mono">make run SAMPLE=3</span>
   </div>
 </header>
@@ -152,15 +113,17 @@
 <main>
 
 <section id="couches">
-  <div class="sec-head"><span class="idx">01</span><h2>Le pipeline en trois couches</h2></div>
+  <h2><span class="num">01</span>Le pipeline en trois couches</h2>
   <p class="lead">Le brut est persisté <b>avant toute transformation</b>, puis raffiné couche par couche.
      Chaque étape tourne sur le cluster Spark (master + worker), jamais en local.</p>
   <div class="layers">
-    <div class="layer" style="--tagc:var(--bronze)">
+    <div class="layer bronze">
       <span class="tag">Bronze</span>
       <h3>Persistance du brut</h3>
       <p>Chaque parquet est copié <b>octet pour octet</b> vers
-         <span class="mono">bronze/&lt;vehicle_type&gt;/&lt;year&gt;/&lt;month&gt;/</span>.</p>
+         <span class="mono">bronze/&lt;vehicle_type&gt;/&lt;year&gt;/&lt;month&gt;/</span>,
+         convention qui répond sans ouvrir les fichiers&nbsp;: quels types, quelles périodes,
+         quel mois déjà ingéré.</p>
       <ul>
         <li>ingestion idempotente (déjà présent → sauté)</li>
         <li>manifeste JSON cumulé dans <span class="mono">bronze/_manifest/</span></li>
@@ -168,10 +131,11 @@
       </ul>
     </div>
     <div class="arrow">➜</div>
-    <div class="layer" style="--tagc:var(--silver)">
+    <div class="layer silver">
       <span class="tag">Silver</span>
       <h3>Réconciliation &amp; typage</h3>
-      <p>Schémas legacy (2009) et modernes fusionnés vers un modèle canonique unique.</p>
+      <p>Schemas legacy (2009) et modernes fusionnés vers un modèle canonique unique,
+         GPS et LocationID conservés côte à côte.</p>
       <ul>
         <li>suppléments absents avant introduction → <b>null</b>, jamais 0</li>
         <li>horodatages corrompus écartés (fenêtre bornée)</li>
@@ -179,7 +143,7 @@
       </ul>
     </div>
     <div class="arrow">➜</div>
-    <div class="layer" style="--tagc:var(--gold)">
+    <div class="layer gold">
       <span class="tag">Gold</span>
       <h3>Agrégats métier</h3>
       <p>Un mart JSON par analyse du notebook : suppléments, flux de zones, prix/km,
@@ -196,101 +160,66 @@
 
 
 <section id="apercu-0">
-  <div class="sec-head"><span class="idx">02</span><h2>Vue d'ensemble <small style="color:var(--v-y)">(mode échantillon)</small></h2></div>
+  <h2><span class="num">02</span>Vue d'ensemble</h2>
   <p class="lead">Données ingérées depuis <span class="mono">/data/raw</span>, traitées sur
      <span class="mono">spark://spark-master:7077</span>. Généré le 2026-08-25.</p>
   <div class="kpis">
-    <div class="kpi" style="--kc:var(--v-t)"><div class="v" data-kpi="total-0"></div><div class="l">courses analysées</div></div>
-    <div class="kpi" style="--kc:var(--v-g)"><div class="v" data-kpi="periode-0"></div><div class="l">période couverte</div></div>
-    <div class="kpi" style="--kc:var(--v-y)"><div class="v" data-kpi="annees-0"></div><div class="l">années de données</div></div>
-    <div class="kpi" style="--kc:var(--v-l)"><div class="v" data-kpi="vehicules-0"></div><div class="l">types de véhicules</div></div>
-    <div class="kpi" style="--kc:var(--v-p)"><div class="v" data-kpi="taille-0"></div><div class="l">de parquet brut ingéré</div></div>
-  </div>
-  <div class="duo">
-    <div>
-      <div class="chart-title"><b>Courses par type de véhicule</b><span>cliquez la légende pour masquer une part</span></div>
-      <div id="donut-0" class="chart chart-pad" style="height:320px"></div>
-    </div>
-    <div>
-      <div class="chart-title"><b>Courses par année</b><span>toutes périodes ingérées confondues</span></div>
-      <div id="baran-0" class="chart chart-pad" style="height:320px"></div>
-    </div>
+    <div class="kpi"><div class="v" data-kpi="total-0"></div><div class="l">courses analysées</div></div>
+    <div class="kpi"><div class="v" data-kpi="periode-0"></div><div class="l">période couverte</div></div>
+    <div class="kpi"><div class="v" data-kpi="annees-0"></div><div class="l">années de données</div></div>
+    <div class="kpi"><div class="v" data-kpi="vehicules-0"></div><div class="l">types de véhicules</div></div>
+    <div class="kpi"><div class="v" data-kpi="taille-0"></div><div class="l">de parquet brut ingéré</div></div>
   </div>
 </section>
 
 <section id="analyse1-0">
-  <div class="sec-head"><span class="idx">03</span><h2>Évolution des suppléments tarifaires</h2></div>
+  <h2><span class="num">03</span>Évolution des suppléments tarifaires</h2>
   <blockquote>«&nbsp;Pour chaque supplément apparu progressivement dans le schéma, montrer son évolution
-     dans le temps, par type de véhicule.&nbsp;»</blockquote>
-  <div class="controls">
-    <label>Véhicules</label>
-    <div class="chips" id="veh-chips-0"></div>
-    <label>Métrique</label>
-    <div class="seg" id="met-seg-0">
-      <button data-v="moyenne" class="on">Moyenne $/course</button>
-      <button data-v="total">Total collecté</button>
-    </div>
+     dans le temps (montant moyen collecté), par type de véhicule.&nbsp;»</blockquote>
+  <div class="selbar">
+    <label for="veh-sel-0">Type de véhicule :</label>
+    <select id="veh-sel-0"></select>
   </div>
-  <p class="hint">Couleur = supplément · trait plein vs pointillé = véhicule · cliquez la légende pour masquer/afficher chaque courbe.</p>
-  <div id="surcharge-0" class="chart" style="height:440px"></div>
+  <div id="surcharge-0" class="chart" style="height:420px"></div>
   <div class="takeaway" id="tk-surcharge-0"></div>
 </section>
 
 <section id="analyse2-0">
-  <div class="sec-head"><span class="idx">04</span><h2>Flux de prises en charge / déposes</h2></div>
-  <blockquote>«&nbsp;Visualiser les flux de courses entre zones de départ et d'arrivée.&nbsp;»</blockquote>
-  <div class="controls">
-    <label>Visualisation</label>
-    <div class="seg" id="flow-seg-0">
-      <button data-v="chord" class="on">Corde</button>
-      <button data-v="sankey">Sankey</button>
-      <button data-v="bars">Top départs</button>
-    </div>
-  </div>
-  <div id="chord-0" class="chart" style="height:580px"></div>
+  <h2><span class="num">04</span>Flux de prises en charge / déposes</h2>
+  <blockquote>«&nbsp;Visualiser, sous forme de diagramme en corde, les flux de courses entre zones de départ
+     et d'arrivée.&nbsp;»</blockquote>
+  <div id="chord-0" class="chart" style="height:560px"></div>
   <div class="takeaway" id="tk-chord-0"></div>
 </section>
 
 <section id="analyse3-0">
-  <div class="sec-head"><span class="idx">05</span><h2>Prix au km par année et zone de départ</h2></div>
+  <h2><span class="num">05</span>Prix au km par année et zone de départ</h2>
   <blockquote>«&nbsp;Un ridgeline plot montrant l'évolution des prix par km au fil des années, pour une zone
      de départ donnée.&nbsp;»</blockquote>
-  <div class="controls">
-    <label>Ridgeline — zone</label>
+  <div class="selbar">
+    <label for="zone-sel-0">Zone de départ (LocationID) :</label>
     <select id="zone-sel-0"></select>
   </div>
   <div id="ridge-0" class="chart" style="height:520px"></div>
   <div class="takeaway" id="tk-ridge-0"></div>
-
-  <div class="chart-title" style="margin-top:34px"><b>Comparateur de zones</b><span>prix/km moyen pondéré par année — cochez plusieurs zones pour les superposer</span></div>
-  <div class="controls">
-    <label>Zones</label>
-    <div class="chips" id="zone-chips-0"></div>
-  </div>
-  <div id="cmpzone-0" class="chart" style="height:400px"></div>
-  <div class="takeaway" id="tk-cmpzone-0"></div>
 </section>
 
 <section id="analyse4-0">
-  <div class="sec-head"><span class="idx">06</span><h2>Fréquence des courses : jour × heure</h2></div>
+  <h2><span class="num">06</span>Fréquence des courses : jour × heure</h2>
   <blockquote>«&nbsp;Une fonction qui, pour une année donnée en paramètre, produit une heatmap (jour de la
      semaine × heure) de la fréquence des courses, pour chaque type de véhicule.&nbsp;»</blockquote>
-  <div class="controls">
-    <label>Année</label>
+  <div class="selbar">
+    <label for="an-sel-0">Année :</label>
     <select id="an-sel-0"></select>
-    <label>Véhicule</label>
+    <label for="vt-sel-0">Véhicule :</label>
     <select id="vt-sel-0"></select>
   </div>
-  <div id="heat-0" class="chart" style="height:450px"></div>
+  <div id="heat-0" class="chart" style="height:430px"></div>
   <div class="takeaway" id="tk-heat-0"></div>
-
-  <div class="chart-title" style="margin-top:34px"><b>Profil horaire</b><span>somme des 7 jours — tous les véhicules de l'année sélectionnée, comparables d'un coup d'œil</span></div>
-  <div id="profil-0" class="chart" style="height:330px"></div>
-  <div class="takeaway" id="tk-profil-0"></div>
 </section>
 
 <section id="analyse5-0">
-  <div class="sec-head"><span class="idx">07</span><h2>Écart de prix selon la météo</h2></div>
+  <h2><span class="num">07</span>Écart de prix selon la météo</h2>
   <blockquote>«&nbsp;Comparer le prix des courses (par km) selon les conditions météo au moment de la course,
      par rapport au prix moyen général.&nbsp;»</blockquote>
   <div id="meteo-0"></div>
@@ -304,12 +233,12 @@
   <div class="stack">
     <span class="badge">Docker Compose</span><span class="badge">Spark 3.5 master + worker</span>
     <span class="badge">MinIO S3</span><span class="badge">ECharts</span>
-    <span class="badge">Généré le 25/08/2026 12:49</span>
+    <span class="badge">Généré le 25/08/2026 11:27</span>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script>window.__PAYLOAD__ = {"genere_le": "25/08/2026 12:49", "spark_master": "spark://spark-master:7077", "datasets": [{"id": "nyc-taxi-trips", "meta": {"dataset_id": "nyc-taxi-trips", "source_dir": "/data/raw", "sample_mode": true, "taille_octets": 1395786309, "spark_master": "spark://spark-master:7077", "lake": "minio", "buckets": {"bronze": "bronze", "silver": "silver", "gold": "gold"}, "genere_le": "2026-08-25T09:53:41+00:00"}, "kpis": {"total_courses": 41859906, "periode": {"debut": "01/01/2009", "fin": "31/03/2009"}, "par_annee": {"2009": 41859906}, "par_vehicule": {"yellow": 41859906}}, "surcharges": {"supplements": ["extra", "mta_tax", "improvement_surcharge", "congestion_surcharge", "airport_fee", "cbd_convenience_fee"], "rows": [{"annee": 2009, "vehicle_type": "yellow", "extra_moyen": 0.18, "extra_total": 7643857.25, "mta_tax_moyen": null, "mta_tax_total": null, "improvement_surcharge_moyen": null, "improvement_surcharge_total": null, "congestion_surcharge_moyen": null, "congestion_surcharge_total": null, "airport_fee_moyen": null, "airport_fee_total": null, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}]}, "flux_zones": {"nodes": [], "links": [], "courses_zonees": 0, "courses_non_zonees": 41859906}, "prix_km": {"bins": ["0-1$", "1-2$", "2-3$", "3-4$", "4-5$", "5-6$", "6-7$", "7-8$", "8-9$", "9-10$"], "zones": [], "rows": []}, "heatmap": {"2009": {"yellow": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[133389, 79279, 52855, 37760, 35227, 48001, 128980, 235934, 309936, 281971, 230316, 225106, 246668, 243786, 267297, 282885, 263743, 311058, 370761, 363956, 314966, 286205, 249775, 186662], [126887, 75610, 46732, 32152, 29100, 47521, 145130, 281926, 366054, 341800, 283887, 269583, 282799, 276723, 299608, 300107, 270160, 333097, 411311, 416293, 376002, 358459, 319892, 244673], [148925, 88085, 56515, 37746, 32426, 45251, 134651, 265315, 339511, 320786, 247443, 237159, 251569, 245338, 257979, 259952, 240687, 293866, 363410, 377774, 349604, 334468, 312405, 239865], [174467, 111737, 76022, 54274, 44233, 51643, 139768, 271175, 332233, 312153, 271128, 267164, 290419, 281929, 309891, 318951, 280621, 340887, 420054, 445296, 411985, 398394, 381982, 329964], [245203, 158080, 105044, 71960, 54444, 54725, 140639, 270442, 356227, 332396, 286671, 286750, 312249, 308081, 328160, 322733, 286813, 345772, 422248, 460696, 417867, 399816, 410351, 412360], [385577, 322073, 266711, 204023, 134655, 62622, 61413, 85118, 136546, 198587, 238332, 270453, 305685, 317289, 302789, 314355, 302645, 333087, 391231, 433101, 383577, 368861, 404565, 415201], [406978, 356347, 290475, 237071, 158457, 70089, 54272, 67234, 100590, 148130, 208414, 249754, 281339, 289252, 290834, 283555, 280594, 291071, 305516, 272390, 241617, 226723, 223394, 178465]]}}}, "meteo": {"statut": "en_attente", "message": "Ingestion meteo non effectuee : lance make weather avec des exports Open-Meteo/NOAA dans data/weather/, puis relance bronze_to_silver."}}]};</script>
+<script>window.__PAYLOAD__ = {"genere_le": "25/08/2026 11:27", "spark_master": "spark://spark-master:7077", "datasets": [{"id": "nyc-taxi-trips", "meta": {"dataset_id": "nyc-taxi-trips", "source_dir": "/data/raw", "sample_mode": false, "taille_octets": 3451801986, "spark_master": "spark://spark-master:7077", "lake": "minio", "buckets": {"bronze": "bronze", "silver": "silver", "gold": "gold"}, "genere_le": "2026-08-25T11:26:54+00:00"}, "kpis": {"total_courses": 133194415, "periode": {"debut": "01/01/2009", "fin": "31/12/2019"}, "par_annee": {"2009": 41859906, "2019": 91334509}, "par_vehicule": {"yellow": 62847841, "fhvhv": 65041759, "green": 1381132, "fhv": 3923683}}, "surcharges": {"supplements": ["extra", "mta_tax", "improvement_surcharge", "congestion_surcharge", "airport_fee", "cbd_convenience_fee"], "rows": [{"annee": 2009, "vehicle_type": "yellow", "extra_moyen": 0.18, "extra_total": 7643857.25, "mta_tax_moyen": null, "mta_tax_total": null, "improvement_surcharge_moyen": null, "improvement_surcharge_total": null, "congestion_surcharge_moyen": null, "congestion_surcharge_total": null, "airport_fee_moyen": null, "airport_fee_total": null, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}, {"annee": 2019, "vehicle_type": "fhv", "extra_moyen": null, "extra_total": null, "mta_tax_moyen": null, "mta_tax_total": null, "improvement_surcharge_moyen": null, "improvement_surcharge_total": null, "congestion_surcharge_moyen": null, "congestion_surcharge_total": null, "airport_fee_moyen": null, "airport_fee_total": null, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}, {"annee": 2019, "vehicle_type": "fhvhv", "extra_moyen": null, "extra_total": null, "mta_tax_moyen": null, "mta_tax_total": null, "improvement_surcharge_moyen": null, "improvement_surcharge_total": null, "congestion_surcharge_moyen": 1.0, "congestion_surcharge_total": 65194125.25, "airport_fee_moyen": 0.0, "airport_fee_total": 0.0, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}, {"annee": 2019, "vehicle_type": "green", "extra_moyen": 0.86, "extra_total": 1183974.1, "mta_tax_moyen": 0.47, "mta_tax_total": 648605.61, "improvement_surcharge_moyen": 0.25, "improvement_surcharge_total": 349262.8, "congestion_surcharge_moyen": 0.44, "congestion_surcharge_total": 490901.25, "airport_fee_moyen": null, "airport_fee_total": null, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}, {"annee": 2019, "vehicle_type": "yellow", "extra_moyen": 1.12, "extra_total": 23598613.68, "mta_tax_moyen": 0.49, "mta_tax_total": 10347842.65, "improvement_surcharge_moyen": 0.3, "improvement_surcharge_total": 6257794.2, "congestion_surcharge_moyen": 2.3, "congestion_surcharge_total": 47909677.8, "airport_fee_moyen": null, "airport_fee_total": null, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}]}, "flux_zones": {"nodes": [{"id": 264, "pickups": 3270830}, {"id": 132, "pickups": 1701644}, {"id": 161, "pickups": 1689276}, {"id": 138, "pickups": 1670437}, {"id": 79, "pickups": 1652189}, {"id": 237, "pickups": 1602222}, {"id": 230, "pickups": 1529327}, {"id": 236, "pickups": 1443305}, {"id": 234, "pickups": 1437632}, {"id": 162, "pickups": 1405764}, {"id": 48, "pickups": 1383668}, {"id": 170, "pickups": 1337516}, {"id": 186, "pickups": 1318232}, {"id": 68, "pickups": 1218262}, {"id": 164, "pickups": 1191466}, {"id": 142, "pickups": 1184549}, {"id": 163, "pickups": 1154927}, {"id": 231, "pickups": 1152366}, {"id": 107, "pickups": 1076611}, {"id": 239, "pickups": 1071688}], "links": [{"source": 264, "target": 264, "count": 760696}, {"source": 132, "target": 265, "count": 198030}, {"source": 237, "target": 236, "count": 189184}, {"source": 76, "target": 76, "count": 169106}, {"source": 236, "target": 237, "count": 164047}, {"source": 237, "target": 237, "count": 151646}, {"source": 236, "target": 236, "count": 148890}, {"source": 138, "target": 265, "count": 137006}, {"source": 26, "target": 26, "count": 120798}, {"source": 7, "target": 7, "count": 116468}, {"source": 39, "target": 39, "count": 115569}, {"source": 61, "target": 61, "count": 112842}, {"source": 129, "target": 129, "count": 111177}, {"source": 14, "target": 14, "count": 88910}, {"source": 181, "target": 181, "count": 88181}, {"source": 237, "target": 161, "count": 86362}, {"source": 138, "target": 230, "count": 85185}, {"source": 239, "target": 238, "count": 84956}, {"source": 239, "target": 142, "count": 84796}, {"source": 95, "target": 95, "count": 83517}, {"source": 238, "target": 239, "count": 78154}, {"source": 161, "target": 237, "count": 78023}, {"source": 264, "target": 265, "count": 77690}, {"source": 142, "target": 239, "count": 77599}, {"source": 141, "target": 236, "count": 76249}, {"source": 237, "target": 162, "count": 75389}, {"source": 37, "target": 37, "count": 75359}, {"source": 230, "target": 265, "count": 74245}, {"source": 230, "target": 186, "count": 73961}, {"source": 186, "target": 230, "count": 73778}, {"source": 82, "target": 82, "count": 73576}, {"source": 42, "target": 42, "count": 73215}, {"source": 230, "target": 138, "count": 70638}, {"source": 132, "target": 132, "count": 70250}, {"source": 223, "target": 223, "count": 70088}, {"source": 79, "target": 79, "count": 69828}, {"source": 141, "target": 237, "count": 68278}, {"source": 36, "target": 37, "count": 67764}, {"source": 75, "target": 74, "count": 66293}, {"source": 7, "target": 223, "count": 66147}, {"source": 37, "target": 36, "count": 65976}, {"source": 186, "target": 161, "count": 65827}, {"source": 237, "target": 141, "count": 65825}, {"source": 41, "target": 42, "count": 65782}, {"source": 216, "target": 216, "count": 65253}, {"source": 48, "target": 48, "count": 64713}, {"source": 236, "target": 141, "count": 64301}, {"source": 74, "target": 75, "count": 63664}, {"source": 48, "target": 68, "count": 62856}, {"source": 234, "target": 170, "count": 62732}, {"source": 89, "target": 89, "count": 62081}, {"source": 237, "target": 142, "count": 61380}, {"source": 239, "target": 236, "count": 61271}, {"source": 161, "target": 265, "count": 61112}, {"source": 263, "target": 236, "count": 61007}, {"source": 236, "target": 239, "count": 60992}, {"source": 255, "target": 112, "count": 60810}, {"source": 236, "target": 161, "count": 60610}, {"source": 264, "target": 76, "count": 60415}, {"source": 161, "target": 236, "count": 60362}, {"source": 239, "target": 239, "count": 60287}, {"source": 142, "target": 237, "count": 60082}, {"source": 161, "target": 234, "count": 59967}, {"source": 161, "target": 186, "count": 59467}, {"source": 148, "target": 79, "count": 59341}, {"source": 79, "target": 107, "count": 59319}, {"source": 223, "target": 7, "count": 59086}, {"source": 82, "target": 129, "count": 58295}, {"source": 162, "target": 237, "count": 58204}, {"source": 161, "target": 164, "count": 58075}, {"source": 79, "target": 148, "count": 57782}, {"source": 142, "target": 238, "count": 57762}, {"source": 236, "target": 238, "count": 57376}, {"source": 138, "target": 162, "count": 57314}, {"source": 234, "target": 79, "count": 57125}, {"source": 161, "target": 161, "count": 57009}, {"source": 231, "target": 231, "count": 56901}, {"source": 238, "target": 236, "count": 56887}, {"source": 42, "target": 41, "count": 56520}, {"source": 170, "target": 234, "count": 56493}, {"source": 161, "target": 138, "count": 56455}, {"source": 164, "target": 161, "count": 56452}, {"source": 170, "target": 161, "count": 56450}, {"source": 112, "target": 255, "count": 56385}, {"source": 262, "target": 236, "count": 56266}, {"source": 107, "target": 170, "count": 55942}, {"source": 236, "target": 142, "count": 55650}, {"source": 48, "target": 246, "count": 55134}, {"source": 186, "target": 170, "count": 54783}, {"source": 249, "target": 79, "count": 54521}, {"source": 237, "target": 140, "count": 54371}, {"source": 238, "target": 142, "count": 54326}, {"source": 234, "target": 68, "count": 54298}, {"source": 263, "target": 141, "count": 54148}, {"source": 138, "target": 161, "count": 53795}, {"source": 142, "target": 236, "count": 53692}, {"source": 244, "target": 244, "count": 53321}, {"source": 68, "target": 48, "count": 53165}, {"source": 237, "target": 263, "count": 53103}, {"source": 68, "target": 246, "count": 53100}], "courses_zonees": 91286457, "courses_non_zonees": 41907958}, "prix_km": {"bins": ["0-1$", "1-2$", "2-3$", "3-4$", "4-5$", "5-6$", "6-7$", "7-8$", "8-9$", "9-10$"], "zones": [48, 68, 79, 107, 132, 138, 141, 142, 161, 162, 163, 164, 170, 186, 230, 234, 236, 237, 238, 239], "rows": [{"annee": 2019, "zone": 48, "prix_km_moyen": 12.98, "courses": 651999, "hist": [2179, 90, 701, 17050, 44490, 54939, 60950, 62939, 61004, 347657]}, {"annee": 2019, "zone": 68, "prix_km_moyen": 12.36, "courses": 499150, "hist": [1291, 67, 383, 8104, 24598, 40779, 49795, 53389, 51511, 269233]}, {"annee": 2019, "zone": 79, "prix_km_moyen": 11.3, "courses": 535366, "hist": [1478, 33, 262, 12169, 38427, 60325, 59263, 55854, 53090, 254465]}, {"annee": 2019, "zone": 107, "prix_km_moyen": 12.03, "courses": 464229, "hist": [1017, 35, 249, 6421, 26032, 36350, 39059, 42376, 46089, 266601]}, {"annee": 2019, "zone": 132, "prix_km_moyen": 17.06, "courses": 682700, "hist": [4060, 573, 87163, 423542, 140569, 8695, 2407, 1204, 661, 13826]}, {"annee": 2019, "zone": 138, "prix_km_moyen": 8.81, "courses": 489869, "hist": [1384, 62, 5563, 80813, 180834, 154864, 42102, 11448, 4096, 8703]}, {"annee": 2019, "zone": 141, "prix_km_moyen": 12.6, "courses": 496015, "hist": [1263, 32, 209, 8183, 24049, 30493, 40306, 48411, 50682, 292387]}, {"annee": 2019, "zone": 142, "prix_km_moyen": 11.62, "courses": 667799, "hist": [1395, 26, 640, 8930, 25971, 43094, 69000, 85707, 82843, 350193]}, {"annee": 2019, "zone": 161, "prix_km_moyen": 13.91, "courses": 855787, "hist": [2164, 54, 401, 13380, 47489, 50988, 63984, 81189, 82907, 513231]}, {"annee": 2019, "zone": 162, "prix_km_moyen": 13.16, "courses": 744143, "hist": [1641, 38, 285, 11919, 48077, 44486, 58162, 74172, 76714, 428649]}, {"annee": 2019, "zone": 163, "prix_km_moyen": 13.37, "courses": 587104, "hist": [1609, 55, 471, 11184, 30994, 36326, 44253, 56428, 59913, 345871]}, {"annee": 2019, "zone": 164, "prix_km_moyen": 13.91, "courses": 479352, "hist": [1505, 44, 229, 8798, 30697, 33416, 36236, 42212, 45069, 281146]}, {"annee": 2019, "zone": 170, "prix_km_moyen": 13.92, "courses": 616785, "hist": [1445, 63, 423, 9684, 38625, 38218, 44625, 56005, 58495, 369202]}, {"annee": 2019, "zone": 186, "prix_km_moyen": 12.36, "courses": 753221, "hist": [1776, 43, 296, 9643, 31534, 53385, 65875, 72748, 75023, 442898]}, {"annee": 2019, "zone": 230, "prix_km_moyen": 13.71, "courses": 722007, "hist": [2363, 73, 735, 19748, 56480, 60967, 62066, 64928, 63035, 391612]}, {"annee": 2019, "zone": 234, "prix_km_moyen": 12.28, "courses": 603390, "hist": [1315, 30, 181, 5800, 22317, 38865, 48153, 54490, 59113, 373126]}, {"annee": 2019, "zone": 236, "prix_km_moyen": 12.06, "courses": 871095, "hist": [1660, 30, 203, 9279, 28715, 45104, 71479, 94172, 99460, 520993]}, {"annee": 2019, "zone": 237, "prix_km_moyen": 12.96, "courses": 976615, "hist": [2370, 37, 375, 8971, 28358, 39039, 58672, 81903, 97438, 659452]}, {"annee": 2019, "zone": 238, "prix_km_moyen": 11.09, "courses": 424623, "hist": [910, 33, 433, 7294, 21356, 34555, 45398, 56721, 57147, 200776]}, {"annee": 2019, "zone": 239, "prix_km_moyen": 11.42, "courses": 563184, "hist": [1141, 32, 616, 6972, 21957, 36844, 53511, 73012, 75389, 293710]}]}, "heatmap": {"2009": {"yellow": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[133389, 79279, 52855, 37760, 35227, 48001, 128980, 235934, 309936, 281971, 230316, 225106, 246668, 243786, 267297, 282885, 263743, 311058, 370761, 363956, 314966, 286205, 249775, 186662], [126887, 75610, 46732, 32152, 29100, 47521, 145130, 281926, 366054, 341800, 283887, 269583, 282799, 276723, 299608, 300107, 270160, 333097, 411311, 416293, 376002, 358459, 319892, 244673], [148925, 88085, 56515, 37746, 32426, 45251, 134651, 265315, 339511, 320786, 247443, 237159, 251569, 245338, 257979, 259952, 240687, 293866, 363410, 377774, 349604, 334468, 312405, 239865], [174467, 111737, 76022, 54274, 44233, 51643, 139768, 271175, 332233, 312153, 271128, 267164, 290419, 281929, 309891, 318951, 280621, 340887, 420054, 445296, 411985, 398394, 381982, 329964], [245203, 158080, 105044, 71960, 54444, 54725, 140639, 270442, 356227, 332396, 286671, 286750, 312249, 308081, 328160, 322733, 286813, 345772, 422248, 460696, 417867, 399816, 410351, 412360], [385577, 322073, 266711, 204023, 134655, 62622, 61413, 85118, 136546, 198587, 238332, 270453, 305685, 317289, 302789, 314355, 302645, 333087, 391231, 433101, 383577, 368861, 404565, 415201], [406978, 356347, 290475, 237071, 158457, 70089, 54272, 67234, 100590, 148130, 208414, 249754, 281339, 289252, 290834, 283555, 280594, 291071, 305516, 272390, 241617, 226723, 223394, 178465]]}}, "2019": {"yellow": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[42510, 23175, 14378, 10791, 13876, 27576, 66264, 119102, 144184, 136974, 131332, 134711, 143406, 145196, 159820, 165004, 154963, 174487, 191159, 173303, 163961, 156561, 125513, 84233], [55176, 29054, 16833, 11449, 13674, 29140, 72394, 139817, 167096, 159218, 155885, 157715, 166797, 168537, 180548, 182081, 168818, 194610, 215951, 201398, 196832, 198095, 170095, 116261], [63525, 33627, 19358, 12930, 13963, 27497, 68739, 133399, 160864, 152697, 149097, 153498, 160371, 161023, 171348, 169599, 153872, 178494, 202393, 191787, 183238, 187436, 170604, 120161], [73847, 40731, 24291, 15728, 15941, 29101, 71203, 136834, 164301, 155842, 147364, 155168, 160377, 160696, 173141, 173285, 156278, 183489, 205022, 199175, 190905, 196329, 184144, 148492], [103007, 64818, 40542, 26173, 22176, 29409, 67286, 128272, 155342, 151125, 147323, 154417, 162473, 162210, 175091, 173369, 157289, 186326, 210597, 208672, 175352, 175159, 181737, 170203], [140715, 110712, 85212, 58644, 36458, 20610, 30346, 49564, 77403, 112857, 137135, 155792, 168532, 171523, 167437, 174374, 164674, 177276, 189409, 189345, 153870, 154896, 167185, 167049], [145621, 132145, 94924, 66705, 41731, 21867, 27106, 40229, 63104, 95107, 128722, 147485, 161978, 161777, 159616, 156856, 153155, 155114, 154212, 133567, 119736, 111018, 90832, 64785]]}, "fhvhv": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[230634, 138410, 90182, 73621, 98533, 155176, 256134, 401194, 496596, 424443, 343726, 320955, 328014, 342014, 377848, 405073, 425968, 489926, 519330, 493558, 464987, 439106, 394119, 317401], [237318, 140145, 92603, 71408, 94883, 150595, 264297, 441296, 530107, 449062, 366999, 344822, 354280, 365147, 404992, 433339, 455605, 540973, 587082, 587308, 576059, 560814, 517318, 413614], [250279, 153537, 101994, 76912, 92073, 141194, 250195, 414969, 493985, 423565, 349374, 332928, 342160, 350724, 387663, 412654, 430116, 518377, 570509, 564931, 525020, 514785, 484026, 397823], [272492, 164812, 107795, 82373, 98672, 148224, 260944, 429364, 505960, 439124, 354345, 339221, 344851, 357463, 394849, 422414, 449820, 535681, 586833, 594452, 567011, 558695, 542722, 481549], [361926, 237695, 156511, 115613, 121157, 155624, 259947, 422539, 508146, 439141, 367388, 357046, 372981, 395604, 423833, 441939, 473164, 553841, 619362, 660318, 627852, 614717, 641321, 637226], [561681, 437318, 325369, 243517, 191334, 146423, 175438, 230297, 303249, 372563, 407856, 440087, 462912, 476489, 484772, 506714, 534887, 592134, 643398, 685061, 652240, 636667, 666101, 676968], [624655, 541353, 388184, 294639, 224703, 159076, 165838, 192999, 244663, 321690, 404727, 450264, 471281, 484947, 481909, 485257, 498761, 518564, 531063, 505842, 456202, 429419, 394129, 326755]]}, "fhv": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[9625, 6443, 4869, 5393, 10259, 15967, 24695, 38417, 46942, 47630, 44585, 40573, 40931, 40692, 38593, 34781, 30468, 27576, 22989, 19199, 20173, 18555, 16104, 13500], [9920, 6016, 4836, 4917, 9573, 15013, 23618, 38472, 46456, 47561, 44147, 40493, 40886, 40297, 38615, 34752, 30569, 27821, 24008, 21040, 22393, 20843, 17991, 14550], [9636, 6261, 5196, 5288, 8806, 13563, 21121, 34498, 40863, 40915, 38807, 35680, 36205, 36239, 34264, 31086, 27802, 24883, 21344, 18830, 19399, 18332, 16609, 13757], [9770, 6105, 4632, 4674, 8540, 13186, 20977, 32985, 38585, 40473, 38371, 35539, 36363, 36095, 34559, 31711, 28781, 26057, 22832, 19630, 20075, 19387, 17348, 14430], [11838, 7941, 6096, 6086, 10112, 15537, 23696, 39052, 46894, 47563, 44718, 40858, 41128, 40458, 37269, 32834, 29012, 25901, 23961, 22495, 21864, 20535, 19631, 18071], [14657, 10453, 8412, 7948, 11027, 12911, 16215, 21561, 26288, 30380, 29252, 26203, 26058, 25864, 25555, 24075, 23406, 23314, 23187, 22652, 21519, 20235, 20012, 18934], [16391, 14312, 10474, 9332, 10962, 11173, 13538, 16409, 19706, 25039, 27736, 25885, 24706, 23851, 23688, 23107, 21991, 21088, 19549, 17684, 16760, 15441, 14281, 12677]]}, "green": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[2532, 1656, 1116, 1043, 1490, 1886, 3916, 7343, 10627, 11846, 11339, 10686, 10789, 10607, 11377, 12170, 12208, 13081, 12592, 11151, 8750, 7267, 5559, 4262], [3002, 1782, 1071, 912, 1314, 1960, 4228, 8406, 11954, 12893, 12632, 11949, 11950, 12042, 12567, 13867, 14096, 15050, 14660, 13049, 11122, 9438, 7363, 5806], [3167, 1922, 1198, 997, 1200, 1695, 3877, 7342, 10546, 11929, 11608, 11283, 11366, 11398, 11894, 12997, 13107, 13901, 13690, 12096, 10227, 8478, 6901, 5436], [3537, 2078, 1341, 1021, 1242, 1778, 3826, 7534, 11137, 11848, 11596, 11456, 11447, 11212, 11934, 13445, 13481, 14499, 14192, 12868, 10869, 9646, 8048, 6437], [4517, 2905, 1760, 1373, 1669, 1894, 3892, 7595, 10895, 11821, 11805, 11097, 10289, 10013, 11545, 13150, 14040, 15427, 14983, 14035, 12091, 11224, 10168, 9212], [7477, 5640, 4212, 3375, 2928, 1719, 2002, 3400, 5478, 7848, 8980, 9844, 10262, 10931, 11192, 12334, 12421, 12771, 12473, 12028, 10865, 10367, 10226, 9382], [7589, 6482, 4670, 3853, 3063, 1620, 1620, 2961, 4794, 6860, 8248, 8920, 9901, 10191, 10431, 10573, 9937, 9791, 9458, 8529, 7452, 6382, 5136, 3983]]}}}, "meteo": {"statut": "en_attente", "message": "Ingestion meteo non effectuee : lance make weather avec des exports Open-Meteo/NOAA dans data/weather/, puis relance bronze_to_silver."}}]};</script>
 <script>
 const P = window.__PAYLOAD__;
 const nf = new Intl.NumberFormat('fr-FR');
@@ -323,53 +252,22 @@ function mk(id){
 window.addEventListener('resize', () => charts.forEach(c => c.resize()));
 
 const SUP_COLORS = {
-  'extra':'#fde725', 'mta_tax':'#a0da39', 'improvement_surcharge':'#2db27d',
-  'congestion_surcharge':'#21918c', 'airport_fee':'#365c8d', 'cbd_convenience_fee':'#46327e'
+  'extra':'#ffb703', 'mta_tax':'#06d6a0', 'improvement_surcharge':'#118ab2',
+  'congestion_surcharge':'#ef476f', 'airport_fee':'#9b5de5', 'cbd_convenience_fee':'#f97316'
 };
 const SUP_LABELS = {
   'extra':'Extra', 'mta_tax':'MTA tax', 'improvement_surcharge':'Improvement',
   'congestion_surcharge':'Congestion', 'airport_fee':'Airport fee', 'cbd_convenience_fee':'CBD fee'
 };
-const VIRIDIS = ['#fde725','#d0e11c','#a0da39','#73d056','#4ac16d','#2db27d','#1fa187','#21918c',
-                 '#277f8e','#2e6e8e','#365c8d','#3f4788','#46327e','#481b6d','#440154'];
-function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
-function vcolor(t){
-  t = Math.max(0, Math.min(1, t));
-  const x = t * (VIRIDIS.length - 1), k = Math.min(Math.floor(x), VIRIDIS.length - 2), f = x - k;
-  const a = hex2rgb(VIRIDIS[k]), b = hex2rgb(VIRIDIS[k+1]);
-  return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
+function lerp(a,b,t){ return Math.round(a+(b-a)*t); }
+function ramp(t){
+  const A=[17,138,178], B=[255,183,3];
+  return `rgb(${lerp(A[0],B[0],t)},${lerp(A[1],B[1],t)},${lerp(A[2],B[2],t)})`;
 }
-function spread(n){ return Array.from({length:n}, (_,j) => vcolor(n > 1 ? j/(n-1) : 0)); }
-function chipBox(elId, values, onChange, opts={}){
-  const box = document.getElementById(elId);
-  const cols = spread(values.length || 1);
-  values.forEach((v, j) => {
-    const lab = document.createElement('label');
-    lab.className = 'chip';
-    lab.style.setProperty('--cc', opts.color === false ? undefined : cols[j]);
-    const inp = document.createElement('input');
-    inp.type = 'checkbox'; inp.value = v; inp.checked = true;
-    inp.addEventListener('change', () => onChange());
-    const sp = document.createElement('span'); sp.textContent = opts.fmt ? opts.fmt(v) : v;
-    lab.append(inp, sp); box.appendChild(lab);
-  });
-  return () => [...box.querySelectorAll('input:checked')].map(x => x.value);
-}
-function segCtl(elId, onChange){
-  const seg = document.getElementById(elId);
-  seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-    seg.querySelectorAll('button').forEach(x => x.classList.remove('on'));
-    b.classList.add('on'); onChange(b.dataset.v);
-  }));
-  return () => seg.querySelector('button.on').dataset.v;
-}
-function dashFor(idx){ return idx === 0 ? null : [8, 5]; }
 
-const AX = { axisLabel:{color:'#9aa3ad'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}},
-             splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} };
 const BASE = {
   backgroundColor:'transparent',
-  textStyle:{ color:'#eceef1', fontFamily:'inherit' },
+  textStyle:{ color:'#dbe4f0', fontFamily:'inherit' },
 };
 
 P.datasets.forEach((ds, i) => {
@@ -377,7 +275,7 @@ P.datasets.forEach((ds, i) => {
   /* ---------- KPI ---------- */
   document.querySelector(`[data-kpi="total-${i}"]`).textContent = fmt(ds.kpis.total_courses);
   document.querySelector(`[data-kpi="periode-${i}"]`).textContent =
-    `${ds.kpis.periode?.debut || '?'} → ${ds.kpis.periode?.fin || '?'}`;
+    `${ds.kpis.periode.debut || '?'} → ${ds.kpis.periode.fin || '?'}`;
   document.querySelector(`[data-kpi="annees-${i}"]`).textContent =
     Object.keys(ds.kpis.par_annee).join(', ') || 'n/a';
   document.querySelector(`[data-kpi="vehicules-${i}"]`).textContent =
@@ -386,215 +284,105 @@ P.datasets.forEach((ds, i) => {
   document.querySelector(`[data-kpi="taille-${i}"]`).textContent =
     go ? (go / 1e9).toFixed(2).replace('.', ',') + ' Go' : 'n/a';
 
-  /* ---------- Vue d'ensemble : donut véhicules ---------- */
-  {
-    const ent = Object.entries(ds.kpis.par_vehicule).sort((a,b) => b[1]-a[1]);
-    const cols = spread(ent.length);
-    const total = ent.reduce((s,e) => s+e[1], 0);
-    mk(`donut-${i}`).setOption({
-      ...BASE,
-      tooltip:{ formatter:p => `<b>${p.name}</b><br>${fmt(p.value)} courses (${p.percent}%)` },
-      legend:{ bottom:0, textStyle:{color:'#9aa3ad'}, icon:'circle' },
-      title:{ text:fmt(total), subtext:'courses', left:'center', top:'38%',
-              textStyle:{color:'#eceef1', fontSize:22, fontWeight:600, fontFamily:'JetBrains Mono'},
-              subtextStyle:{color:'#9aa3ad'} },
-      series:[{
-        type:'pie', radius:['52%','74%'], center:['50%','44%'],
-        itemStyle:{ borderColor:'#14181e', borderWidth:3, borderRadius:5 },
-        label:{show:false},
-        data: ent.map(([k,v], j) => ({ name:k, value:v, itemStyle:{color:cols[j]} }))
-      }]
-    });
-  }
-
-  /* ---------- Vue d'ensemble : barres par année ---------- */
-  {
-    const ans = Object.entries(ds.kpis.par_annee).sort((a,b) => a[0].localeCompare(b[0]));
-    mk(`baran-${i}`).setOption({
-      ...BASE,
-      tooltip:{ trigger:'axis', axisPointer:{type:'shadow'} },
-      grid:{ left:70, right:24, top:20, bottom:40 },
-      xAxis:{ type:'category', data:ans.map(a=>a[0]),
-              axisLabel:{color:'#9aa3ad'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}} },
-      yAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
-              splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
-      series:[{ type:'bar', barMaxWidth:46,
-        data:ans.map((a,j,arr) => ({ value:a[1],
-          itemStyle:{ color:vcolor(arr.length>1 ? j/(arr.length-1) : .5), borderRadius:[6,6,0,0] } })),
-        label:{ show:true, position:'top', color:'#9aa3ad', fontSize:10,
-                formatter:p=>fmt(p.value) } }]
-    });
-  }
-
   /* ---------- Analyse 1 : suppléments tarifaires ---------- */
   {
     const vehicules = [...new Set(ds.surcharges.rows.map(r => r.vehicle_type))].sort();
-    const getSel = chipBox(`veh-chips-${i}`, vehicules, draw, {fmt: v=>v});
-    const getMet = segCtl(`met-seg-${i}`, draw);
+    const sel = document.getElementById(`veh-sel-${i}`);
+    vehicules.forEach(v => sel.add(new Option(v, v)));
     const annees = [...new Set(ds.surcharges.rows.map(r => r.annee))].sort((a,b)=>a-b);
 
     function draw(){
-      const veSel = getSel(), met = getMet();
-      const field = met === 'total' ? '_total' : '_moyen';
-      const series = [];
-      let anyData = false;
-      vehicules.forEach(v => {
-        if (!veSel.includes(v)) return;
-        const vi = veSel.indexOf(v);
-        const rows = Object.fromEntries(ds.surcharges.rows.filter(r => r.vehicle_type === v).map(r => [r.annee, r]));
-        ds.surcharges.supplements.forEach(s => {
-          if (!ds.surcharges.rows.some(r => r.vehicle_type === v && r[s + field] !== null)) return;
-          anyData = true;
-          series.push({
-            name: vehicules.length > 1 ? `${SUP_LABELS[s]||s} · ${v}` : (SUP_LABELS[s]||s),
-            type:'line', smooth:true, symbol:'circle', symbolSize:6, connectNulls:false,
-            data: annees.map(a => rows[a] ? rows[a][s+field] : null),
-            itemStyle:{ color:SUP_COLORS[s] || '#9aa3ad' },
-            lineStyle:{ width:2.4, type:dashFor(vi), color:SUP_COLORS[s] || '#9aa3ad' }
-          });
-        });
-      });
-      const yName = met === 'total' ? '$ cumulés' : '$/course';
+      const v = sel.value;
+      const rows = Object.fromEntries(ds.surcharges.rows.filter(r => r.vehicle_type === v)
+                                      .map(r => [r.annee, r]));
+      const series = ds.surcharges.supplements.filter(s =>
+          ds.surcharges.rows.some(r => r.vehicle_type === v && r[s + '_moyen'] !== null))
+        .map(s => ({
+          name: SUP_LABELS[s] || s,
+          type: 'line',
+          smooth: true,
+          symbol: 'circle',
+          symbolSize: 6,
+          connectNulls: false,
+          data: annees.map(a => rows[a] ? rows[a][s + '_moyen'] : null),
+          itemStyle: { color: SUP_COLORS[s] || '#8fa1ba' },
+          lineStyle: { width: 2.5 }
+        }));
       mk(`surcharge-${i}`).setOption({
         ...BASE,
-        tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':(met==='total'?'$'+fmt(v):'$'+Number(v).toFixed(3)) },
-        legend:{ top:0, type:'scroll', textStyle:{color:'#9aa3ad'}, icon:'roundRect' },
-        grid:{ left:64, right:30, top:56, bottom:45 },
-        xAxis:{ type:'category', data:annees, ...AX },
-        yAxis:{ type:'value', name:yName, nameTextStyle:{color:'#9aa3ad'}, ...AX },
+        tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':'$'+v },
+        legend:{ top:0, textStyle:{color:'#8fa1ba'} },
+        grid:{ left:60, right:30, top:44, bottom:45 },
+        xAxis:{ type:'category', data:annees, axisLabel:{color:'#8fa1ba'},
+                axisLine:{lineStyle:{color:'#1e2a41'}} },
+        yAxis:{ type:'value', name:'$/course', nameTextStyle:{color:'#8fa1ba'},
+                splitLine:{lineStyle:{color:'#1e2a41'}}, axisLabel:{color:'#8fa1ba'} },
         series
       }, true);
-      if (!anyData){ mk(`surcharge-${i}`).clear(); }
-      const dispo = ds.surcharges.supplements.filter(s =>
-        ds.surcharges.rows.some(r => r[s + '_moyen'] !== null));
-      document.getElementById(`tk-surcharge-${i}`).innerHTML = dispo.length
-        ? `Sur cet extrait, les composants renseignés sont : <b>${dispo.map(s=>SUP_LABELS[s]).join(', ')}</b>. ` +
-          `Les autres restent à <b>null</b> : ils n'existaient pas encore à ces dates, ce qui n'équivaut pas à $0.`
-        : `Aucun supplément renseigné dans cet échantillon.`;
     }
+    sel.addEventListener('change', draw);
     draw();
+    const dispo = ds.surcharges.supplements.filter(s =>
+      ds.surcharges.rows.some(r => r[s + '_moyen'] !== null));
+    document.getElementById(`tk-surcharge-${i}`).innerHTML = dispo.length
+      ? `Sur cet extrait, les composants renseignés sont : <b>${dispo.map(s=>SUP_LABELS[s]).join(', ')}</b>. ` +
+        `Les autres restent à <b>null</b> : ils n'existaient pas encore à ces dates, ce qui n'équivaut pas à $0.`
+      : `Aucun supplément renseigné dans cet échantillon.`;
   }
 
-  /* ---------- Analyse 2 : flux entre zones (corde / sankey / barres) ---------- */
+  /* ---------- Analyse 2 : chord des flux entre zones ---------- */
   {
     const fz = ds.flux_zones;
-    const box = document.getElementById(`chord-${i}`);
-    const getFlow = segCtl(`flow-seg-${i}`, drawFlow);
-
-    function renderChord(){
-      if (!fz.nodes.length){
-        box.innerHTML = '<p class="empty">Aucune course avec identifiants de zone dans cet échantillon ' +
-                        '(les fichiers 2009 contiennent du GPS brut, pas de LocationID).</p>';
-        document.getElementById(`tk-chord-${i}`).innerHTML = '';
-        return true;
-      }
+    if (!fz.nodes.length){
+      document.getElementById(`chord-${i}`).innerHTML =
+        '<p style="padding:30px;color:#8fa1ba">Aucune course avec identifiants de zone dans cet ' +
+        'échantillon (les fichiers 2009 contiennent du GPS brut, pas de LocationID).</p>';
+    } else {
       const nodeIds = new Set(fz.nodes.map(n => n.id));
       const links = fz.links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
       const maxPick = Math.max(...fz.nodes.map(n => n.pickups), 1);
       const maxLink = links.length ? links[0].count : 1;
-      const cols = spread(fz.nodes.length);
       mk(`chord-${i}`).setOption({
         ...BASE,
         title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
-                textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
+                textStyle:{color:'#8fa1ba', fontSize:13, fontWeight:'normal'} },
         tooltip:{ formatter:p => p.dataType === 'edge'
-          ? `<b>Zone ${p.data.source.replace('Zone ','')} → Zone ${p.data.target.replace('Zone ','')}</b><br>${fmt(p.data.value)} courses`
-          : `<b>${p.name}</b><br>${fmt(fz.nodes.find(n=>'Zone '+n.id===p.name)?.pickups ?? 0)} départs` },
+          ? `<b>Zone ${p.data.source} → Zone ${p.data.target}</b><br>${fmt(p.data.value)} courses`
+          : `<b>Zone ${p.name}</b><br>${fmt(fz.nodes.find(n=>'Zone '+n.id===p.name)?.pickups ?? 0)} départs` },
         series:[{
           type:'graph', layout:'circular', circular:{ rotateLabel:true },
-          data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id,
+          data: fz.nodes.map(n => ({ name:'Zone '+n.id,
             symbolSize: 8 + 26*n.pickups/maxPick,
-            itemStyle:{ color:cols[j], borderColor:'#0b0d10', borderWidth:2 } })),
+            itemStyle:{ color:'#ffb703', borderColor:'#0b1020', borderWidth:2 } })),
           links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target,
             value:l.count, lineStyle:{ width: 1 + 6*l.count/maxLink,
-              color:'#a0da39', opacity:.5, curveness:.35 } })),
+              color:'#f97316', opacity:.55, curveness:.35 } })),
           emphasis:{ focus:'adjacency', lineStyle:{ opacity:1, width:5 } },
-          label:{ color:'#eceef1', fontSize:11 },
+          label:{ color:'#dbe4f0', fontSize:11 },
+          lineStyle:{ color:'#f97316', opacity:.5, curveness:.35 },
           roam:true
         }]
-      }, true);
+      });
       document.getElementById(`tk-chord-${i}`).innerHTML =
         `L'axe dominant est <b>Zone ${links[0].source} → Zone ${links[0].target}</b> avec ` +
         `${fmt(links[0].count)} courses (${fmt(fz.courses_non_zonees)} courses hors périmètre zoné).`;
-      return true;
     }
-
-    function renderSankey(){
-      if (!fz.nodes.length) return renderChord();
-      const nodeIds = new Set(fz.nodes.map(n => n.id));
-      const links = fz.links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
-      const cols = spread(fz.nodes.length);
-      try {
-        mk(`chord-${i}`).setOption({
-          ...BASE,
-          title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
-                  textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
-          tooltip:{ trigger:'item' },
-          series:[{
-            type:'sankey', left:20, right:150, top:40, bottom:20,
-            nodeWidth:14, nodeGap:12,
-            data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id, value:n.pickups,
-              itemStyle:{ color:cols[j], borderColor:'transparent' } })),
-            links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target, value:l.count })),
-            label:{ color:'#eceef1', fontSize:11 },
-            lineStyle:{ color:'gradient', opacity:.35, curveness:.5 },
-            emphasis:{ focus:'adjacency' }
-          }]
-        }, true);
-      } catch(e){
-        box.innerHTML = '<p class="empty">Vue Sankey indisponible pour ce graphe (flux cycliques).</p>';
-      }
-      return true;
-    }
-
-    function renderBars(){
-      if (!fz.nodes.length) return renderChord();
-      const tops = [...fz.nodes].sort((a,b) => b.pickups-a.pickups).slice(0, 12);
-      const cols = spread(tops.length);
-      mk(`chord-${i}`).setOption({
-        ...BASE,
-        title:{ text:`${fmt(fz.courses_zonees)} courses zonées — départs par zone (top ${tops.length})`,
-                left:'center', top:6, textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
-        tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
-                  formatter:p => `<b>${p[0].name}</b><br>${fmt(p[0].value)} départs` },
-        grid:{ left:90, right:50, top:40, bottom:30 },
-        xAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
-                splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
-        yAxis:{ type:'category', data:tops.map(n=>'Zone '+n.id).reverse(),
-                axisLabel:{color:'#eceef1'}, axisLine:{show:false}, axisTick:{show:false} },
-        series:[{ type:'bar', barMaxWidth:22,
-          data:[...tops].reverse().map((n,j) => ({ value:n.pickups,
-            itemStyle:{ color:cols[tops.length-1-j], borderRadius:[0,6,6,0] } })) }]
-      }, true);
-      return true;
-    }
-
-    function drawFlow(){
-      const v = getFlow();
-      if (v === 'chord') renderChord();
-      else if (v === 'sankey') renderSankey();
-      else renderBars();
-    }
-    drawFlow();
   }
 
-  /* ---------- Analyse 3 : ridgeline prix / km ---------- */
+  /* ---------- Analyse 3 : ridgeline prix / km par zone ---------- */
   {
     const zones = ds.prix_km.zones;
-    const sel = document.getElementById(`zone-sel-${i}`);
     if (!zones.length){
-      sel.closest('.controls').style.display = 'none';
       document.getElementById(`ridge-${i}`).innerHTML =
-        '<p class="empty">Pas assez de données tarifaires zonées dans cet échantillon.</p>';
-      document.getElementById(`tk-ridge-${i}`).innerHTML = '';
-      const cmpBox = document.getElementById(`cmpzone-${i}`);
-      cmpBox.innerHTML = '<p class="empty">Comparateur indisponible sans zones.</p>';
-      document.getElementById(`tk-cmpzone-${i}`).innerHTML = '';
+        '<p style="padding:30px;color:#8fa1ba">Pas assez de données tarifaires dans cet échantillon ' +
+        'pour construire le ridgeline.</p>';
     } else {
-      const H = 1;
+      const sel = document.getElementById(`zone-sel-${i}`);
+      zones.forEach(z => sel.add(new Option('Zone ' + z, z)));
       const centers = ds.prix_km.bins.map((b, k) => k + 0.5);
+      const H = 1;
 
-      function drawRidge(){
+      function draw(){
         const zone = +sel.value;
         const rows = ds.prix_km.rows.filter(r => r.zone === zone);
         const annees = [...new Set(rows.map(r => r.annee))].sort((a,b)=>a-b);
@@ -603,7 +391,7 @@ P.datasets.forEach((ds, i) => {
         annees.forEach((a, j) => {
           const r = rows.find(x => x.annee === a);
           const off = j * H;
-          const col = vcolor(annees.length > 1 ? j/(annees.length-1) : .5);
+          const col = ramp(annees.length > 1 ? j/(annees.length-1) : 0);
           const pts = [[centers[0]-0.55, off]]
             .concat(centers.map((c, k) => [c, off + (r.hist[k]/maxCount)*0.92]))
             .concat([[centers[centers.length-1]+0.55, off]]);
@@ -619,7 +407,7 @@ P.datasets.forEach((ds, i) => {
             `${ds.prix_km.bins[Math.min(Math.max(Math.floor(p.value[0]),0), ds.prix_km.bins.length-1)]}` },
           grid:{ left:60, right:30, top:20, bottom:50 },
           xAxis:{ type:'value', min:-1, max:ds.prix_km.bins.length,
-                  axisLabel:{ color:'#9aa3ad', formatter:v => Number.isInteger(v) ? v+'$' : '' },
+                  axisLabel:{ color:'#8fa1ba', formatter:v => Number.isInteger(v) ? v+'$' : '' },
                   splitLine:{ show:false } },
           yAxis:{ type:'value', max:(annees.length)*H + 0.6,
                   axisLabel:{ show:false }, splitLine:{ show:false } },
@@ -630,53 +418,15 @@ P.datasets.forEach((ds, i) => {
                     last.reduce((s,r)=>s+r.courses,0) : null;
         document.getElementById(`tk-ridge-${i}`).innerHTML =
           `Distribution des prix/km pour la <b>Zone ${zone}</b>, une crête par année ` +
-          `(de ${annees[0]} en bas — clair — à ${annees[annees.length-1]} en haut — foncé)` +
+          `(de ${annees[0]} en bas à ${annees[annees.length-1]} en haut)` +
           (moy != null ? `, moyenne ${String(moy).replace('.', ',')} $/km la dernière année.` : '.');
       }
-      zones.forEach(z => sel.add(new Option('Zone ' + z, z)));
-      sel.addEventListener('change', drawRidge);
-      drawRidge();
-
-      /* --- Comparateur de zones --- */
-      const cmpZones = zones.slice(0, Math.min(zones.length, 6));
-      const getCmp = chipBox(`zone-chips-${i}`, cmpZones, drawCmp, {fmt: v=>'Zone '+v});
-      function drawCmp(){
-        const picked = getCmp().map(Number);
-        const annees = [...new Set(ds.prix_km.rows.filter(r=>picked.includes(r.zone)).map(r => r.annee))]
-                       .sort((a,b)=>a-b);
-        const cols = spread(picked.length);
-        const series = picked.map((z, j) => ({
-          name:'Zone ' + z, type:'line', smooth:true, symbol:'circle', symbolSize:7,
-          data: annees.map(a => {
-            const r = ds.prix_km.rows.find(x => x.zone===z && x.annee===a);
-            return r && r.courses ? +(r.prix_km_moyen.toFixed(3)) : null;
-          }),
-          itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
-          emphasis:{ focus:'series' }
-        }));
-        mk(`cmpzone-${i}`).setOption({
-          ...BASE,
-          tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':String(v).replace('.', ',')+' $/km' },
-          legend:{ top:0, textStyle:{color:'#9aa3ad'} },
-          grid:{ left:64, right:30, top:44, bottom:45 },
-          xAxis:{ type:'category', data:annees, ...AX },
-          yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9aa3ad'}, ...AX },
-          series
-        }, true);
-        const flat = ds.prix_km.rows.filter(r => picked.includes(r.zone));
-        const best = flat.length
-          ? flat.reduce((m,r) => r.prix_km_moyen < m.prix_km_moyen ? r : m)
-          : null;
-        document.getElementById(`tk-cmpzone-${i}`).innerHTML = best
-          ? `Sur les années couvertes, la zone la moins chère au km parmi la sélection est la ` +
-            `<b>Zone ${best.zone}</b> (${String(best.prix_km_moyen).replace('.', ',')} $/km en ${best.annee}).`
-          : '';
-      }
-      drawCmp();
+      sel.addEventListener('change', draw);
+      draw();
     }
   }
 
-  /* ---------- Analyse 4 : heatmap jour x heure + profil horaire ---------- */
+  /* ---------- Analyse 4 : heatmap jour x heure (année x véhicule) ---------- */
   {
     const anSel = document.getElementById(`an-sel-${i}`);
     const vtSel = document.getElementById(`vt-sel-${i}`);
@@ -700,61 +450,23 @@ P.datasets.forEach((ds, i) => {
           formatter:p=>`${cell.jours[p.value[1]]} ${p.value[0]}h : ${fmt(p.value[2])} courses` },
         grid:{ left:80, right:20, top:20, bottom:70 },
         xAxis:{ type:'category', data:cell.heures.map(h=>h+'h'), splitArea:{show:true},
-                axisLine:{show:false}, axisTick:{show:false},
-                axisLabel:{color:'#9aa3ad', interval:1} },
+                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#8fa1ba'} },
         yAxis:{ type:'category', data:cell.jours, inverse:true,
-                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#eceef1'} },
+                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#dbe4f0'} },
         visualMap:{ min:0, max:maxV||1, calculable:false, orient:'horizontal', left:'center', bottom:6,
-          textStyle:{color:'#9aa3ad'},
-          inRange:{ color:['#fde725','#d0e11c','#a0da39','#73d056','#4ac16d','#2db27d','#1fa187',
-                           '#21918c','#277f8e','#2e6e8e','#365c8d','#3f4788','#46327e','#481b6d','#440154'] } },
+          textStyle:{color:'#8fa1ba'}, inRange:{ color:['#10243f','#155e75','#0ea5e9','#ffb703','#ffd166'] } },
         series:[{ type:'heatmap', data, label:{show:false},
-          itemStyle:{ borderColor:'#14181e', borderWidth:2 },
-          emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(160,218,57,.6)' } } }]
+          itemStyle:{ borderColor:'#121a2b', borderWidth:2 },
+          emphasis:{ itemStyle:{ shadowBlur:8, shadowColor:'rgba(255,183,3,.5)' } } }]
       }, true);
       document.getElementById(`tk-heat-${i}`).innerHTML =
         `${anSel.value}, ${vtSel.value} : le créneau le plus chargé est ` +
         `<b>${cell.jours[bj]} autour de ${bh}h-${(bh+1)%24}h</b> (${fmt(maxV)} courses).`;
     }
-
-    function drawProfil(){
-      const yearData = ds.heatmap[anSel.value] || {};
-      const vehs = Object.keys(yearData).sort();
-      const heures = yearData[vehs[0]]?.heures || [];
-      const cols = spread(vehs.length || 1);
-      const series = vehs.map((v, j) => {
-        const prof = heures.map((_, h) => yearData[v].matrice.reduce((s,row) => s + (row[h]||0), 0));
-        return { name:v, type:'line', smooth:true, symbol:'circle', symbolSize:5,
-                 data:prof, itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
-                 areaStyle:{ color:cols[j].replace('rgb','rgba').replace(')', ',.08)') } };
-      });
-      mk(`profil-${i}`).setOption({
-        ...BASE,
-        tooltip:{ trigger:'axis' },
-        legend:{ top:0, textStyle:{color:'#9aa3ad'} },
-        grid:{ left:70, right:24, top:40, bottom:40 },
-        xAxis:{ type:'category', data:heures.map(h=>h+'h'), boundaryGap:false, ...AX },
-        yAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
-                splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
-        series
-      }, true);
-      let peak = null;
-      vehs.forEach(v => {
-        const prof = heures.map((_, h) => (ds.heatmap[anSel.value][v].matrice.reduce((s,row)=>s+(row[h]||0),0)));
-        prof.forEach((val,h) => { if (!peak || val > peak.val) peak = {v, h, val}; });
-      });
-      document.getElementById(`tk-profil-${i}`).innerHTML = peak
-        ? `En ${anSel.value}, toutes fenêtres horaires confondues, le pic absolu revient à ` +
-          `<b>${peak.v}</b> à <b>${peak.h}h</b> (${fmt(peak.val)} courses sur la semaine). ` +
-          `Les légendes sont cliquables pour isoler un véhicule.`
-        : '';
-    }
-
-    anSel.addEventListener('change', () => { fillVeh(); draw(); drawProfil(); });
+    anSel.addEventListener('change', () => { fillVeh(); draw(); });
     vtSel.addEventListener('change', draw);
     fillVeh();
     draw();
-    drawProfil();
   }
 
   /* ---------- Analyse 5 : météo ---------- */
@@ -765,7 +477,8 @@ P.datasets.forEach((ds, i) => {
         <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
     } else {
       box.innerHTML = `<div class="card"><div class="t">Table météo disponible</div>
-        <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
+        <p style="color:var(--muted)">Colonnes silver/weather : ${ds.meteo.colonnes.join(', ')}.
+        ${ds.meteo.message}</p></div>`;
     }
   }
 

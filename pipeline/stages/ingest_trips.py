@@ -64,13 +64,21 @@ def main():
     manifest = load_manifest(s3)
     known_keys = {f["key"] for f in manifest["files"]}
 
-    kept, skipped = [], 0
+    kept, skipped, healed = [], 0, 0
     for path, vehicle, year, month in found:
         key = f"{config.DATASET_ID}/{vehicle}/{year}/{month:02d}/{path.name}"
-        if key in known_keys or key in existing:
-            print(f"   - bronze/{key} deja present, ignore")
-            continue
         size = path.stat().st_size
+        if key in known_keys:
+            skipped += 1
+            continue
+        if key in existing:
+            # Objet deja en bucket mais absent du manifeste (run interrompu avant
+            # l'ecriture du manifeste) : on le re-registry sans le re-pousser.
+            healed += 1
+            kept.append({"key": key, "size": size,
+                         "vehicle_type": vehicle, "year": year, "month": month})
+            print(f"   - bronze/{key} deja en bucket, rajoute au manifeste")
+            continue
         s3.upload_file(str(path), config.BUCKET_BRONZE, key)
         kept.append({"key": key, "size": size,
                      "vehicle_type": vehicle, "year": year, "month": month})
@@ -90,8 +98,8 @@ def main():
              f"{config.MANIFEST_PREFIX}/{config.DATASET_ID}.json", manifest)
 
     print(f">> Manifeste : bronze/{config.MANIFEST_PREFIX}/{config.DATASET_ID}.json "
-          f"({len(all_files)} fichiers cumules, {len(kept)} nouveaux, annees "
-          f"{manifest['trip_years']})")
+          f"({len(all_files)} fichiers cumules, {len(kept)} nouveaux/enregistres "
+          f"({healed} gueris), {skipped} ignores, annees {manifest['trip_years']})")
     if not kept:
         print("[!] Rien de nouveau a ingerer (deja en bronze).")
 

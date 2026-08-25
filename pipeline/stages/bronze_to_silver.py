@@ -74,27 +74,28 @@ RENAME_LEGACY = {
     "total_amount": ["Total_Amt"],
 }
 
-# Schema moderne (yellow/green/fhv) : couvre les variantes tpep_/lpep_ et fhv
-# (pickup_datetime / dropOff_datetime / PUlocationID). Les montants absents du fhv
-# restent a null.
+# Schema moderne (yellow/green/fhv/fhvhv) : couvre les variantes tpep_/lpep_, fhv
+# (pickup_datetime / dropOff_datetime / PUlocationID) et fhvhv (trip_miles,
+# base_passenger_fare, tips, tolls, hvfhs_license_num). Les montants sans equivalent
+# reel (bcf, sales_tax du fhvhv) restent a null plutot que falsifies.
 RENAME_MODERN = {
-    "vendor": ["VendorID", "dispatching_base_num"],
+    "vendor": ["VendorID", "dispatching_base_num", "hvfhs_license_num"],
     "pickup_ts": ["tpep_pickup_datetime", "lpep_pickup_datetime", "pickup_datetime"],
     "dropoff_ts": ["tpep_dropoff_datetime", "lpep_dropoff_datetime", "dropOff_datetime"],
     "passenger_count": ["passenger_count"],
-    "trip_distance": ["trip_distance"],
+    "trip_distance": ["trip_distance", "trip_miles"],
     "pulocation_id": ["PULocationID", "PUlocationID"],
     "dolocation_id": ["DOLocationID", "DOlocationID"],
     "payment_type": ["payment_type"],
-    "fare_amount": ["fare_amount"],
+    "fare_amount": ["fare_amount", "base_passenger_fare"],
     "extra": ["extra"],
     "mta_tax": ["mta_tax"],
     "improvement_surcharge": ["improvement_surcharge"],
     "congestion_surcharge": ["congestion_surcharge"],
     "airport_fee": ["airport_fee"],
     "cbd_convenience_fee": ["cbd_convenience_fee"],
-    "tip_amount": ["tip_amount"],
-    "tolls_amount": ["tolls_amount"],
+    "tip_amount": ["tip_amount", "tips"],
+    "tolls_amount": ["tolls_amount", "tolls"],
     "total_amount": ["total_amount"],
 }
 
