@@ -45,7 +45,7 @@ export:
 site:
 	$(COMPOSE) run --rm pipeline python3 scripts/render_site.py
 
-run: up ingest bronze-to-silver silver-to-gold export site
+run: up ingest weather bronze-to-silver silver-to-gold export site
 	@echo ">> Pipeline termine. Dashboard : dashboard/site/index.html"
 
 smoke: up

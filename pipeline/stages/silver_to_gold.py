@@ -178,22 +178,82 @@ def zone_lookup():
     return out
 
 
-def weather_deviation(spark, s3):
-    # La table silver/weather n'existe pas tant que l'ingestion meteo n'a pas tourne ;
-    # le payload reste placeholder-safe pour le dashboard.
+def weather_deviation(spark, s3, trips_base):
+    # Jointure course -> meteo a l'heure : les courses sont agregees par heure
+    # (somme montants / somme distances), puis rattachees a la ligne meteo horaire.
     weather_keys = list_keys(s3, config.BUCKET_SILVER,
                              f"{config.DATASET_ID}/weather/")
     if not weather_keys:
         return {"statut": "en_attente",
-                "message": "Ingestion meteo non effectuee : lance make weather avec des "
-                           "exports Open-Meteo/NOAA dans data/weather/, puis relance "
-                           "bronze_to_silver."}
+                "message": "Ingestion meteo non effectuee : lance make weather "
+                           "(telechargement Open-Meteo) puis make bronze-to-silver."}
     weather = spark.read.parquet(
         f"{lake_uri(config.BUCKET_SILVER, config.DATASET_ID)}/weather")
-    return {"statut": "brut_disponible",
-            "colonnes": weather.columns,
-            "message": "Table meteo presente en silver ; la jointure horaire "
-                       "(course -> meteo -> ecart de prix/km) sera branchee ici."}
+    trips = spark.read.parquet(trips_base)
+
+    hourly = (
+        trips.filter((F.col("trip_distance") > 0) & F.col("total_amount").isNotNull())
+             .groupBy("year", "month",
+                      F.dayofmonth("pickup_ts").alias("jour"),
+                      F.hour("pickup_ts").alias("heure"), "vehicle_type")
+             .agg(F.count("*").alias("courses"),
+                  F.sum("total_amount").alias("somme_total"),
+                  F.sum("trip_distance").alias("somme_km"))
+    )
+    joined = hourly.join(
+        weather.select("ts", "temperature", "weather_code",
+                       F.year("ts").alias("year"), F.month("ts").alias("month"),
+                       F.dayofmonth("ts").alias("jour"), F.hour("ts").alias("heure")),
+        ["year", "month", "jour", "heure"], "inner"
+    ).withColumn("prix_km", F.col("somme_total") / F.col("somme_km"))
+
+    def categorie(code):
+        return (F.when(code.isNull(), "Inconnu")
+                 .when(code == 0, "Dégagé")
+                 .when(code < 4, "Nuageux")
+                 .when(code < 49, "Brouillard")
+                 .when(code < 70, "Pluie")
+                 .when(code < 80, "Neige")
+                 .when(code < 83, "Averses")
+                 .when(code < 95, "Neige")
+                 .otherwise("Orage"))
+
+    def bande(temp):
+        return (F.when(temp < 0, "< 0°C")
+                 .when(temp < 10, "0-10°C")
+                 .when(temp < 20, "10-20°C")
+                 .when(temp < 30, "20-30°C")
+                 .otherwise("≥ 30°C"))
+
+    def agg_rows(df, dim):
+        rows = (df.groupBy("year", dim)
+                  .agg(F.sum("courses").alias("courses"),
+                       F.sum("somme_total").alias("tot"),
+                       F.sum("somme_km").alias("km"))
+                  .collect())
+        return [{"annee": int(r["year"]), dim: r[dim], "courses": int(r["courses"]),
+                 "prix_km_moyen": round(float(r["tot"]) / float(r["km"]), 2)}
+                for r in rows]
+
+    glob = (joined.groupBy("year")
+                  .agg(F.sum("courses").alias("courses"),
+                       F.sum("somme_total").alias("tot"),
+                       F.sum("somme_km").alias("km")).collect())
+    glob_rows = [{"annee": int(r["year"]), "courses": int(r["courses"]),
+                  "prix_km_moyen": round(float(r["tot"]) / float(r["km"]), 2)}
+                 for r in glob]
+
+    return {
+        "statut": "ok",
+        "conditions": ["Dégagé", "Nuageux", "Brouillard", "Pluie", "Neige", "Averses", "Orage"],
+        "rows": agg_rows(joined.withColumn("condition", categorie(F.col("weather_code"))),
+                         "condition"),
+        "temp_bandes": ["< 0°C", "0-10°C", "10-20°C", "20-30°C", "≥ 30°C"],
+        "temp_rows": agg_rows(joined.withColumn("bande", bande(F.col("temperature"))),
+                              "bande"),
+        "global_rows": glob_rows,
+        "message": "Jointure horaire course × météo Open-Meteo (heure locale NYC).",
+    }
 
 
 def main():
@@ -242,7 +302,7 @@ def main():
         heatmap = activity_heatmap(trips)
 
         # ---- Analyse 5 : ecart de prix selon la meteo ---------------------
-        meteo = weather_deviation(spark, s3)
+        meteo = weather_deviation(spark, s3, base)
 
         # ---- Analyse 6 : activite par zone + chronologie mensuelle --------
         zones_stats = zone_stats(trips)

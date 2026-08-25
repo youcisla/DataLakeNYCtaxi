@@ -319,7 +319,7 @@
     <label>Visualisation</label>
     <div class="seg" id="flow-seg-{{i}}">
       <button data-v="chord" class="on">Corde</button>
-      <button data-v="sankey">Sankey</button>
+      <button data-v="matrix">Matrice O→D</button>
       <button data-v="bars">Top départs</button>
     </div>
   </div>
@@ -810,28 +810,42 @@ function renderFlow(){
         roam:true
       }]
     }, true);
-  } else if (v === 'sankey'){
-    const cols = spread(fz.nodes.length);
-    try {
-      mk(`chord-${i}`).setOption({
-        ...BASE,
-        title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
-                textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
-        tooltip:{ trigger:'item' },
-        series:[{
-          type:'sankey', left:20, right:170, top:40, bottom:20,
-          nodeWidth:14, nodeGap:12,
-          data: fz.nodes.map((n,j) => ({ name: zname(n.id), value:n.pickups,
-            itemStyle:{ color:cols[j], borderColor:'transparent' } })),
-          links: links.map(l => ({ source: zname(l.source), target: zname(l.target), value:l.count })),
-          label:{ color:'#eef4f4', fontSize:10 },
-          lineStyle:{ color:'gradient', opacity:.35, curveness:.5 },
-          emphasis:{ focus:'adjacency' }
-        }]
-      }, true);
-    } catch(e){
-      box.innerHTML = '<p class="empty">Vue Sankey indisponible pour ce graphe (flux cycliques).</p>';
-    }
+  } else if (v === 'matrix'){
+    const topP = [...fz.nodes].sort((a,b) => b.pickups-a.pickups).slice(0, 15).map(n => n.id);
+    const setP = new Set(topP);
+    const cell = {};
+    links.forEach(l => {
+      if (!setP.has(l.source) || !setP.has(l.target)) return;
+      const k = l.source + '_' + l.target;
+      cell[k] = (cell[k] || 0) + l.count;
+    });
+    const data = [];
+    let maxC = 0;
+    topP.forEach((s, yi) => topP.forEach((d, xi) => {
+      const c = cell[s + '_' + d];
+      if (c){ data.push([xi, yi, c]); if (c > maxC) maxC = c; }
+    }));
+    mk(`chord-${i}`).setOption({
+      ...BASE,
+      title:{ text:`Top 15 × 15 — origine (lignes) → destination (colonnes)`,
+              left:'center', top:6, textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
+      tooltip:{ position:'top',
+        formatter:p => p.value == null ? '' :
+          `<b>${zname(topP[p.value[1]])}</b> → <b>${zname(topP[p.value[0]])}</b><br>` +
+          `${fmt(p.value[2])} courses` },
+      grid:{ left:20, right:110, top:40, bottom:90, containLabel:true },
+      xAxis:{ type:'category', data:topP.map(z => zname(z)),
+              axisLabel:{color:'#9fb8bc', fontSize:9, rotate:45},
+              axisLine:{show:false}, axisTick:{show:false} },
+      yAxis:{ type:'category', data:topP.map(z => zname(z)), inverse:true,
+              axisLabel:{color:'#eef4f4', fontSize:10, width:110, overflow:'truncate'},
+              axisLine:{show:false}, axisTick:{show:false} },
+      visualMap:{ min:0, max:maxC || 1, calculable:true, orient:'vertical', right:4, top:'middle',
+        textStyle:{color:'#9fb8bc'}, inRange:{ color: VIRIDIS } },
+      series:[{ type:'heatmap', data,
+        itemStyle:{ borderColor:'#1b313b', borderWidth:2, borderRadius:3 },
+        emphasis:{ itemStyle:{ shadowBlur:8, shadowColor:'rgba(233,196,106,.6)' } } }]
+    }, true);
   } else {
     const tops = [...fz.nodes].sort((a,b) => b.pickups-a.pickups).slice(0, 12);
     const cols = spread(tops.length);
@@ -1042,16 +1056,82 @@ document.getElementById(`an-sel-${i}`).addEventListener('change', () => { fillVt
 document.getElementById(`vt-sel-${i}`).addEventListener('change', () => { renderHeat(); });
 
 /* ---------- analyse 5 : météo ---------- */
-{
+let weatherReady = false;
+function renderWeather(){
   const box = document.getElementById(`meteo-${i}`);
-  if (ds.meteo.statut === 'en_attente'){
-    box.innerHTML = `<div class="card warn"><div class="t">En attente de l'ingestion météo</div>
-      <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
-  } else {
-    box.innerHTML = `<div class="card"><div class="t">Table météo disponible</div>
-      <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
+  if (ds.meteo.statut !== 'ok'){
+    if (!box.innerHTML.trim()){
+      box.innerHTML = `<div class="card warn"><div class="t">En attente de l'ingestion météo</div>
+        <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
+    }
+    return;
   }
+  if (!weatherReady){
+    box.innerHTML = `
+      <div class="chart-title"><b>Prix/km selon les conditions météo</b>
+        <span>au moment de la prise en charge · barre = prix/km moyen · ligne = moyenne générale</span></div>
+      <div id="wcond-${i}" class="chart" style="height:380px"></div>
+      <div class="chart-title" style="margin-top:20px"><b>Prix/km selon la température</b>
+        <span>bandes de 10°C à l'heure de la course</span></div>
+      <div id="wtemp-${i}" class="chart" style="height:360px"></div>
+      <div class="takeaway" id="tk-meteo-${i}"></div>`;
+    weatherReady = true;
+  }
+  const pick = rows => rows.filter(r => STATE.years.has(r.annee));
+  function aggBy(rows, dim){
+    const agg = {};
+    pick(rows).forEach(r => {
+      const b = agg[r[dim]] = agg[r[dim]] || {c:0, s:0};
+      b.c += r.courses; b.s += r.prix_km_moyen * r.courses;
+    });
+    return Object.entries(agg).map(([k, b]) => ({k, v: b.s / b.c, c: b.c}))
+                             .sort((a,b) => b.v - a.v);
+  }
+  const gRows = pick(ds.meteo.global_rows);
+  const gAvg = gRows.length
+    ? gRows.reduce((s,r) => s + r.prix_km_moyen * r.courses, 0) /
+      gRows.reduce((s,r) => s + r.courses, 0) : null;
+  function drawChart(divId, rows, dim, order){
+    const agg = aggBy(rows, dim).filter(x => order.includes(x.k));
+    const ordered = order.map(k => agg.find(x => x.k === k)).filter(Boolean);
+    mk(divId).setOption({
+      ...BASE,
+      tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+        formatter:p => { const d = p[0];
+          const dev = gAvg ? ((d.value - gAvg) / gAvg * 100) : null;
+          return `<b>${d.name}</b><br>${fmt2(d.value)} $/km` +
+                 (dev != null ? `<br>${dev >= 0 ? '+' : ''}${dev.toFixed(1).replace('.', ',')}% vs moyenne` : '') +
+                 `<br>${fmt(d.data.c)} courses`; } },
+      grid:{ left:64, right:30, top:30, bottom:60 },
+      xAxis:{ type:'category', data:ordered.map(x => x.k),
+              axisLabel:{color:'#9fb8bc', fontSize:11, rotate:20},
+              axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}} },
+      yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9fb8bc'}, ...AX },
+      series:[{ type:'bar', barMaxWidth:52,
+        data: ordered.map(x => ({ value:+x.v.toFixed(3), c:x.c,
+          itemStyle:{ color: gAvg && x.v > gAvg ? '#e76f51' : '#2a9d8f',
+                      borderRadius:[6,6,0,0] } })),
+        label:{ show:true, position:'top', color:'#9fb8bc', fontSize:10,
+                formatter:p => fmt2(p.value) },
+        ...(gAvg != null ? { markLine:{ symbol:'none', silent:true,
+          lineStyle:{ color:'#e9c46a', type:'dashed', width:1.5 },
+          label:{ color:'#e9c46a', formatter:'moyenne ' + fmt2(gAvg) },
+          data:[{ yAxis:+gAvg.toFixed(3) }] } } : {}) }]
+    }, true);
+  }
+  drawChart(`wcond-${i}`, ds.meteo.rows, 'condition', ds.meteo.conditions);
+  drawChart(`wtemp-${i}`, ds.meteo.temp_rows, 'bande', ds.meteo.temp_bandes);
+  const condAgg = aggBy(ds.meteo.rows, 'condition');
+  const chere = condAgg[0], cmoins = condAgg[condAgg.length-1];
+  document.getElementById(`tk-meteo-${i}`).innerHTML =
+    (chere && cmoins && gAvg)
+    ? `Météo la plus chère au km : <b>${chere.k}</b> (${fmt2(chere.v)} $/km, ` +
+      `${((chere.v - gAvg) / gAvg * 100).toFixed(1).replace('.', ',')}% au-dessus de la moyenne) ; ` +
+      `la moins chère : <b>${cmoins.k}</b> (${fmt2(cmoins.v)} $/km). ` +
+      `Rouge = au-dessus de la moyenne générale, vert = en dessous.`
+    : '';
 }
+renderWeather();
 
 /* ---------- orchestration des filtres ---------- */
 function applyFilters(){
@@ -1059,7 +1139,7 @@ function applyFilters(){
   STATE.veh = new Set(getGV());
   renderKpis(); renderOverview(); renderTimeline(); renderSurcharge(); renderFlow();
   renderRidge(); drawCmp(); fillHeatSelectors(); renderHeat(); renderProfil();
-  renderMap(); renderTopZones(); renderZoneCard();
+  renderMap(); renderTopZones(); renderZoneCard(); renderWeather();
 }
 
 buildCmpChips();

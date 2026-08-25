@@ -21,7 +21,7 @@ from functools import reduce
 from pyspark.sql import DataFrame, functions as F, types as T
 
 from pipeline import config
-from pipeline.utils_s3 import client, load_manifests
+from pipeline.utils_s3 import client, list_keys, load_manifests
 from pipeline.utils_spark import get_spark, lake_uri
 
 TS_FORMAT = "yyyy-MM-dd HH:mm:ss"
@@ -123,9 +123,49 @@ def normalize(raw: DataFrame, vehicle_type: str, year: int, month: int) -> DataF
     )
 
 
+def build_weather(spark, s3):
+    """bronze/weather/<annee>/<mois>.json (exports Open-Meteo bruts) -> silver/weather
+    en Parquet partitionne par annee. Horodatages deja en heure locale America/New_York,
+    alignes sur pickup_ts des courses."""
+    keys = sorted(k for k in list_keys(s3, config.BUCKET_BRONZE, "weather/")
+                  if k.endswith(".json"))
+    if not keys:
+        print(">> silver/weather : aucun export meteo en bronze, etape ignoree.")
+        return
+    frames = []
+    for key in keys:
+        year = int(key.split("/")[1])
+        raw = spark.read.json(lake_uri(config.BUCKET_BRONZE, key))
+        frames.append(
+            raw.select(F.explode(F.arrays_zip(
+                "hourly.time", "hourly.temperature_2m", "hourly.precipitation",
+                "hourly.snowfall", "hourly.weather_code", "hourly.wind_speed_10m"
+            )).alias("h"))
+              .select(
+                  F.to_timestamp("h.time", "yyyy-MM-dd'T'HH:mm").alias("ts"),
+                  F.col("h.temperature_2m").cast("double").alias("temperature"),
+                  F.col("h.precipitation").cast("double").alias("precipitation"),
+                  F.col("h.snowfall").cast("double").alias("snowfall"),
+                  F.col("h.weather_code").cast("int").alias("weather_code"),
+                  F.col("h.wind_speed_10m").cast("double").alias("wind_speed"),
+                  F.lit(year).alias("year"))
+        )
+    weather = reduce(DataFrame.unionByName, frames)
+    out = f"{lake_uri(config.BUCKET_SILVER, config.DATASET_ID)}/weather"
+    weather.write.mode("overwrite").partitionBy("year").parquet(out)
+    total = spark.read.parquet(out).count()
+    print(f">> silver/{config.DATASET_ID}/weather ecrit ({total:,} heures, "
+          f"{len(keys)} mois sources)")
+
+
 def main():
     spark = get_spark("nyc-taxi-bronze-to-silver")
     s3 = client()
+
+    if "--weather-only" in sys.argv:
+        build_weather(spark, s3)
+        return
+
     manifests = [m for m in load_manifests(s3) if m.get("kind") == "trips"]
     if not manifests:
         print("[!] Aucun manifeste trips dans bronze/. Lance d'abord l'etape ingest.")
@@ -157,6 +197,8 @@ def main():
     total = spark.read.parquet(out).count()
     print(f">> silver/{config.DATASET_ID}/trips ecrit en Parquet partitionne par "
           f"vehicle_type/year/month : {total:,} courses")
+
+    build_weather(spark, s3)
 
 
 if __name__ == "__main__":

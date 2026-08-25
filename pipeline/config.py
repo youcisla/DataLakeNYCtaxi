@@ -31,6 +31,10 @@ MANIFEST_PREFIX = "_manifest"
 
 DATASET_ID = "nyc-taxi-trips"
 
+# Centre de NYC pour l'API meteo Open-Meteo (heure locale America/New_York cote API).
+WEATHER_LAT = env("WEATHER_LAT", "40.7128")
+WEATHER_LON = env("WEATHER_LON", "-74.0060")
+
 
 def lake_path(bucket: str, key: str) -> str:
     """Chemin d'un objet du lake, en storage objet (s3a://) ou local selon LAKE."""
