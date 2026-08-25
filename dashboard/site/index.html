@@ -4,108 +4,147 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NYC Taxi × Météo : DataLake Bronze · Silver · Gold</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b1020; --panel:#121a2b; --panel2:#0f1626; --border:#1e2a41;
-    --text:#dbe4f0; --muted:#8fa1ba; --accent:#ffb703; --accent2:#06d6a0;
-    --blue:#118ab2; --rose:#ef476f; --violet:#9b5de5;
+    --bg:#0b0d10; --bg2:#0e1114; --panel:#14181e; --panel2:#171c23;
+    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.16);
+    --text:#eceef1; --muted:#9aa3ad; --dim:#68717c;
+    --v-y:#fde725; --v-l:#a0da39; --v-g:#2db27d; --v-t:#21918c; --v-b:#365c8d; --v-p:#46327e;
+    --accent:var(--v-t); --accent2:var(--v-g);
+    --bronze:#cd7f32; --silver:#c0c5ce; --gold:var(--v-y);
+    --r:16px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.55}
-  .mono{font-family:ui-monospace,"Cascadia Code",Consolas,monospace}
-  a{color:var(--accent)}
-  nav{position:sticky;top:0;z-index:50;display:flex;gap:22px;align-items:center;padding:14px 28px;
-      background:rgba(11,16,32,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
-  nav .brand{font-weight:700;color:var(--accent);letter-spacing:.4px}
-  nav a{color:var(--muted);text-decoration:none;font-size:.92rem}
-  nav a:hover{color:var(--text)}
-  header{max-width:1150px;margin:0 auto;padding:70px 28px 40px}
-  .kicker{color:var(--accent2);text-transform:uppercase;letter-spacing:2.5px;font-size:.78rem;font-weight:600}
-  h1{font-size:clamp(2rem,5vw,3.3rem);line-height:1.12;margin:10px 0 14px}
-  h1 em{color:var(--accent);font-style:normal}
-  .sub{max-width:820px;color:var(--muted);font-size:1.06rem}
-  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-  .badge{border:1px solid var(--border);background:var(--panel2);padding:7px 13px;border-radius:999px;
-         font-size:.82rem;color:var(--muted)}
+  ::selection{background:var(--v-t);color:#04121a}
+  .mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
+  a{color:inherit}
+  h1,h2,h3,.brand,.num{font-family:"Space Grotesk","Segoe UI",sans-serif}
+
+  nav{position:sticky;top:0;z-index:50;display:flex;gap:6px;align-items:center;padding:12px 26px;
+      background:rgba(11,13,16,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  nav .brand{font-weight:700;letter-spacing:.3px;margin-right:auto;display:flex;align-items:center;gap:10px}
+  nav .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+  nav a{color:var(--muted);text-decoration:none;font-size:.88rem;padding:6px 11px;border-radius:999px;border:1px solid transparent}
+  nav a:hover{color:var(--text);border-color:var(--line2)}
+
+  header{max-width:1220px;margin:0 auto;padding:84px 28px 44px}
+  .kicker{font-family:"JetBrains Mono",monospace;color:var(--accent);text-transform:uppercase;
+          letter-spacing:3px;font-size:.74rem;font-weight:600}
+  h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.08;margin:14px 0 16px;letter-spacing:-.5px}
+  h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1.5px var(--v-y)}
+  .sub{max-width:840px;color:var(--muted);font-size:1.05rem}
+  .sub code{font-family:"JetBrains Mono",monospace;color:var(--v-g);font-size:.95em}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .badge{border:1px solid var(--line);background:var(--panel2);padding:7px 13px;border-radius:999px;
+         font-size:.82rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
   .badge b{color:var(--text);font-weight:600}
-  main{max-width:1150px;margin:0 auto;padding:20px 28px 60px}
-  section{margin-top:64px}
-  h2{font-size:1.65rem;margin-bottom:6px}
-  h2 .num{color:var(--accent);margin-right:10px}
-  .lead{color:var(--muted);margin-bottom:24px;max-width:850px}
-  /* --- couches --- */
-  .layers{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;margin-top:26px}
-  .layer{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--border);
-         border-radius:16px;padding:22px}
-  .layer .tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-              padding:4px 10px;border-radius:999px;margin-bottom:12px}
-  .layer.bronze .tag{background:rgba(205,127,50,.16);color:#cd7f32}
-  .layer.silver .tag{background:rgba(192,197,206,.14);color:#c0c5ce}
-  .layer.gold  .tag{background:rgba(255,183,3,.15);color:var(--accent)}
-  .layer h3{margin-bottom:8px;font-size:1.08rem}
-  .layer p{color:var(--muted);font-size:.9rem}
-  .layer ul{margin-top:12px;list-style:none}
-  .layer li{font-size:.85rem;color:var(--muted);padding-left:18px;position:relative;margin-top:6px}
-  .layer li::before{content:"◆";position:absolute;left:0;color:var(--accent2);font-size:.6rem;top:5px}
-  .arrow{align-self:center;color:var(--accent);font-size:1.6rem}
-  @media(max-width:900px){.layers{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}}
-  .cmd{margin-top:26px;background:#0a0f1d;border:1px solid var(--border);border-radius:12px;
-       padding:16px 20px;color:#9fe8c8;overflow-x:auto;white-space:nowrap}
-  .cmd .cmt{color:var(--muted)}
-  /* --- KPI --- */
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:26px}
-  .kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
-  .kpi .v{font-size:1.7rem;font-weight:700;color:var(--accent)}
-  .kpi .l{color:var(--muted);font-size:.84rem;margin-top:4px}
-  /* --- analyses --- */
+  .sw{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px}
+
+  main{max-width:1220px;margin:0 auto;padding:16px 28px 60px}
+  section{margin-top:76px;scroll-margin-top:70px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;border-top:1px solid var(--line);padding-top:26px}
+  .sec-head .idx{font-family:"JetBrains Mono",monospace;color:var(--dim);font-size:.85rem}
+  h2{font-size:1.55rem;letter-spacing:-.3px}
+  .lead{color:var(--muted);margin:10px 0 8px;max-width:880px}
   blockquote{border-left:3px solid var(--accent);background:var(--panel2);border-radius:0 12px 12px 0;
-             padding:14px 20px;color:var(--text);font-style:italic;margin-bottom:20px}
-  .chart{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-top:18px}
-  .takeaway{margin-top:16px;background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.25);
-            border-radius:12px;padding:14px 18px;font-size:.95rem}
-  .takeaway::before{content:"Lecture : ";color:var(--accent2);font-weight:600}
-  .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
-  .selbar{display:flex;gap:14px;align-items:center;margin-top:18px;flex-wrap:wrap}
-  .selbar label{color:var(--muted);font-size:.88rem}
-  .selbar select{background:var(--panel);border:1px solid var(--border);border-radius:10px;
-                 color:var(--text);padding:8px 12px;font-size:.92rem;outline:none}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:18px}
-  .card.warn{border-color:rgba(255,183,3,.35)}
-  .card .t{font-weight:700;color:var(--accent);margin-bottom:8px}
-  footer{border-top:1px solid var(--border);margin-top:80px;padding:34px 28px;text-align:center;
-         color:var(--muted);font-size:.88rem}
-  footer .stack{margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+             padding:13px 20px;color:var(--text);font-style:italic;margin:18px 0 6px;font-size:.97rem}
+
+  .layers{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch;margin-top:28px}
+  .layer{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;
+         border-top:3px solid var(--tagc,var(--accent))}
+  .layer .tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+              padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--tagc) 14%,transparent);
+              color:var(--tagc);margin-bottom:12px}
+  .layer h3{margin-bottom:8px;font-size:1.06rem}
+  .layer p,.layer li{color:var(--muted);font-size:.89rem}
+  .layer ul{margin-top:12px;list-style:none}
+  .layer li{padding-left:18px;position:relative;margin-top:6px}
+  .layer li::before{content:"◆";position:absolute;left:0;color:var(--tagc);font-size:.58rem;top:6px}
+  .arrow{align-self:center;color:var(--dim);font-size:1.5rem}
+  @media(max-width:900px){.layers{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}}
+  .cmd{margin-top:26px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
+       padding:15px 20px;color:#9fe8c8;font-family:"JetBrains Mono",monospace;overflow-x:auto;white-space:nowrap}
+  .cmd .cmt{color:var(--dim)}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin-top:26px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--kc,var(--accent));opacity:.85}
+  .kpi .v{font-family:"JetBrains Mono",monospace;font-size:1.55rem;font-weight:600;letter-spacing:-.5px}
+  .kpi .l{color:var(--muted);font-size:.82rem;margin-top:4px;text-transform:uppercase;letter-spacing:.8px}
+
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:900px){.duo{grid-template-columns:1fr}}
+
+  .chart{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-top:14px}
+  .chart-pad{padding:10px}
+  .chart-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px 0;color:var(--muted);font-size:.9rem}
+  .chart-title b{color:var(--text);font-weight:600}
+  .takeaway{margin-top:14px;background:color-mix(in srgb,var(--v-g) 7%,transparent);border:1px solid color-mix(in srgb,var(--v-g) 25%,transparent);
+            border-radius:12px;padding:13px 18px;font-size:.94rem;color:var(--text)}
+  .takeaway::before{content:"Lecture : ";color:var(--v-g);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;margin-right:6px}
+  .empty{padding:34px;text-align:center;color:var(--muted)}
+
+  .controls{display:flex;gap:18px;row-gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
+  .controls>label{color:var(--dim);font-size:.82rem;text-transform:uppercase;letter-spacing:1px}
+  select{background:var(--panel);color:var(--text);border:1px solid var(--line2);border-radius:10px;
+         padding:8px 12px;font-size:.92rem;outline:none;cursor:pointer}
+  select:focus{border-color:var(--accent)}
+  .seg{display:inline-flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+  .seg button{background:transparent;border:none;color:var(--muted);padding:8px 15px;font-size:.88rem;cursor:pointer}
+  .seg button.on{background:var(--accent);color:#04121a;font-weight:600}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{position:relative}
+  .chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+  .chip span{display:inline-block;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);
+             color:var(--muted);font-size:.86rem;transition:.15s}
+  .chip input:checked + span{background:color-mix(in srgb,var(--cc,var(--v-t)) 20%,transparent);
+             border-color:var(--cc,var(--v-t));color:var(--text)}
+  .chip:hover span{border-color:var(--cc,var(--v-t))}
+  .hint{color:var(--dim);font-size:.8rem;margin-top:8px}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-top:14px}
+  .card.warn{border-color:color-mix(in srgb,var(--v-y) 30%,transparent)}
+  .card .t{font-family:"Space Grotesk";font-weight:700;color:var(--v-y);margin-bottom:8px}
+
+  footer{border-top:1px solid var(--line);margin-top:90px;padding:36px 28px;text-align:center;color:var(--muted);font-size:.88rem}
+  footer .stack{margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
 
 <nav>
-  <span class="brand">◆ DataLake · NYC Taxi × Météo</span>
-  <a href="#couches">Les 3 couches</a>
+  <span class="brand"><span class="dot"></span>DataLake · NYC Taxi × Météo</span>
+  <a href="#couches">Pipeline</a>
   
+  <a href="#apercu-0">Aperçu</a>
   <a href="#analyse1-0">Suppléments</a>
-  <a href="#analyse2-0">Flux zones</a>
-  <a href="#analyse3-0">Prix / km</a>
+  <a href="#analyse2-0">Flux</a>
+  <a href="#analyse3-0">Prix/km</a>
   <a href="#analyse4-0">Activité</a>
   <a href="#analyse5-0">Météo</a>
   
 </nav>
 
 <header>
-  <div class="kicker">Pipeline médallion · Spark sur master réel · MinIO</div>
+  <div class="kicker">Pipeline médallion · Spark · MinIO · Viridis</div>
   <h1>Les taxis <em>New-Yorkais</em>,<br>dix-sept ans de schémas réconciliés</h1>
   <p class="sub">
     Yellow (2009), green et fhv (2016)&nbsp;: les fichiers TLC changent de schéma au fil des ans
     (GPS brut avant juillet&nbsp;2016, identifiants de zone ensuite, suppléments apparus
     progressivement). Un pipeline en une seule commande&nbsp;: ingestion telle quelle dans un stockage
-    objet, réconciliation distribuée avec Spark connecté à un vrai master
-    (<code class="mono">spark://spark-master:7077</code>), agrégats métier, puis ce dashboard statique.
+    objet, réconciliation distribuée avec Spark (<code>spark://spark-master:7077</code>),
+    agrégats métier, puis ce dashboard statique — dont toute la gamme chromatique est
+    dérivée de la palette <code>viridis</code>.
   </p>
   <div class="badges">
-    <span class="badge"><span class="sw" style="background:#cd7f32"></span>Bronze : parquets bruts <b>tels quels</b> (MinIO)</span>
-    <span class="badge"><span class="sw" style="background:#c0c5ce"></span>Silver : schéma canonique typé &amp; drift résolu</span>
-    <span class="badge"><span class="sw" style="background:#ffb703"></span>Gold : un mart JSON par analyse (MinIO)</span>
+    <span class="badge"><span class="sw" style="background:#cd7f32"></span>Bronze : parquets bruts <b>tels quels</b></span>
+    <span class="badge"><span class="sw" style="background:#c0c5ce"></span>Silver : schéma canonique typé</span>
+    <span class="badge"><span class="sw" style="background:var(--v-y)"></span>Gold : un mart JSON par analyse</span>
     <span class="badge mono">make run SAMPLE=3</span>
   </div>
 </header>
@@ -113,17 +152,15 @@
 <main>
 
 <section id="couches">
-  <h2><span class="num">01</span>Le pipeline en trois couches</h2>
+  <div class="sec-head"><span class="idx">01</span><h2>Le pipeline en trois couches</h2></div>
   <p class="lead">Le brut est persisté <b>avant toute transformation</b>, puis raffiné couche par couche.
      Chaque étape tourne sur le cluster Spark (master + worker), jamais en local.</p>
   <div class="layers">
-    <div class="layer bronze">
+    <div class="layer" style="--tagc:var(--bronze)">
       <span class="tag">Bronze</span>
       <h3>Persistance du brut</h3>
       <p>Chaque parquet est copié <b>octet pour octet</b> vers
-         <span class="mono">bronze/&lt;vehicle_type&gt;/&lt;year&gt;/&lt;month&gt;/</span>,
-         convention qui répond sans ouvrir les fichiers&nbsp;: quels types, quelles périodes,
-         quel mois déjà ingéré.</p>
+         <span class="mono">bronze/&lt;vehicle_type&gt;/&lt;year&gt;/&lt;month&gt;/</span>.</p>
       <ul>
         <li>ingestion idempotente (déjà présent → sauté)</li>
         <li>manifeste JSON cumulé dans <span class="mono">bronze/_manifest/</span></li>
@@ -131,11 +168,10 @@
       </ul>
     </div>
     <div class="arrow">➜</div>
-    <div class="layer silver">
+    <div class="layer" style="--tagc:var(--silver)">
       <span class="tag">Silver</span>
       <h3>Réconciliation &amp; typage</h3>
-      <p>Schemas legacy (2009) et modernes fusionnés vers un modèle canonique unique,
-         GPS et LocationID conservés côte à côte.</p>
+      <p>Schémas legacy (2009) et modernes fusionnés vers un modèle canonique unique.</p>
       <ul>
         <li>suppléments absents avant introduction → <b>null</b>, jamais 0</li>
         <li>horodatages corrompus écartés (fenêtre bornée)</li>
@@ -143,7 +179,7 @@
       </ul>
     </div>
     <div class="arrow">➜</div>
-    <div class="layer gold">
+    <div class="layer" style="--tagc:var(--gold)">
       <span class="tag">Gold</span>
       <h3>Agrégats métier</h3>
       <p>Un mart JSON par analyse du notebook : suppléments, flux de zones, prix/km,
@@ -160,66 +196,101 @@
 
 
 <section id="apercu-0">
-  <h2><span class="num">02</span>Vue d'ensemble <small style="color:var(--rose)">(mode échantillon)</small></h2>
+  <div class="sec-head"><span class="idx">02</span><h2>Vue d'ensemble <small style="color:var(--v-y)">(mode échantillon)</small></h2></div>
   <p class="lead">Données ingérées depuis <span class="mono">/data/raw</span>, traitées sur
      <span class="mono">spark://spark-master:7077</span>. Généré le 2026-08-25.</p>
   <div class="kpis">
-    <div class="kpi"><div class="v" data-kpi="total-0"></div><div class="l">courses analysées</div></div>
-    <div class="kpi"><div class="v" data-kpi="periode-0"></div><div class="l">période couverte</div></div>
-    <div class="kpi"><div class="v" data-kpi="annees-0"></div><div class="l">années de données</div></div>
-    <div class="kpi"><div class="v" data-kpi="vehicules-0"></div><div class="l">types de véhicules</div></div>
-    <div class="kpi"><div class="v" data-kpi="taille-0"></div><div class="l">de parquet brut ingéré</div></div>
+    <div class="kpi" style="--kc:var(--v-t)"><div class="v" data-kpi="total-0"></div><div class="l">courses analysées</div></div>
+    <div class="kpi" style="--kc:var(--v-g)"><div class="v" data-kpi="periode-0"></div><div class="l">période couverte</div></div>
+    <div class="kpi" style="--kc:var(--v-y)"><div class="v" data-kpi="annees-0"></div><div class="l">années de données</div></div>
+    <div class="kpi" style="--kc:var(--v-l)"><div class="v" data-kpi="vehicules-0"></div><div class="l">types de véhicules</div></div>
+    <div class="kpi" style="--kc:var(--v-p)"><div class="v" data-kpi="taille-0"></div><div class="l">de parquet brut ingéré</div></div>
+  </div>
+  <div class="duo">
+    <div>
+      <div class="chart-title"><b>Courses par type de véhicule</b><span>cliquez la légende pour masquer une part</span></div>
+      <div id="donut-0" class="chart chart-pad" style="height:320px"></div>
+    </div>
+    <div>
+      <div class="chart-title"><b>Courses par année</b><span>toutes périodes ingérées confondues</span></div>
+      <div id="baran-0" class="chart chart-pad" style="height:320px"></div>
+    </div>
   </div>
 </section>
 
 <section id="analyse1-0">
-  <h2><span class="num">03</span>Évolution des suppléments tarifaires</h2>
+  <div class="sec-head"><span class="idx">03</span><h2>Évolution des suppléments tarifaires</h2></div>
   <blockquote>«&nbsp;Pour chaque supplément apparu progressivement dans le schéma, montrer son évolution
-     dans le temps (montant moyen collecté), par type de véhicule.&nbsp;»</blockquote>
-  <div class="selbar">
-    <label for="veh-sel-0">Type de véhicule :</label>
-    <select id="veh-sel-0"></select>
+     dans le temps, par type de véhicule.&nbsp;»</blockquote>
+  <div class="controls">
+    <label>Véhicules</label>
+    <div class="chips" id="veh-chips-0"></div>
+    <label>Métrique</label>
+    <div class="seg" id="met-seg-0">
+      <button data-v="moyenne" class="on">Moyenne $/course</button>
+      <button data-v="total">Total collecté</button>
+    </div>
   </div>
-  <div id="surcharge-0" class="chart" style="height:420px"></div>
+  <p class="hint">Couleur = supplément · trait plein vs pointillé = véhicule · cliquez la légende pour masquer/afficher chaque courbe.</p>
+  <div id="surcharge-0" class="chart" style="height:440px"></div>
   <div class="takeaway" id="tk-surcharge-0"></div>
 </section>
 
 <section id="analyse2-0">
-  <h2><span class="num">04</span>Flux de prises en charge / déposes</h2>
-  <blockquote>«&nbsp;Visualiser, sous forme de diagramme en corde, les flux de courses entre zones de départ
-     et d'arrivée.&nbsp;»</blockquote>
-  <div id="chord-0" class="chart" style="height:560px"></div>
+  <div class="sec-head"><span class="idx">04</span><h2>Flux de prises en charge / déposes</h2></div>
+  <blockquote>«&nbsp;Visualiser les flux de courses entre zones de départ et d'arrivée.&nbsp;»</blockquote>
+  <div class="controls">
+    <label>Visualisation</label>
+    <div class="seg" id="flow-seg-0">
+      <button data-v="chord" class="on">Corde</button>
+      <button data-v="sankey">Sankey</button>
+      <button data-v="bars">Top départs</button>
+    </div>
+  </div>
+  <div id="chord-0" class="chart" style="height:580px"></div>
   <div class="takeaway" id="tk-chord-0"></div>
 </section>
 
 <section id="analyse3-0">
-  <h2><span class="num">05</span>Prix au km par année et zone de départ</h2>
+  <div class="sec-head"><span class="idx">05</span><h2>Prix au km par année et zone de départ</h2></div>
   <blockquote>«&nbsp;Un ridgeline plot montrant l'évolution des prix par km au fil des années, pour une zone
      de départ donnée.&nbsp;»</blockquote>
-  <div class="selbar">
-    <label for="zone-sel-0">Zone de départ (LocationID) :</label>
+  <div class="controls">
+    <label>Ridgeline — zone</label>
     <select id="zone-sel-0"></select>
   </div>
   <div id="ridge-0" class="chart" style="height:520px"></div>
   <div class="takeaway" id="tk-ridge-0"></div>
+
+  <div class="chart-title" style="margin-top:34px"><b>Comparateur de zones</b><span>prix/km moyen pondéré par année — cochez plusieurs zones pour les superposer</span></div>
+  <div class="controls">
+    <label>Zones</label>
+    <div class="chips" id="zone-chips-0"></div>
+  </div>
+  <div id="cmpzone-0" class="chart" style="height:400px"></div>
+  <div class="takeaway" id="tk-cmpzone-0"></div>
 </section>
 
 <section id="analyse4-0">
-  <h2><span class="num">06</span>Fréquence des courses : jour × heure</h2>
+  <div class="sec-head"><span class="idx">06</span><h2>Fréquence des courses : jour × heure</h2></div>
   <blockquote>«&nbsp;Une fonction qui, pour une année donnée en paramètre, produit une heatmap (jour de la
      semaine × heure) de la fréquence des courses, pour chaque type de véhicule.&nbsp;»</blockquote>
-  <div class="selbar">
-    <label for="an-sel-0">Année :</label>
+  <div class="controls">
+    <label>Année</label>
     <select id="an-sel-0"></select>
-    <label for="vt-sel-0">Véhicule :</label>
+    <label>Véhicule</label>
     <select id="vt-sel-0"></select>
   </div>
-  <div id="heat-0" class="chart" style="height:430px"></div>
+  <div id="heat-0" class="chart" style="height:450px"></div>
   <div class="takeaway" id="tk-heat-0"></div>
+
+  <div class="chart-title" style="margin-top:34px"><b>Profil horaire</b><span>somme des 7 jours — tous les véhicules de l'année sélectionnée, comparables d'un coup d'œil</span></div>
+  <div id="profil-0" class="chart" style="height:330px"></div>
+  <div class="takeaway" id="tk-profil-0"></div>
 </section>
 
 <section id="analyse5-0">
-  <h2><span class="num">07</span>Écart de prix selon la météo</h2>
+  <div class="sec-head"><span class="idx">07</span><h2>Écart de prix selon la météo</h2></div>
   <blockquote>«&nbsp;Comparer le prix des courses (par km) selon les conditions météo au moment de la course,
      par rapport au prix moyen général.&nbsp;»</blockquote>
   <div id="meteo-0"></div>
@@ -233,12 +304,12 @@
   <div class="stack">
     <span class="badge">Docker Compose</span><span class="badge">Spark 3.5 master + worker</span>
     <span class="badge">MinIO S3</span><span class="badge">ECharts</span>
-    <span class="badge">Généré le 25/08/2026 09:54</span>
+    <span class="badge">Généré le 25/08/2026 12:49</span>
   </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-<script>window.__PAYLOAD__ = {"genere_le": "25/08/2026 09:54", "spark_master": "spark://spark-master:7077", "datasets": [{"id": "nyc-taxi-trips", "meta": {"dataset_id": "nyc-taxi-trips", "source_dir": "/data/raw", "sample_mode": true, "taille_octets": 1395786309, "spark_master": "spark://spark-master:7077", "lake": "minio", "buckets": {"bronze": "bronze", "silver": "silver", "gold": "gold"}, "genere_le": "2026-08-25T09:53:41+00:00"}, "kpis": {"total_courses": 41859906, "periode": {"debut": "01/01/2009", "fin": "31/03/2009"}, "par_annee": {"2009": 41859906}, "par_vehicule": {"yellow": 41859906}}, "surcharges": {"supplements": ["extra", "mta_tax", "improvement_surcharge", "congestion_surcharge", "airport_fee", "cbd_convenience_fee"], "rows": [{"annee": 2009, "vehicle_type": "yellow", "extra_moyen": 0.18, "extra_total": 7643857.25, "mta_tax_moyen": null, "mta_tax_total": null, "improvement_surcharge_moyen": null, "improvement_surcharge_total": null, "congestion_surcharge_moyen": null, "congestion_surcharge_total": null, "airport_fee_moyen": null, "airport_fee_total": null, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}]}, "flux_zones": {"nodes": [], "links": [], "courses_zonees": 0, "courses_non_zonees": 41859906}, "prix_km": {"bins": ["0-1$", "1-2$", "2-3$", "3-4$", "4-5$", "5-6$", "6-7$", "7-8$", "8-9$", "9-10$"], "zones": [], "rows": []}, "heatmap": {"2009": {"yellow": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[133389, 79279, 52855, 37760, 35227, 48001, 128980, 235934, 309936, 281971, 230316, 225106, 246668, 243786, 267297, 282885, 263743, 311058, 370761, 363956, 314966, 286205, 249775, 186662], [126887, 75610, 46732, 32152, 29100, 47521, 145130, 281926, 366054, 341800, 283887, 269583, 282799, 276723, 299608, 300107, 270160, 333097, 411311, 416293, 376002, 358459, 319892, 244673], [148925, 88085, 56515, 37746, 32426, 45251, 134651, 265315, 339511, 320786, 247443, 237159, 251569, 245338, 257979, 259952, 240687, 293866, 363410, 377774, 349604, 334468, 312405, 239865], [174467, 111737, 76022, 54274, 44233, 51643, 139768, 271175, 332233, 312153, 271128, 267164, 290419, 281929, 309891, 318951, 280621, 340887, 420054, 445296, 411985, 398394, 381982, 329964], [245203, 158080, 105044, 71960, 54444, 54725, 140639, 270442, 356227, 332396, 286671, 286750, 312249, 308081, 328160, 322733, 286813, 345772, 422248, 460696, 417867, 399816, 410351, 412360], [385577, 322073, 266711, 204023, 134655, 62622, 61413, 85118, 136546, 198587, 238332, 270453, 305685, 317289, 302789, 314355, 302645, 333087, 391231, 433101, 383577, 368861, 404565, 415201], [406978, 356347, 290475, 237071, 158457, 70089, 54272, 67234, 100590, 148130, 208414, 249754, 281339, 289252, 290834, 283555, 280594, 291071, 305516, 272390, 241617, 226723, 223394, 178465]]}}}, "meteo": {"statut": "en_attente", "message": "Ingestion meteo non effectuee : lance make weather avec des exports Open-Meteo/NOAA dans data/weather/, puis relance bronze_to_silver."}}]};</script>
+<script>window.__PAYLOAD__ = {"genere_le": "25/08/2026 12:49", "spark_master": "spark://spark-master:7077", "datasets": [{"id": "nyc-taxi-trips", "meta": {"dataset_id": "nyc-taxi-trips", "source_dir": "/data/raw", "sample_mode": true, "taille_octets": 1395786309, "spark_master": "spark://spark-master:7077", "lake": "minio", "buckets": {"bronze": "bronze", "silver": "silver", "gold": "gold"}, "genere_le": "2026-08-25T09:53:41+00:00"}, "kpis": {"total_courses": 41859906, "periode": {"debut": "01/01/2009", "fin": "31/03/2009"}, "par_annee": {"2009": 41859906}, "par_vehicule": {"yellow": 41859906}}, "surcharges": {"supplements": ["extra", "mta_tax", "improvement_surcharge", "congestion_surcharge", "airport_fee", "cbd_convenience_fee"], "rows": [{"annee": 2009, "vehicle_type": "yellow", "extra_moyen": 0.18, "extra_total": 7643857.25, "mta_tax_moyen": null, "mta_tax_total": null, "improvement_surcharge_moyen": null, "improvement_surcharge_total": null, "congestion_surcharge_moyen": null, "congestion_surcharge_total": null, "airport_fee_moyen": null, "airport_fee_total": null, "cbd_convenience_fee_moyen": null, "cbd_convenience_fee_total": null}]}, "flux_zones": {"nodes": [], "links": [], "courses_zonees": 0, "courses_non_zonees": 41859906}, "prix_km": {"bins": ["0-1$", "1-2$", "2-3$", "3-4$", "4-5$", "5-6$", "6-7$", "7-8$", "8-9$", "9-10$"], "zones": [], "rows": []}, "heatmap": {"2009": {"yellow": {"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"], "heures": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], "matrice": [[133389, 79279, 52855, 37760, 35227, 48001, 128980, 235934, 309936, 281971, 230316, 225106, 246668, 243786, 267297, 282885, 263743, 311058, 370761, 363956, 314966, 286205, 249775, 186662], [126887, 75610, 46732, 32152, 29100, 47521, 145130, 281926, 366054, 341800, 283887, 269583, 282799, 276723, 299608, 300107, 270160, 333097, 411311, 416293, 376002, 358459, 319892, 244673], [148925, 88085, 56515, 37746, 32426, 45251, 134651, 265315, 339511, 320786, 247443, 237159, 251569, 245338, 257979, 259952, 240687, 293866, 363410, 377774, 349604, 334468, 312405, 239865], [174467, 111737, 76022, 54274, 44233, 51643, 139768, 271175, 332233, 312153, 271128, 267164, 290419, 281929, 309891, 318951, 280621, 340887, 420054, 445296, 411985, 398394, 381982, 329964], [245203, 158080, 105044, 71960, 54444, 54725, 140639, 270442, 356227, 332396, 286671, 286750, 312249, 308081, 328160, 322733, 286813, 345772, 422248, 460696, 417867, 399816, 410351, 412360], [385577, 322073, 266711, 204023, 134655, 62622, 61413, 85118, 136546, 198587, 238332, 270453, 305685, 317289, 302789, 314355, 302645, 333087, 391231, 433101, 383577, 368861, 404565, 415201], [406978, 356347, 290475, 237071, 158457, 70089, 54272, 67234, 100590, 148130, 208414, 249754, 281339, 289252, 290834, 283555, 280594, 291071, 305516, 272390, 241617, 226723, 223394, 178465]]}}}, "meteo": {"statut": "en_attente", "message": "Ingestion meteo non effectuee : lance make weather avec des exports Open-Meteo/NOAA dans data/weather/, puis relance bronze_to_silver."}}]};</script>
 <script>
 const P = window.__PAYLOAD__;
 const nf = new Intl.NumberFormat('fr-FR');
@@ -252,22 +323,53 @@ function mk(id){
 window.addEventListener('resize', () => charts.forEach(c => c.resize()));
 
 const SUP_COLORS = {
-  'extra':'#ffb703', 'mta_tax':'#06d6a0', 'improvement_surcharge':'#118ab2',
-  'congestion_surcharge':'#ef476f', 'airport_fee':'#9b5de5', 'cbd_convenience_fee':'#f97316'
+  'extra':'#fde725', 'mta_tax':'#a0da39', 'improvement_surcharge':'#2db27d',
+  'congestion_surcharge':'#21918c', 'airport_fee':'#365c8d', 'cbd_convenience_fee':'#46327e'
 };
 const SUP_LABELS = {
   'extra':'Extra', 'mta_tax':'MTA tax', 'improvement_surcharge':'Improvement',
   'congestion_surcharge':'Congestion', 'airport_fee':'Airport fee', 'cbd_convenience_fee':'CBD fee'
 };
-function lerp(a,b,t){ return Math.round(a+(b-a)*t); }
-function ramp(t){
-  const A=[17,138,178], B=[255,183,3];
-  return `rgb(${lerp(A[0],B[0],t)},${lerp(A[1],B[1],t)},${lerp(A[2],B[2],t)})`;
+const VIRIDIS = ['#fde725','#d0e11c','#a0da39','#73d056','#4ac16d','#2db27d','#1fa187','#21918c',
+                 '#277f8e','#2e6e8e','#365c8d','#3f4788','#46327e','#481b6d','#440154'];
+function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
+function vcolor(t){
+  t = Math.max(0, Math.min(1, t));
+  const x = t * (VIRIDIS.length - 1), k = Math.min(Math.floor(x), VIRIDIS.length - 2), f = x - k;
+  const a = hex2rgb(VIRIDIS[k]), b = hex2rgb(VIRIDIS[k+1]);
+  return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
 }
+function spread(n){ return Array.from({length:n}, (_,j) => vcolor(n > 1 ? j/(n-1) : 0)); }
+function chipBox(elId, values, onChange, opts={}){
+  const box = document.getElementById(elId);
+  const cols = spread(values.length || 1);
+  values.forEach((v, j) => {
+    const lab = document.createElement('label');
+    lab.className = 'chip';
+    lab.style.setProperty('--cc', opts.color === false ? undefined : cols[j]);
+    const inp = document.createElement('input');
+    inp.type = 'checkbox'; inp.value = v; inp.checked = true;
+    inp.addEventListener('change', () => onChange());
+    const sp = document.createElement('span'); sp.textContent = opts.fmt ? opts.fmt(v) : v;
+    lab.append(inp, sp); box.appendChild(lab);
+  });
+  return () => [...box.querySelectorAll('input:checked')].map(x => x.value);
+}
+function segCtl(elId, onChange){
+  const seg = document.getElementById(elId);
+  seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    seg.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on'); onChange(b.dataset.v);
+  }));
+  return () => seg.querySelector('button.on').dataset.v;
+}
+function dashFor(idx){ return idx === 0 ? null : [8, 5]; }
 
+const AX = { axisLabel:{color:'#9aa3ad'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}},
+             splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} };
 const BASE = {
   backgroundColor:'transparent',
-  textStyle:{ color:'#dbe4f0', fontFamily:'inherit' },
+  textStyle:{ color:'#eceef1', fontFamily:'inherit' },
 };
 
 P.datasets.forEach((ds, i) => {
@@ -275,7 +377,7 @@ P.datasets.forEach((ds, i) => {
   /* ---------- KPI ---------- */
   document.querySelector(`[data-kpi="total-${i}"]`).textContent = fmt(ds.kpis.total_courses);
   document.querySelector(`[data-kpi="periode-${i}"]`).textContent =
-    `${ds.kpis.periode.debut || '?'} → ${ds.kpis.periode.fin || '?'}`;
+    `${ds.kpis.periode?.debut || '?'} → ${ds.kpis.periode?.fin || '?'}`;
   document.querySelector(`[data-kpi="annees-${i}"]`).textContent =
     Object.keys(ds.kpis.par_annee).join(', ') || 'n/a';
   document.querySelector(`[data-kpi="vehicules-${i}"]`).textContent =
@@ -284,105 +386,215 @@ P.datasets.forEach((ds, i) => {
   document.querySelector(`[data-kpi="taille-${i}"]`).textContent =
     go ? (go / 1e9).toFixed(2).replace('.', ',') + ' Go' : 'n/a';
 
+  /* ---------- Vue d'ensemble : donut véhicules ---------- */
+  {
+    const ent = Object.entries(ds.kpis.par_vehicule).sort((a,b) => b[1]-a[1]);
+    const cols = spread(ent.length);
+    const total = ent.reduce((s,e) => s+e[1], 0);
+    mk(`donut-${i}`).setOption({
+      ...BASE,
+      tooltip:{ formatter:p => `<b>${p.name}</b><br>${fmt(p.value)} courses (${p.percent}%)` },
+      legend:{ bottom:0, textStyle:{color:'#9aa3ad'}, icon:'circle' },
+      title:{ text:fmt(total), subtext:'courses', left:'center', top:'38%',
+              textStyle:{color:'#eceef1', fontSize:22, fontWeight:600, fontFamily:'JetBrains Mono'},
+              subtextStyle:{color:'#9aa3ad'} },
+      series:[{
+        type:'pie', radius:['52%','74%'], center:['50%','44%'],
+        itemStyle:{ borderColor:'#14181e', borderWidth:3, borderRadius:5 },
+        label:{show:false},
+        data: ent.map(([k,v], j) => ({ name:k, value:v, itemStyle:{color:cols[j]} }))
+      }]
+    });
+  }
+
+  /* ---------- Vue d'ensemble : barres par année ---------- */
+  {
+    const ans = Object.entries(ds.kpis.par_annee).sort((a,b) => a[0].localeCompare(b[0]));
+    mk(`baran-${i}`).setOption({
+      ...BASE,
+      tooltip:{ trigger:'axis', axisPointer:{type:'shadow'} },
+      grid:{ left:70, right:24, top:20, bottom:40 },
+      xAxis:{ type:'category', data:ans.map(a=>a[0]),
+              axisLabel:{color:'#9aa3ad'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}} },
+      yAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
+              splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
+      series:[{ type:'bar', barMaxWidth:46,
+        data:ans.map((a,j,arr) => ({ value:a[1],
+          itemStyle:{ color:vcolor(arr.length>1 ? j/(arr.length-1) : .5), borderRadius:[6,6,0,0] } })),
+        label:{ show:true, position:'top', color:'#9aa3ad', fontSize:10,
+                formatter:p=>fmt(p.value) } }]
+    });
+  }
+
   /* ---------- Analyse 1 : suppléments tarifaires ---------- */
   {
     const vehicules = [...new Set(ds.surcharges.rows.map(r => r.vehicle_type))].sort();
-    const sel = document.getElementById(`veh-sel-${i}`);
-    vehicules.forEach(v => sel.add(new Option(v, v)));
+    const getSel = chipBox(`veh-chips-${i}`, vehicules, draw, {fmt: v=>v});
+    const getMet = segCtl(`met-seg-${i}`, draw);
     const annees = [...new Set(ds.surcharges.rows.map(r => r.annee))].sort((a,b)=>a-b);
 
     function draw(){
-      const v = sel.value;
-      const rows = Object.fromEntries(ds.surcharges.rows.filter(r => r.vehicle_type === v)
-                                      .map(r => [r.annee, r]));
-      const series = ds.surcharges.supplements.filter(s =>
-          ds.surcharges.rows.some(r => r.vehicle_type === v && r[s + '_moyen'] !== null))
-        .map(s => ({
-          name: SUP_LABELS[s] || s,
-          type: 'line',
-          smooth: true,
-          symbol: 'circle',
-          symbolSize: 6,
-          connectNulls: false,
-          data: annees.map(a => rows[a] ? rows[a][s + '_moyen'] : null),
-          itemStyle: { color: SUP_COLORS[s] || '#8fa1ba' },
-          lineStyle: { width: 2.5 }
-        }));
+      const veSel = getSel(), met = getMet();
+      const field = met === 'total' ? '_total' : '_moyen';
+      const series = [];
+      let anyData = false;
+      vehicules.forEach(v => {
+        if (!veSel.includes(v)) return;
+        const vi = veSel.indexOf(v);
+        const rows = Object.fromEntries(ds.surcharges.rows.filter(r => r.vehicle_type === v).map(r => [r.annee, r]));
+        ds.surcharges.supplements.forEach(s => {
+          if (!ds.surcharges.rows.some(r => r.vehicle_type === v && r[s + field] !== null)) return;
+          anyData = true;
+          series.push({
+            name: vehicules.length > 1 ? `${SUP_LABELS[s]||s} · ${v}` : (SUP_LABELS[s]||s),
+            type:'line', smooth:true, symbol:'circle', symbolSize:6, connectNulls:false,
+            data: annees.map(a => rows[a] ? rows[a][s+field] : null),
+            itemStyle:{ color:SUP_COLORS[s] || '#9aa3ad' },
+            lineStyle:{ width:2.4, type:dashFor(vi), color:SUP_COLORS[s] || '#9aa3ad' }
+          });
+        });
+      });
+      const yName = met === 'total' ? '$ cumulés' : '$/course';
       mk(`surcharge-${i}`).setOption({
         ...BASE,
-        tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':'$'+v },
-        legend:{ top:0, textStyle:{color:'#8fa1ba'} },
-        grid:{ left:60, right:30, top:44, bottom:45 },
-        xAxis:{ type:'category', data:annees, axisLabel:{color:'#8fa1ba'},
-                axisLine:{lineStyle:{color:'#1e2a41'}} },
-        yAxis:{ type:'value', name:'$/course', nameTextStyle:{color:'#8fa1ba'},
-                splitLine:{lineStyle:{color:'#1e2a41'}}, axisLabel:{color:'#8fa1ba'} },
+        tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':(met==='total'?'$'+fmt(v):'$'+Number(v).toFixed(3)) },
+        legend:{ top:0, type:'scroll', textStyle:{color:'#9aa3ad'}, icon:'roundRect' },
+        grid:{ left:64, right:30, top:56, bottom:45 },
+        xAxis:{ type:'category', data:annees, ...AX },
+        yAxis:{ type:'value', name:yName, nameTextStyle:{color:'#9aa3ad'}, ...AX },
         series
       }, true);
+      if (!anyData){ mk(`surcharge-${i}`).clear(); }
+      const dispo = ds.surcharges.supplements.filter(s =>
+        ds.surcharges.rows.some(r => r[s + '_moyen'] !== null));
+      document.getElementById(`tk-surcharge-${i}`).innerHTML = dispo.length
+        ? `Sur cet extrait, les composants renseignés sont : <b>${dispo.map(s=>SUP_LABELS[s]).join(', ')}</b>. ` +
+          `Les autres restent à <b>null</b> : ils n'existaient pas encore à ces dates, ce qui n'équivaut pas à $0.`
+        : `Aucun supplément renseigné dans cet échantillon.`;
     }
-    sel.addEventListener('change', draw);
     draw();
-    const dispo = ds.surcharges.supplements.filter(s =>
-      ds.surcharges.rows.some(r => r[s + '_moyen'] !== null));
-    document.getElementById(`tk-surcharge-${i}`).innerHTML = dispo.length
-      ? `Sur cet extrait, les composants renseignés sont : <b>${dispo.map(s=>SUP_LABELS[s]).join(', ')}</b>. ` +
-        `Les autres restent à <b>null</b> : ils n'existaient pas encore à ces dates, ce qui n'équivaut pas à $0.`
-      : `Aucun supplément renseigné dans cet échantillon.`;
   }
 
-  /* ---------- Analyse 2 : chord des flux entre zones ---------- */
+  /* ---------- Analyse 2 : flux entre zones (corde / sankey / barres) ---------- */
   {
     const fz = ds.flux_zones;
-    if (!fz.nodes.length){
-      document.getElementById(`chord-${i}`).innerHTML =
-        '<p style="padding:30px;color:#8fa1ba">Aucune course avec identifiants de zone dans cet ' +
-        'échantillon (les fichiers 2009 contiennent du GPS brut, pas de LocationID).</p>';
-    } else {
+    const box = document.getElementById(`chord-${i}`);
+    const getFlow = segCtl(`flow-seg-${i}`, drawFlow);
+
+    function renderChord(){
+      if (!fz.nodes.length){
+        box.innerHTML = '<p class="empty">Aucune course avec identifiants de zone dans cet échantillon ' +
+                        '(les fichiers 2009 contiennent du GPS brut, pas de LocationID).</p>';
+        document.getElementById(`tk-chord-${i}`).innerHTML = '';
+        return true;
+      }
       const nodeIds = new Set(fz.nodes.map(n => n.id));
       const links = fz.links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
       const maxPick = Math.max(...fz.nodes.map(n => n.pickups), 1);
       const maxLink = links.length ? links[0].count : 1;
+      const cols = spread(fz.nodes.length);
       mk(`chord-${i}`).setOption({
         ...BASE,
         title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
-                textStyle:{color:'#8fa1ba', fontSize:13, fontWeight:'normal'} },
+                textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
         tooltip:{ formatter:p => p.dataType === 'edge'
-          ? `<b>Zone ${p.data.source} → Zone ${p.data.target}</b><br>${fmt(p.data.value)} courses`
-          : `<b>Zone ${p.name}</b><br>${fmt(fz.nodes.find(n=>'Zone '+n.id===p.name)?.pickups ?? 0)} départs` },
+          ? `<b>Zone ${p.data.source.replace('Zone ','')} → Zone ${p.data.target.replace('Zone ','')}</b><br>${fmt(p.data.value)} courses`
+          : `<b>${p.name}</b><br>${fmt(fz.nodes.find(n=>'Zone '+n.id===p.name)?.pickups ?? 0)} départs` },
         series:[{
           type:'graph', layout:'circular', circular:{ rotateLabel:true },
-          data: fz.nodes.map(n => ({ name:'Zone '+n.id,
+          data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id,
             symbolSize: 8 + 26*n.pickups/maxPick,
-            itemStyle:{ color:'#ffb703', borderColor:'#0b1020', borderWidth:2 } })),
+            itemStyle:{ color:cols[j], borderColor:'#0b0d10', borderWidth:2 } })),
           links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target,
             value:l.count, lineStyle:{ width: 1 + 6*l.count/maxLink,
-              color:'#f97316', opacity:.55, curveness:.35 } })),
+              color:'#a0da39', opacity:.5, curveness:.35 } })),
           emphasis:{ focus:'adjacency', lineStyle:{ opacity:1, width:5 } },
-          label:{ color:'#dbe4f0', fontSize:11 },
-          lineStyle:{ color:'#f97316', opacity:.5, curveness:.35 },
+          label:{ color:'#eceef1', fontSize:11 },
           roam:true
         }]
-      });
+      }, true);
       document.getElementById(`tk-chord-${i}`).innerHTML =
         `L'axe dominant est <b>Zone ${links[0].source} → Zone ${links[0].target}</b> avec ` +
         `${fmt(links[0].count)} courses (${fmt(fz.courses_non_zonees)} courses hors périmètre zoné).`;
+      return true;
     }
+
+    function renderSankey(){
+      if (!fz.nodes.length) return renderChord();
+      const nodeIds = new Set(fz.nodes.map(n => n.id));
+      const links = fz.links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
+      const cols = spread(fz.nodes.length);
+      try {
+        mk(`chord-${i}`).setOption({
+          ...BASE,
+          title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
+                  textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
+          tooltip:{ trigger:'item' },
+          series:[{
+            type:'sankey', left:20, right:150, top:40, bottom:20,
+            nodeWidth:14, nodeGap:12,
+            data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id, value:n.pickups,
+              itemStyle:{ color:cols[j], borderColor:'transparent' } })),
+            links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target, value:l.count })),
+            label:{ color:'#eceef1', fontSize:11 },
+            lineStyle:{ color:'gradient', opacity:.35, curveness:.5 },
+            emphasis:{ focus:'adjacency' }
+          }]
+        }, true);
+      } catch(e){
+        box.innerHTML = '<p class="empty">Vue Sankey indisponible pour ce graphe (flux cycliques).</p>';
+      }
+      return true;
+    }
+
+    function renderBars(){
+      if (!fz.nodes.length) return renderChord();
+      const tops = [...fz.nodes].sort((a,b) => b.pickups-a.pickups).slice(0, 12);
+      const cols = spread(tops.length);
+      mk(`chord-${i}`).setOption({
+        ...BASE,
+        title:{ text:`${fmt(fz.courses_zonees)} courses zonées — départs par zone (top ${tops.length})`,
+                left:'center', top:6, textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
+        tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+                  formatter:p => `<b>${p[0].name}</b><br>${fmt(p[0].value)} départs` },
+        grid:{ left:90, right:50, top:40, bottom:30 },
+        xAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
+                splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
+        yAxis:{ type:'category', data:tops.map(n=>'Zone '+n.id).reverse(),
+                axisLabel:{color:'#eceef1'}, axisLine:{show:false}, axisTick:{show:false} },
+        series:[{ type:'bar', barMaxWidth:22,
+          data:[...tops].reverse().map((n,j) => ({ value:n.pickups,
+            itemStyle:{ color:cols[tops.length-1-j], borderRadius:[0,6,6,0] } })) }]
+      }, true);
+      return true;
+    }
+
+    function drawFlow(){
+      const v = getFlow();
+      if (v === 'chord') renderChord();
+      else if (v === 'sankey') renderSankey();
+      else renderBars();
+    }
+    drawFlow();
   }
 
-  /* ---------- Analyse 3 : ridgeline prix / km par zone ---------- */
+  /* ---------- Analyse 3 : ridgeline prix / km ---------- */
   {
     const zones = ds.prix_km.zones;
+    const sel = document.getElementById(`zone-sel-${i}`);
     if (!zones.length){
+      sel.closest('.controls').style.display = 'none';
       document.getElementById(`ridge-${i}`).innerHTML =
-        '<p style="padding:30px;color:#8fa1ba">Pas assez de données tarifaires dans cet échantillon ' +
-        'pour construire le ridgeline.</p>';
+        '<p class="empty">Pas assez de données tarifaires zonées dans cet échantillon.</p>';
+      document.getElementById(`tk-ridge-${i}`).innerHTML = '';
+      const cmpBox = document.getElementById(`cmpzone-${i}`);
+      cmpBox.innerHTML = '<p class="empty">Comparateur indisponible sans zones.</p>';
+      document.getElementById(`tk-cmpzone-${i}`).innerHTML = '';
     } else {
-      const sel = document.getElementById(`zone-sel-${i}`);
-      zones.forEach(z => sel.add(new Option('Zone ' + z, z)));
-      const centers = ds.prix_km.bins.map((b, k) => k + 0.5);
       const H = 1;
+      const centers = ds.prix_km.bins.map((b, k) => k + 0.5);
 
-      function draw(){
+      function drawRidge(){
         const zone = +sel.value;
         const rows = ds.prix_km.rows.filter(r => r.zone === zone);
         const annees = [...new Set(rows.map(r => r.annee))].sort((a,b)=>a-b);
@@ -391,7 +603,7 @@ P.datasets.forEach((ds, i) => {
         annees.forEach((a, j) => {
           const r = rows.find(x => x.annee === a);
           const off = j * H;
-          const col = ramp(annees.length > 1 ? j/(annees.length-1) : 0);
+          const col = vcolor(annees.length > 1 ? j/(annees.length-1) : .5);
           const pts = [[centers[0]-0.55, off]]
             .concat(centers.map((c, k) => [c, off + (r.hist[k]/maxCount)*0.92]))
             .concat([[centers[centers.length-1]+0.55, off]]);
@@ -407,7 +619,7 @@ P.datasets.forEach((ds, i) => {
             `${ds.prix_km.bins[Math.min(Math.max(Math.floor(p.value[0]),0), ds.prix_km.bins.length-1)]}` },
           grid:{ left:60, right:30, top:20, bottom:50 },
           xAxis:{ type:'value', min:-1, max:ds.prix_km.bins.length,
-                  axisLabel:{ color:'#8fa1ba', formatter:v => Number.isInteger(v) ? v+'$' : '' },
+                  axisLabel:{ color:'#9aa3ad', formatter:v => Number.isInteger(v) ? v+'$' : '' },
                   splitLine:{ show:false } },
           yAxis:{ type:'value', max:(annees.length)*H + 0.6,
                   axisLabel:{ show:false }, splitLine:{ show:false } },
@@ -418,15 +630,53 @@ P.datasets.forEach((ds, i) => {
                     last.reduce((s,r)=>s+r.courses,0) : null;
         document.getElementById(`tk-ridge-${i}`).innerHTML =
           `Distribution des prix/km pour la <b>Zone ${zone}</b>, une crête par année ` +
-          `(de ${annees[0]} en bas à ${annees[annees.length-1]} en haut)` +
+          `(de ${annees[0]} en bas — clair — à ${annees[annees.length-1]} en haut — foncé)` +
           (moy != null ? `, moyenne ${String(moy).replace('.', ',')} $/km la dernière année.` : '.');
       }
-      sel.addEventListener('change', draw);
-      draw();
+      zones.forEach(z => sel.add(new Option('Zone ' + z, z)));
+      sel.addEventListener('change', drawRidge);
+      drawRidge();
+
+      /* --- Comparateur de zones --- */
+      const cmpZones = zones.slice(0, Math.min(zones.length, 6));
+      const getCmp = chipBox(`zone-chips-${i}`, cmpZones, drawCmp, {fmt: v=>'Zone '+v});
+      function drawCmp(){
+        const picked = getCmp().map(Number);
+        const annees = [...new Set(ds.prix_km.rows.filter(r=>picked.includes(r.zone)).map(r => r.annee))]
+                       .sort((a,b)=>a-b);
+        const cols = spread(picked.length);
+        const series = picked.map((z, j) => ({
+          name:'Zone ' + z, type:'line', smooth:true, symbol:'circle', symbolSize:7,
+          data: annees.map(a => {
+            const r = ds.prix_km.rows.find(x => x.zone===z && x.annee===a);
+            return r && r.courses ? +(r.prix_km_moyen.toFixed(3)) : null;
+          }),
+          itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
+          emphasis:{ focus:'series' }
+        }));
+        mk(`cmpzone-${i}`).setOption({
+          ...BASE,
+          tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':String(v).replace('.', ',')+' $/km' },
+          legend:{ top:0, textStyle:{color:'#9aa3ad'} },
+          grid:{ left:64, right:30, top:44, bottom:45 },
+          xAxis:{ type:'category', data:annees, ...AX },
+          yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9aa3ad'}, ...AX },
+          series
+        }, true);
+        const flat = ds.prix_km.rows.filter(r => picked.includes(r.zone));
+        const best = flat.length
+          ? flat.reduce((m,r) => r.prix_km_moyen < m.prix_km_moyen ? r : m)
+          : null;
+        document.getElementById(`tk-cmpzone-${i}`).innerHTML = best
+          ? `Sur les années couvertes, la zone la moins chère au km parmi la sélection est la ` +
+            `<b>Zone ${best.zone}</b> (${String(best.prix_km_moyen).replace('.', ',')} $/km en ${best.annee}).`
+          : '';
+      }
+      drawCmp();
     }
   }
 
-  /* ---------- Analyse 4 : heatmap jour x heure (année x véhicule) ---------- */
+  /* ---------- Analyse 4 : heatmap jour x heure + profil horaire ---------- */
   {
     const anSel = document.getElementById(`an-sel-${i}`);
     const vtSel = document.getElementById(`vt-sel-${i}`);
@@ -450,23 +700,61 @@ P.datasets.forEach((ds, i) => {
           formatter:p=>`${cell.jours[p.value[1]]} ${p.value[0]}h : ${fmt(p.value[2])} courses` },
         grid:{ left:80, right:20, top:20, bottom:70 },
         xAxis:{ type:'category', data:cell.heures.map(h=>h+'h'), splitArea:{show:true},
-                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#8fa1ba'} },
+                axisLine:{show:false}, axisTick:{show:false},
+                axisLabel:{color:'#9aa3ad', interval:1} },
         yAxis:{ type:'category', data:cell.jours, inverse:true,
-                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#dbe4f0'} },
+                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#eceef1'} },
         visualMap:{ min:0, max:maxV||1, calculable:false, orient:'horizontal', left:'center', bottom:6,
-          textStyle:{color:'#8fa1ba'}, inRange:{ color:['#10243f','#155e75','#0ea5e9','#ffb703','#ffd166'] } },
+          textStyle:{color:'#9aa3ad'},
+          inRange:{ color:['#fde725','#d0e11c','#a0da39','#73d056','#4ac16d','#2db27d','#1fa187',
+                           '#21918c','#277f8e','#2e6e8e','#365c8d','#3f4788','#46327e','#481b6d','#440154'] } },
         series:[{ type:'heatmap', data, label:{show:false},
-          itemStyle:{ borderColor:'#121a2b', borderWidth:2 },
-          emphasis:{ itemStyle:{ shadowBlur:8, shadowColor:'rgba(255,183,3,.5)' } } }]
+          itemStyle:{ borderColor:'#14181e', borderWidth:2 },
+          emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(160,218,57,.6)' } } }]
       }, true);
       document.getElementById(`tk-heat-${i}`).innerHTML =
         `${anSel.value}, ${vtSel.value} : le créneau le plus chargé est ` +
         `<b>${cell.jours[bj]} autour de ${bh}h-${(bh+1)%24}h</b> (${fmt(maxV)} courses).`;
     }
-    anSel.addEventListener('change', () => { fillVeh(); draw(); });
+
+    function drawProfil(){
+      const yearData = ds.heatmap[anSel.value] || {};
+      const vehs = Object.keys(yearData).sort();
+      const heures = yearData[vehs[0]]?.heures || [];
+      const cols = spread(vehs.length || 1);
+      const series = vehs.map((v, j) => {
+        const prof = heures.map((_, h) => yearData[v].matrice.reduce((s,row) => s + (row[h]||0), 0));
+        return { name:v, type:'line', smooth:true, symbol:'circle', symbolSize:5,
+                 data:prof, itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
+                 areaStyle:{ color:cols[j].replace('rgb','rgba').replace(')', ',.08)') } };
+      });
+      mk(`profil-${i}`).setOption({
+        ...BASE,
+        tooltip:{ trigger:'axis' },
+        legend:{ top:0, textStyle:{color:'#9aa3ad'} },
+        grid:{ left:70, right:24, top:40, bottom:40 },
+        xAxis:{ type:'category', data:heures.map(h=>h+'h'), boundaryGap:false, ...AX },
+        yAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
+                splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
+        series
+      }, true);
+      let peak = null;
+      vehs.forEach(v => {
+        const prof = heures.map((_, h) => (ds.heatmap[anSel.value][v].matrice.reduce((s,row)=>s+(row[h]||0),0)));
+        prof.forEach((val,h) => { if (!peak || val > peak.val) peak = {v, h, val}; });
+      });
+      document.getElementById(`tk-profil-${i}`).innerHTML = peak
+        ? `En ${anSel.value}, toutes fenêtres horaires confondues, le pic absolu revient à ` +
+          `<b>${peak.v}</b> à <b>${peak.h}h</b> (${fmt(peak.val)} courses sur la semaine). ` +
+          `Les légendes sont cliquables pour isoler un véhicule.`
+        : '';
+    }
+
+    anSel.addEventListener('change', () => { fillVeh(); draw(); drawProfil(); });
     vtSel.addEventListener('change', draw);
     fillVeh();
     draw();
+    drawProfil();
   }
 
   /* ---------- Analyse 5 : météo ---------- */
@@ -477,8 +765,7 @@ P.datasets.forEach((ds, i) => {
         <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
     } else {
       box.innerHTML = `<div class="card"><div class="t">Table météo disponible</div>
-        <p style="color:var(--muted)">Colonnes silver/weather : ${ds.meteo.colonnes.join(', ')}.
-        ${ds.meteo.message}</p></div>`;
+        <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
     }
   }
 
