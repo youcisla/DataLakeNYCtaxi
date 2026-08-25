@@ -10,7 +10,8 @@ from pipeline import config
 
 ANALYSE_FILES = ("surcharge_evolution.json", "zone_flows.json",
                  "price_per_km_by_zone.json", "activity_heatmap.json",
-                 "weather_deviation.json")
+                 "weather_deviation.json", "zone_stats.json", "timeline.json",
+                 "zone_lookup.json")
 
 
 def read_json(path: Path):
@@ -43,6 +44,9 @@ def main():
             "prix_km": read_json(ds_dir / "price_per_km_by_zone.json"),
             "heatmap": read_json(ds_dir / "activity_heatmap.json"),
             "meteo": read_json(ds_dir / "weather_deviation.json"),
+            "zone_stats": read_json(ds_dir / "zone_stats.json"),
+            "timeline": read_json(ds_dir / "timeline.json"),
+            "zones": read_json(ds_dir / "zone_lookup.json"),
         })
 
     if not datasets:

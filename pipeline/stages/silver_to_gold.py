@@ -5,9 +5,12 @@
 3. Prix au km par annee et zone de depart (ridgeline plot).
 4. Frequence des courses jour de semaine x heure, par annee et type de vehicule.
 5. Ecart de prix selon la meteo (en attente de l'ingestion meteo -> payload placeholder).
+6. Activite par zone (carte choroplethe) et chronologie mensuelle (filtres croises cote client).
 """
+import csv
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 from pyspark.sql import functions as F
 
@@ -124,6 +127,57 @@ def activity_heatmap(trips):
     return nested
 
 
+def zone_stats(trips):
+    # Par (zone, annee, vehicule) : departs, arrivees, tarif moyen, prix/km moyen.
+    # Les filtres annee x vehicule sont appliques cote client sur ces lignes.
+    pu = (
+        trips.filter(F.col("pulocation_id").isNotNull())
+             .groupBy("pulocation_id", "year", "vehicle_type")
+             .agg(F.count("*").alias("pickups"),
+                  F.round(F.avg("fare_amount"), 2).alias("tarif_moyen"),
+                  F.round(F.avg(F.when((F.col("trip_distance") > 0)
+                                       & F.col("total_amount").isNotNull(),
+                                       F.col("total_amount") / F.col("trip_distance"))), 2)
+                   .alias("prix_km_moyen"))
+    )
+    do = (
+        trips.filter(F.col("dolocation_id").isNotNull())
+             .groupBy(F.col("dolocation_id").alias("pulocation_id"), "year", "vehicle_type")
+             .agg(F.count("*").alias("dropoffs"))
+    )
+    joined = pu.join(do, ["pulocation_id", "year", "vehicle_type"], "left")
+    rows = [
+        {"zone": int(r["pulocation_id"]), "annee": int(r["year"]),
+         "vehicle": r["vehicle_type"], "pickups": int(r["pickups"]),
+         "dropoffs": int(r["dropoffs"] or 0),
+         "tarif_moyen": float(r["tarif_moyen"]) if r["tarif_moyen"] is not None else None,
+         "prix_km_moyen": float(r["prix_km_moyen"]) if r["prix_km_moyen"] is not None else None}
+        for r in joined.collect()
+    ]
+    return {"rows": rows}
+
+
+def monthly_timeline(trips):
+    rows = (
+        trips.groupBy("year", "month", "vehicle_type").count()
+             .orderBy("year", "month", "vehicle_type").collect()
+    )
+    return {"rows": [{"annee": int(r["year"]), "mois": int(r["month"]),
+                      "vehicle": r["vehicle_type"], "courses": int(r["count"])}
+                     for r in rows]}
+
+
+def zone_lookup():
+    csv_path = Path(config.RAW_DIR) / "taxi_zone_lookup.csv"
+    if not csv_path.exists():
+        return {}
+    out = {}
+    with open(csv_path, encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            out[int(row["LocationID"])] = {"zone": row["Zone"], "borough": row["Borough"]}
+    return out
+
+
 def weather_deviation(spark, s3):
     # La table silver/weather n'existe pas tant que l'ingestion meteo n'a pas tourne ;
     # le payload reste placeholder-safe pour le dashboard.
@@ -190,6 +244,10 @@ def main():
         # ---- Analyse 5 : ecart de prix selon la meteo ---------------------
         meteo = weather_deviation(spark, s3)
 
+        # ---- Analyse 6 : activite par zone + chronologie mensuelle --------
+        zones_stats = zone_stats(trips)
+        timeline = monthly_timeline(trips)
+
         # ---- Ecriture dans gold ------------------------------------------
         gk = f"{ds}/"
         put_json(s3, config.BUCKET_GOLD, gk + "kpis.json", kpis)
@@ -198,6 +256,9 @@ def main():
         put_json(s3, config.BUCKET_GOLD, gk + "price_per_km_by_zone.json", prix_km)
         put_json(s3, config.BUCKET_GOLD, gk + "activity_heatmap.json", heatmap)
         put_json(s3, config.BUCKET_GOLD, gk + "weather_deviation.json", meteo)
+        put_json(s3, config.BUCKET_GOLD, gk + "zone_stats.json", zones_stats)
+        put_json(s3, config.BUCKET_GOLD, gk + "timeline.json", timeline)
+        put_json(s3, config.BUCKET_GOLD, gk + "zone_lookup.json", zone_lookup())
         put_json(s3, config.BUCKET_GOLD, gk + "meta.json", {
             "dataset_id": ds,
             "source_dir": man.get("source_dir"),

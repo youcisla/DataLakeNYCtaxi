@@ -25,32 +25,41 @@
   a{color:inherit}
   h1,h2,h3,.brand,.num{font-family:"Space Grotesk","Segoe UI",sans-serif}
 
-  nav{position:sticky;top:0;z-index:50;display:flex;gap:6px;align-items:center;padding:12px 26px;
-      background:rgba(11,13,16,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  nav{position:sticky;top:0;z-index:60;display:flex;gap:6px;align-items:center;padding:12px 26px;
+      background:rgba(19,34,42,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
   nav .brand{font-weight:700;letter-spacing:.3px;margin-right:auto;display:flex;align-items:center;gap:10px}
   nav .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
   nav a{color:var(--muted);text-decoration:none;font-size:.88rem;padding:6px 11px;border-radius:999px;border:1px solid transparent}
   nav a:hover{color:var(--text);border-color:var(--line2)}
 
-  header{max-width:1220px;margin:0 auto;padding:84px 28px 44px}
+  .filterbar{position:sticky;top:53px;z-index:55;background:rgba(15,27,34,.92);backdrop-filter:blur(12px);
+             border-bottom:1px solid var(--line);padding:12px 26px;display:flex;gap:20px;row-gap:10px;
+             align-items:center;flex-wrap:wrap}
+  .filterbar .fl{color:var(--dim);font-size:.74rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
+  .filterbar .spacer{flex:1}
+  .reset{background:transparent;border:1px solid var(--line2);color:var(--muted);border-radius:999px;
+         padding:6px 14px;font-size:.82rem;cursor:pointer}
+  .reset:hover{border-color:var(--red);color:var(--red)}
+
+  header{max-width:1280px;margin:0 auto;padding:84px 28px 44px}
   .kicker{font-family:"JetBrains Mono",monospace;color:var(--accent);text-transform:uppercase;
           letter-spacing:3px;font-size:.74rem;font-weight:600}
   h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.08;margin:14px 0 16px;letter-spacing:-.5px}
   h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1.5px var(--sand)}
-  .sub{max-width:840px;color:var(--muted);font-size:1.05rem}
-  .sub code{font-family:"JetBrains Mono",monospace;color:var(--teal);font-size:.95em}
+  .sub{max-width:860px;color:var(--muted);font-size:1.05rem}
+  .sub code{font-family:"JetBrains Mono",monospace;color:var(--sand);font-size:.95em}
   .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
   .badge{border:1px solid var(--line);background:var(--panel2);padding:7px 13px;border-radius:999px;
          font-size:.82rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
   .badge b{color:var(--text);font-weight:600}
   .sw{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px}
 
-  main{max-width:1220px;margin:0 auto;padding:16px 28px 60px}
-  section{margin-top:76px;scroll-margin-top:70px}
+  main{max-width:1280px;margin:0 auto;padding:16px 28px 60px}
+  section{margin-top:76px;scroll-margin-top:120px}
   .sec-head{display:flex;align-items:baseline;gap:16px;border-top:1px solid var(--line);padding-top:26px}
   .sec-head .idx{font-family:"JetBrains Mono",monospace;color:var(--dim);font-size:.85rem}
   h2{font-size:1.55rem;letter-spacing:-.3px}
-  .lead{color:var(--muted);margin:10px 0 8px;max-width:880px}
+  .lead{color:var(--muted);margin:10px 0 8px;max-width:900px}
   blockquote{border-left:3px solid var(--accent);background:var(--panel2);border-radius:0 12px 12px 0;
              padding:13px 20px;color:var(--text);font-style:italic;margin:18px 0 6px;font-size:.97rem}
 
@@ -68,7 +77,7 @@
   .arrow{align-self:center;color:var(--dim);font-size:1.5rem}
   @media(max-width:900px){.layers{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}}
   .cmd{margin-top:26px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
-       padding:15px 20px;color:#e9c46a;font-family:"JetBrains Mono",monospace;overflow-x:auto;white-space:nowrap}
+       padding:15px 20px;color:var(--sand);font-family:"JetBrains Mono",monospace;overflow-x:auto;white-space:nowrap}
   .cmd .cmt{color:var(--dim)}
 
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin-top:26px}
@@ -78,7 +87,8 @@
   .kpi .l{color:var(--muted);font-size:.82rem;margin-top:4px;text-transform:uppercase;letter-spacing:.8px}
 
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-  @media(max-width:900px){.duo{grid-template-columns:1fr}}
+  .mapgrid{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:1000px){.duo,.mapgrid{grid-template-columns:1fr}}
 
   .chart{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-top:14px}
   .chart-pad{padding:10px}
@@ -107,6 +117,16 @@
   .chip:hover span{border-color:var(--cc,var(--teal))}
   .hint{color:var(--dim);font-size:.8rem;margin-top:8px}
 
+  .zcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-top:14px}
+  .zcard .zn{font-family:"Space Grotesk";font-weight:700;font-size:1.15rem;color:var(--sand)}
+  .zcard .zb{color:var(--dim);font-size:.82rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+  .zcard .zrow{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+  .zcard .zrow b{font-family:"JetBrains Mono",monospace;color:var(--text)}
+  .zcard .zrow span{color:var(--muted)}
+  .zcard .clear{margin-top:12px;width:100%;background:transparent;border:1px solid var(--line2);color:var(--muted);
+                border-radius:10px;padding:8px;cursor:pointer;font-size:.85rem}
+  .zcard .clear:hover{border-color:var(--red);color:var(--red)}
+
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-top:14px}
   .card.warn{border-color:color-mix(in srgb,var(--sand) 30%,transparent)}
   .card .t{font-family:"Space Grotesk";font-weight:700;color:var(--sand);margin-bottom:8px}
@@ -122,6 +142,8 @@
   <a href="#couches">Pipeline</a>
   {% for ds in payload.datasets %}{% set i = loop.index0 %}
   <a href="#apercu-{{i}}">Aperçu</a>
+  <a href="#timeline-{{i}}">Chronologie</a>
+  <a href="#carte-{{i}}">Carte</a>
   <a href="#analyse1-{{i}}">Suppléments</a>
   <a href="#analyse2-{{i}}">Flux</a>
   <a href="#analyse3-{{i}}">Prix/km</a>
@@ -130,23 +152,33 @@
   {% endfor %}
 </nav>
 
+<div class="filterbar" id="filterbar">
+  <span class="fl">Années</span>
+  <div class="chips" id="g-years"></div>
+  <span class="fl">Véhicules</span>
+  <div class="chips" id="g-veh"></div>
+  <span class="spacer"></span>
+  <button class="reset" id="g-reset">Réinitialiser les filtres</button>
+</div>
+
 <header>
-  <div class="kicker">Pipeline médallion · Spark · MinIO · Viridis</div>
+  <div class="kicker">Pipeline médallion · Spark · MinIO · Viridis × 264653</div>
   <h1>Les taxis <em>New-Yorkais</em>,<br>dix-sept ans de schémas réconciliés</h1>
   <p class="sub">
-    Yellow (2009), green et fhv (2016)&nbsp;: les fichiers TLC changent de schéma au fil des ans
-    (GPS brut avant juillet&nbsp;2016, identifiants de zone ensuite, suppléments apparus
+    Yellow (2009), green, fhv, fhvhv (2016 → 2025)&nbsp;: les fichiers TLC changent de schéma au fil
+    des ans (GPS brut avant juillet&nbsp;2016, identifiants de zone ensuite, suppléments apparus
     progressivement). Un pipeline en une seule commande&nbsp;: ingestion telle quelle dans un stockage
-    objet, réconciliation distribuée avec Spark (<code>{{ payload.spark_master }}</code>),
-    agrégats métier, puis ce dashboard statique — habillé avec la palette
-    <code>#264653 · #2a9d8f · #e9c46a · #f4a261 · #e76f51</code>, heatmap en
-    <code>viridis</code> 100 pas, du clair au foncé.
+    objet, réconciliation distribuée avec Spark (<code>{{ payload.spark_master }}</code>), agrégats
+    métier, puis ce dashboard statique — habillé avec la palette
+    <code>#264653 · #2a9d8f · #e9c46a · #f4a261 · #e76f51</code>, heatmap et carte en
+    <code>viridis</code> 100 pas, du clair au foncé. Les filtres années × véhicules de la barre
+    ci-dessus pilotent tous les graphiques ; cliquez une zone sur la carte pour la mettre au focus.
   </p>
   <div class="badges">
-    <span class="badge"><span class="sw" style="background:#cd7f32"></span>Bronze : parquets bruts <b>tels quels</b></span>
+    <span class="badge"><span class="sw" style="background:var(--orange)"></span>Bronze : parquets bruts <b>tels quels</b></span>
     <span class="badge"><span class="sw" style="background:#c0c5ce"></span>Silver : schéma canonique typé</span>
     <span class="badge"><span class="sw" style="background:var(--sand)"></span>Gold : un mart JSON par analyse</span>
-    <span class="badge mono">make run SAMPLE=3</span>
+    <span class="badge mono">make run</span>
   </div>
 </header>
 
@@ -157,13 +189,13 @@
   <p class="lead">Le brut est persisté <b>avant toute transformation</b>, puis raffiné couche par couche.
      Chaque étape tourne sur le cluster Spark (master + worker), jamais en local.</p>
   <div class="layers">
-    <div class="layer" style="--tagc:var(--bronze)">
+    <div class="layer" style="--tagc:var(--orange)">
       <span class="tag">Bronze</span>
       <h3>Persistance du brut</h3>
       <p>Chaque parquet est copié <b>octet pour octet</b> vers
          <span class="mono">bronze/&lt;vehicle_type&gt;/&lt;year&gt;/&lt;month&gt;/</span>.</p>
       <ul>
-        <li>ingestion idempotente (déjà présent → sauté)</li>
+        <li>ingestion idempotente, manifeste auto-réparant</li>
         <li>manifeste JSON cumulé dans <span class="mono">bronze/_manifest/</span></li>
         <li>météo stub : <span class="mono">bronze/weather/&lt;year&gt;/</span></li>
       </ul>
@@ -172,7 +204,7 @@
     <div class="layer" style="--tagc:var(--silver)">
       <span class="tag">Silver</span>
       <h3>Réconciliation &amp; typage</h3>
-      <p>Schémas legacy (2009) et modernes fusionnés vers un modèle canonique unique.</p>
+      <p>Schémas legacy (2009), modernes, fhv et fhvhv fusionnés vers un modèle canonique unique.</p>
       <ul>
         <li>suppléments absents avant introduction → <b>null</b>, jamais 0</li>
         <li>horodatages corrompus écartés (fenêtre bornée)</li>
@@ -180,14 +212,14 @@
       </ul>
     </div>
     <div class="arrow">➜</div>
-    <div class="layer" style="--tagc:var(--gold)">
+    <div class="layer" style="--tagc:var(--sand)">
       <span class="tag">Gold</span>
       <h3>Agrégats métier</h3>
-      <p>Un mart JSON par analyse du notebook : suppléments, flux de zones, prix/km,
-         activité jour×heure, écart météo (en attente).</p>
+      <p>Un mart JSON par analyse : suppléments, flux, prix/km, activité jour×heure,
+         activité par zone, chronologie mensuelle, météo (en attente).</p>
       <ul>
         <li><span class="mono">s3a://gold/</span> puis export vers ce site</li>
-        <li>agrégats légers → dashboard 100% statique</li>
+        <li>agrégats légers → dashboard 100% statique et filtrable</li>
         <li>vérifiable dans la console MinIO (:9001)</li>
       </ul>
     </div>
@@ -199,46 +231,89 @@
 <section id="apercu-{{i}}">
   <div class="sec-head"><span class="idx">02</span><h2>Vue d'ensemble{% if ds.meta.sample_mode %} <small style="color:var(--sand)">(mode échantillon)</small>{% endif %}</h2></div>
   <p class="lead">Données ingérées depuis <span class="mono">{{ ds.meta.source_dir or "data/" }}</span>, traitées sur
-     <span class="mono">{{ ds.meta.spark_master }}</span>. Généré le {{ ds.meta.genere_le[:10] }}.</p>
+     <span class="mono">{{ ds.meta.spark_master }}</span>. KPI et graphiques réagissent aux filtres globaux.</p>
   <div class="kpis">
-    <div class="kpi" style="--kc:var(--teal)"><div class="v" data-kpi="total-{{i}}"></div><div class="l">courses analysées</div></div>
-    <div class="kpi" style="--kc:var(--teal)"><div class="v" data-kpi="periode-{{i}}"></div><div class="l">période couverte</div></div>
-    <div class="kpi" style="--kc:var(--sand)"><div class="v" data-kpi="annees-{{i}}"></div><div class="l">années de données</div></div>
-    <div class="kpi" style="--kc:var(--orange)"><div class="v" data-kpi="vehicules-{{i}}"></div><div class="l">types de véhicules</div></div>
+    <div class="kpi" style="--kc:var(--teal)"><div class="v" data-kpi="total-{{i}}"></div><div class="l">courses (filtres actifs)</div></div>
+    <div class="kpi" style="--kc:var(--sand)"><div class="v" data-kpi="periode-{{i}}"></div><div class="l">période filtrée</div></div>
+    <div class="kpi" style="--kc:var(--orange)"><div class="v" data-kpi="annees-{{i}}"></div><div class="l">années sélectionnées</div></div>
+    <div class="kpi" style="--kc:var(--red)"><div class="v" data-kpi="vehicules-{{i}}"></div><div class="l">véhicules sélectionnés</div></div>
     <div class="kpi" style="--kc:#7fb2c4"><div class="v" data-kpi="taille-{{i}}"></div><div class="l">de parquet brut ingéré</div></div>
   </div>
   <div class="duo">
     <div>
-      <div class="chart-title"><b>Courses par type de véhicule</b><span>cliquez la légende pour masquer une part</span></div>
+      <div class="chart-title"><b>Courses par type de véhicule</b><span>dans le filtre courant · légende cliquable</span></div>
       <div id="donut-{{i}}" class="chart chart-pad" style="height:320px"></div>
     </div>
     <div>
-      <div class="chart-title"><b>Courses par année</b><span>toutes périodes ingérées confondues</span></div>
+      <div class="chart-title"><b>Courses par année</b><span>dans le filtre courant</span></div>
       <div id="baran-{{i}}" class="chart chart-pad" style="height:320px"></div>
     </div>
   </div>
 </section>
 
+<section id="timeline-{{i}}">
+  <div class="sec-head"><span class="idx">03</span><h2>Chronologie mensuelle</h2></div>
+  <blockquote>«&nbsp;Comment l'activité évolue-t-elle mois par mois, par type de véhicule&nbsp;?&nbsp;»
+  — empilements par véhicule, zoom par glissement (slider) ou molette.</blockquote>
+  <div id="tl-{{i}}" class="chart" style="height:420px"></div>
+  <div class="takeaway" id="tk-tl-{{i}}"></div>
+</section>
+
+<section id="carte-{{i}}">
+  <div class="sec-head"><span class="idx">04</span><h2>Carte des 263 zones TLC</h2></div>
+  <blockquote>«&nbsp;Où les courses démarrent-elles&nbsp;? Choroplethe viridis (clair → foncé) sur les
+  polygons officiels des taxi zones. Cliquez une zone pour la mettre au focus : les flux et le
+  panneau de détail se mettent à jour.&nbsp;»</blockquote>
+  <div class="controls">
+    <label>Métrique de couleur</label>
+    <div class="seg" id="map-metric-{{i}}">
+      <button data-v="pickups" class="on">Départs</button>
+      <button data-v="dropoffs">Arrivées</button>
+      <button data-v="tarif">Tarif moyen</button>
+      <button data-v="prix_km">Prix/km</button>
+    </div>
+    <label>Couches</label>
+    <div class="seg" id="map-arcs-{{i}}">
+      <button data-v="off" class="on">Zones seules</button>
+      <button data-v="on">+ Flux top 100</button>
+    </div>
+  </div>
+  <div class="mapgrid">
+    <div id="map-{{i}}" class="chart" style="height:620px"></div>
+    <div>
+      <div class="chart-title"><b>Top zones (filtre courant)</b><span>départs</span></div>
+      <div id="topz-{{i}}" class="chart chart-pad" style="height:330px"></div>
+      <div class="zcard" id="zcard-{{i}}">
+        <div class="zn">Aucune zone sélectionnée</div>
+        <div class="zb">cliquez la carte pour focus une zone</div>
+        <div class="zrow"><span>Départs</span><b>—</b></div>
+        <div class="zrow"><span>Arrivées</span><b>—</b></div>
+        <div class="zrow"><span>Tarif moyen</span><b>—</b></div>
+        <div class="zrow"><span>Prix/km moyen</span><b>—</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="takeaway" id="tk-map-{{i}}"></div>
+</section>
+
 <section id="analyse1-{{i}}">
-  <div class="sec-head"><span class="idx">03</span><h2>Évolution des suppléments tarifaires</h2></div>
+  <div class="sec-head"><span class="idx">05</span><h2>Évolution des suppléments tarifaires</h2></div>
   <blockquote>«&nbsp;Pour chaque supplément apparu progressivement dans le schéma, montrer son évolution
      dans le temps, par type de véhicule.&nbsp;»</blockquote>
   <div class="controls">
-    <label>Véhicules</label>
-    <div class="chips" id="veh-chips-{{i}}"></div>
     <label>Métrique</label>
     <div class="seg" id="met-seg-{{i}}">
       <button data-v="moyenne" class="on">Moyenne $/course</button>
       <button data-v="total">Total collecté</button>
     </div>
   </div>
-  <p class="hint">Couleur = supplément · trait plein vs pointillé = véhicule · cliquez la légende pour masquer/afficher chaque courbe.</p>
+  <p class="hint">Couleur = supplément · trait plein vs pointillé = véhicule · légende cliquable · filtres globaux actifs.</p>
   <div id="surcharge-{{i}}" class="chart" style="height:440px"></div>
   <div class="takeaway" id="tk-surcharge-{{i}}"></div>
 </section>
 
 <section id="analyse2-{{i}}">
-  <div class="sec-head"><span class="idx">04</span><h2>Flux de prises en charge / déposes</h2></div>
+  <div class="sec-head"><span class="idx">06</span><h2>Flux de prises en charge / déposes</h2></div>
   <blockquote>«&nbsp;Visualiser les flux de courses entre zones de départ et d'arrivée.&nbsp;»</blockquote>
   <div class="controls">
     <label>Visualisation</label>
@@ -253,7 +328,7 @@
 </section>
 
 <section id="analyse3-{{i}}">
-  <div class="sec-head"><span class="idx">05</span><h2>Prix au km par année et zone de départ</h2></div>
+  <div class="sec-head"><span class="idx">07</span><h2>Prix au km par année et zone de départ</h2></div>
   <blockquote>«&nbsp;Un ridgeline plot montrant l'évolution des prix par km au fil des années, pour une zone
      de départ donnée.&nbsp;»</blockquote>
   <div class="controls">
@@ -273,7 +348,7 @@
 </section>
 
 <section id="analyse4-{{i}}">
-  <div class="sec-head"><span class="idx">06</span><h2>Fréquence des courses : jour × heure</h2></div>
+  <div class="sec-head"><span class="idx">08</span><h2>Fréquence des courses : jour × heure</h2></div>
   <blockquote>«&nbsp;Une fonction qui, pour une année donnée en paramètre, produit une heatmap (jour de la
      semaine × heure) de la fréquence des courses, pour chaque type de véhicule.&nbsp;»</blockquote>
   <div class="controls">
@@ -285,13 +360,13 @@
   <div id="heat-{{i}}" class="chart" style="height:450px"></div>
   <div class="takeaway" id="tk-heat-{{i}}"></div>
 
-  <div class="chart-title" style="margin-top:34px"><b>Profil horaire</b><span>somme des 7 jours — tous les véhicules de l'année sélectionnée, comparables d'un coup d'œil</span></div>
+  <div class="chart-title" style="margin-top:34px"><b>Profil horaire</b><span>somme des 7 jours — tous les véhicules de l'année sélectionnée</span></div>
   <div id="profil-{{i}}" class="chart" style="height:330px"></div>
   <div class="takeaway" id="tk-profil-{{i}}"></div>
 </section>
 
 <section id="analyse5-{{i}}">
-  <div class="sec-head"><span class="idx">07</span><h2>Écart de prix selon la météo</h2></div>
+  <div class="sec-head"><span class="idx">09</span><h2>Écart de prix selon la météo</h2></div>
   <blockquote>«&nbsp;Comparer le prix des courses (par km) selon les conditions météo au moment de la course,
      par rapport au prix moyen général.&nbsp;»</blockquote>
   <div id="meteo-{{i}}"></div>
@@ -304,7 +379,7 @@
   Pipeline : ingestion → MinIO bronze/silver/gold → PySpark sur {{ payload.spark_master }} → dashboard statique.
   <div class="stack">
     <span class="badge">Docker Compose</span><span class="badge">Spark 3.5 master + worker</span>
-    <span class="badge">MinIO S3</span><span class="badge">ECharts</span>
+    <span class="badge">MinIO S3</span><span class="badge">ECharts · 263 zones TLC</span>
     <span class="badge">Généré le {{ payload.genere_le }}</span>
   </div>
 </footer>
@@ -314,15 +389,18 @@
 <script>
 const P = window.__PAYLOAD__;
 const nf = new Intl.NumberFormat('fr-FR');
-const fmt = n => nf.format(n);
+const fmt = n => nf.format(Math.round(n));
+const fmt2 = n => n == null ? '—' : (Math.round(n * 100) / 100).toString().replace('.', ',');
 const charts = [];
 const cache = {};
 function mk(id){
-  if (!cache[id]) { cache[id] = echarts.init(document.getElementById(id)); charts.push(cache[id]); }
+  const el = document.getElementById(id);
+  if (!cache[id]) { cache[id] = echarts.init(el); charts.push(cache[id]); }
   return cache[id];
 }
 window.addEventListener('resize', () => charts.forEach(c => c.resize()));
 
+/* ---------- palettes ---------- */
 const SUP_COLORS = {
   'extra':'#e9c46a', 'mta_tax':'#2a9d8f', 'improvement_surcharge':'#f4a261',
   'congestion_surcharge':'#e76f51', 'airport_fee':'#8ecfc3', 'cbd_convenience_fee':'#7fb2c4'
@@ -355,8 +433,12 @@ function stops_color(stops, t){
 }
 function vcolor(t){ return stops_color(VIRIDIS, t); }
 function spread(n){ return Array.from({length:n}, (_,j) => stops_color(PALETTE, n > 1 ? j/(n-1) : 0)); }
+function dashFor(idx){ return idx === 0 ? null : [8, 5]; }
+
+/* ---------- helpers UI ---------- */
 function chipBox(elId, values, onChange, opts={}){
   const box = document.getElementById(elId);
+  box.innerHTML = '';
   const cols = spread(values.length || 1);
   values.forEach((v, j) => {
     const lab = document.createElement('label');
@@ -378,423 +460,611 @@ function segCtl(elId, onChange){
   }));
   return () => seg.querySelector('button.on').dataset.v;
 }
-function dashFor(idx){ return idx === 0 ? null : [8, 5]; }
-
 const AX = { axisLabel:{color:'#9fb8bc'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}},
              splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} };
-const BASE = {
-  backgroundColor:'transparent',
-  textStyle:{ color:'#eef4f4', fontFamily:'inherit' },
-};
+const BASE = { backgroundColor:'transparent', textStyle:{ color:'#eef4f4', fontFamily:'inherit' } };
+const MOIS = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 
+/* ================================================================ */
 P.datasets.forEach((ds, i) => {
 
-  /* ---------- KPI ---------- */
-  document.querySelector(`[data-kpi="total-${i}"]`).textContent = fmt(ds.kpis.total_courses);
-  document.querySelector(`[data-kpi="periode-${i}"]`).textContent =
-    `${ds.kpis.periode?.debut || '?'} → ${ds.kpis.periode?.fin || '?'}`;
+/* ---------- état global des filtres ---------- */
+const ZONES = ds.zones || {};
+const zname = id => (ZONES[id] && ZONES[id].zone) ? ZONES[id].zone : ('Zone ' + id);
+const zbor = id => (ZONES[id] && ZONES[id].borough) ? ZONES[id].borough : '';
+const ALL_YEARS = [...new Set(ds.timeline.rows.map(r => r.annee))].sort((a,b) => a-b);
+const ALL_VEH = [...new Set(ds.timeline.rows.map(r => r.vehicle))].sort();
+const STATE = { years: new Set(ALL_YEARS), veh: new Set(ALL_VEH),
+                mapMetric: 'pickups', arcs: false, zone: null };
+
+function filteredTL(){
+  return ds.timeline.rows.filter(r => STATE.years.has(r.annee) && STATE.veh.has(r.vehicle));
+}
+function filteredZS(){
+  return ds.zone_stats.rows.filter(r => STATE.years.has(r.annee) && STATE.veh.has(r.vehicle));
+}
+
+/* ---------- barre de filtres globale ---------- */
+const getGY = chipBox('g-years', ALL_YEARS, applyFilters, {fmt: v => String(v)});
+const getGV = chipBox('g-veh', ALL_VEH, applyFilters, {fmt: v => v});
+document.getElementById('g-reset').addEventListener('click', () => {
+  STATE.years = new Set(ALL_YEARS); STATE.veh = new Set(ALL_VEH);
+  STATE.zone = null;
+  document.querySelectorAll('#g-years input, #g-veh input').forEach(c => c.checked = true);
+  applyFilters();
+});
+
+/* ---------- KPI dynamiques ---------- */
+function renderKpis(){
+  const tl = filteredTL();
+  const total = tl.reduce((s,r) => s + r.courses, 0);
+  document.querySelector(`[data-kpi="total-${i}"]`).textContent = fmt(total);
+  if (tl.length){
+    const keys = tl.map(r => r.annee * 100 + r.mois).sort((a,b) => a-b);
+    const lo = keys[0], hi = keys[keys.length-1];
+    document.querySelector(`[data-kpi="periode-${i}"]`).textContent =
+      `${String(lo%100).padStart(2,'0')}/${Math.floor(lo/100)} → ${String(hi%100).padStart(2,'0')}/${Math.floor(hi/100)}`;
+  } else {
+    document.querySelector(`[data-kpi="periode-${i}"]`).textContent = '—';
+  }
   document.querySelector(`[data-kpi="annees-${i}"]`).textContent =
-    Object.keys(ds.kpis.par_annee).join(', ') || 'n/a';
+    ALL_YEARS.filter(y => STATE.years.has(y)).join(', ') || '—';
   document.querySelector(`[data-kpi="vehicules-${i}"]`).textContent =
-    Object.keys(ds.kpis.par_vehicule).join(', ') || 'n/a';
+    ALL_VEH.filter(v => STATE.veh.has(v)).join(', ') || '—';
   const go = ds.meta.taille_octets;
   document.querySelector(`[data-kpi="taille-${i}"]`).textContent =
     go ? (go / 1e9).toFixed(2).replace('.', ',') + ' Go' : 'n/a';
+}
 
-  /* ---------- Vue d'ensemble : donut véhicules ---------- */
-  {
-    const ent = Object.entries(ds.kpis.par_vehicule).sort((a,b) => b[1]-a[1]);
-    const cols = spread(ent.length);
-    const total = ent.reduce((s,e) => s+e[1], 0);
-    mk(`donut-${i}`).setOption({
-      ...BASE,
-      tooltip:{ formatter:p => `<b>${p.name}</b><br>${fmt(p.value)} courses (${p.percent}%)` },
-      legend:{ bottom:0, textStyle:{color:'#9fb8bc'}, icon:'circle' },
-      title:{ text:fmt(total), subtext:'courses', left:'center', top:'38%',
-              textStyle:{color:'#eef4f4', fontSize:22, fontWeight:600, fontFamily:'JetBrains Mono'},
-              subtextStyle:{color:'#9fb8bc'} },
-      series:[{
-        type:'pie', radius:['52%','74%'], center:['50%','44%'],
-        itemStyle:{ borderColor:'#1b313b', borderWidth:3, borderRadius:5 },
-        label:{show:false},
-        data: ent.map(([k,v], j) => ({ name:k, value:v, itemStyle:{color:cols[j]} }))
-      }]
+/* ---------- vue d'ensemble : donut + barres (dynamiques) ---------- */
+function renderOverview(){
+  const tl = filteredTL();
+  const parVeh = {}, parAn = {};
+  tl.forEach(r => { parVeh[r.vehicle] = (parVeh[r.vehicle]||0) + r.courses;
+                    parAn[r.annee] = (parAn[r.annee]||0) + r.courses; });
+  const ent = Object.entries(parVeh).sort((a,b) => b[1]-a[1]);
+  const cols = spread(ent.length || 1);
+  const total = ent.reduce((s,e) => s+e[1], 0);
+  mk(`donut-${i}`).setOption({
+    ...BASE,
+    tooltip:{ formatter:p => `<b>${p.name}</b><br>${fmt(p.value)} courses (${p.percent}%)` },
+    legend:{ bottom:0, textStyle:{color:'#9fb8bc'}, icon:'circle' },
+    title:{ text: ent.length ? fmt(total) : '—', subtext:'courses', left:'center', top:'38%',
+            textStyle:{color:'#eef4f4', fontSize:22, fontWeight:600, fontFamily:'JetBrains Mono'},
+            subtextStyle:{color:'#9fb8bc'} },
+    series:[{ type:'pie', radius:['52%','74%'], center:['50%','44%'],
+      itemStyle:{ borderColor:'#1b313b', borderWidth:3, borderRadius:5 },
+      label:{show:false},
+      data: ent.map(([k,v], j) => ({ name:k, value:v, itemStyle:{color:cols[j]} })) }]
+  }, true);
+
+  const ans = Object.entries(parAn).sort((a,b) => a[0].localeCompare(b[0]));
+  mk(`baran-${i}`).setOption({
+    ...BASE,
+    tooltip:{ trigger:'axis', axisPointer:{type:'shadow'} },
+    grid:{ left:70, right:24, top:20, bottom:40 },
+    xAxis:{ type:'category', data:ans.map(a=>a[0]),
+            axisLabel:{color:'#9fb8bc'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}} },
+    yAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
+            splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
+    series:[{ type:'bar', barMaxWidth:46,
+      data:ans.map((a,j,arr) => ({ value:a[1],
+        itemStyle:{ color:vcolor(arr.length>1 ? j/(arr.length-1) : .5), borderRadius:[6,6,0,0] } })),
+      label:{ show:true, position:'top', color:'#9fb8bc', fontSize:10, formatter:p=>fmt(p.value) } }]
+  }, true);
+}
+
+/* ---------- chronologie mensuelle ---------- */
+function renderTimeline(){
+  const tl = filteredTL();
+  const keys = [...new Set(tl.map(r => r.annee * 100 + r.mois))].sort((a,b) => a-b);
+  const labels = keys.map(k => `${String(k%100).padStart(2,'0')}/${Math.floor(k/100)}`);
+  const vehs = ALL_VEH.filter(v => STATE.veh.has(v));
+  const cols = spread(vehs.length || 1);
+  const series = vehs.map((v, j) => ({
+    name:v, type:'bar', stack:'t', barMaxWidth:26,
+    itemStyle:{ color:cols[j], borderRadius: j === vehs.length-1 ? [4,4,0,0] : 0 },
+    data: keys.map(k => {
+      const r = tl.find(x => x.annee*100+x.mois === k && x.vehicle === v);
+      return r ? r.courses : 0;
+    })
+  }));
+  mk(`tl-${i}`).setOption({
+    ...BASE,
+    tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+              valueFormatter:v => fmt(v) + ' courses' },
+    legend:{ top:0, textStyle:{color:'#9fb8bc'}, icon:'roundRect' },
+    grid:{ left:70, right:24, top:36, bottom:70 },
+    xAxis:{ type:'category', data:labels, ...AX },
+    yAxis:{ type:'value', ...AX, axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)} },
+    dataZoom:[{ type:'slider', height:20, bottom:12, borderColor:'rgba(255,255,255,.15)',
+                backgroundColor:'rgba(255,255,255,.04)', fillerColor:'rgba(42,157,143,.25)',
+                handleStyle:{color:'#2a9d8f'}, textStyle:{color:'#6d8a90'} },
+              { type:'inside' }],
+    series
+  }, true);
+  const best = tl.length ? tl.reduce((m,r) => r.courses > m.courses ? r : m) : null;
+  document.getElementById(`tk-tl-${i}`).innerHTML = best
+    ? `Pic d'activité du filtre courant : <b>${String(best.mois).padStart(2,'0')}/${best.annee}</b> avec ` +
+      `<b>${fmt(best.courses)}</b> courses ${best.vehicle}. Zoomez avec le slider pour isoler une période.`
+    : 'Aucune donnée dans le filtre courant.';
+}
+
+/* ---------- carte des zones ---------- */
+const GEO_URL = 'data/geo/taxi_zones.geojson';
+let CP = {};
+fetch(GEO_URL).then(r => r.json()).then(gj => {
+  echarts.registerMap('nyczones', {geoJSON: gj});
+  gj.features.forEach(f => { CP[f.properties.locationid] = f.properties.cp; });
+  renderMap(); renderTopZones();
+}).catch(() => {
+  document.getElementById(`map-${i}`).innerHTML =
+    '<p class="empty">GeoJSON des zones introuvable (data/geo/taxi_zones.geojson).</p>';
+});
+
+function zoneAgg(){
+  const rows = filteredZS();
+  const by = {};
+  rows.forEach(r => {
+    const b = by[r.zone] = by[r.zone] ||
+      {zone:r.zone, pickups:0, dropoffs:0, tarifS:0, tarifN:0, pkS:0, pkN:0};
+    b.pickups += r.pickups; b.dropoffs += r.dropoffs;
+    if (r.tarif_moyen != null){ b.tarifS += r.tarif_moyen * r.pickups; b.tarifN += r.pickups; }
+    if (r.prix_km_moyen != null){ b.pkS += r.prix_km_moyen * r.pickups; b.pkN += r.pickups; }
+  });
+  return Object.values(by);
+}
+function metricValue(b, metric){
+  if (metric === 'pickups') return b.pickups;
+  if (metric === 'dropoffs') return b.dropoffs;
+  if (metric === 'tarif') return b.tarifN ? b.tarifS / b.tarifN : null;
+  return b.pkN ? b.pkS / b.pkN : null;
+}
+const METRIC_LABEL = {pickups:'départs', dropoffs:'arrivées', tarif:'tarif moyen $', prix_km:'$/km moyen'};
+
+function renderMap(){
+  const agg = zoneAgg();
+  const metric = STATE.mapMetric;
+  const vals = agg.map(b => metricValue(b, metric)).filter(v => v != null && v > 0);
+  const data = agg.map(b => ({ name: zname(b.zone), value: metricValue(b, metric),
+    locationid: b.zone, borough: zbor(b.zone),
+    pickups: b.pickups, dropoffs: b.dropoffs,
+    tarif: b.tarifN ? b.tarifS/b.tarifN : null, pk: b.pkN ? b.pkS/b.pkN : null }));
+  const series = [{
+    type:'map', map:'nyczones', roam:true, geoIndex:0,
+    selectedMode:'single',
+    itemStyle:{ borderColor:'rgba(19,34,42,.9)', borderWidth:.6 },
+    emphasis:{ label:{show:true, color:'#04121a', fontSize:10},
+               itemStyle:{ areaColor:'#e9c46a' } },
+    select:{ label:{show:true, color:'#04121a', fontSize:10},
+             itemStyle:{ areaColor:'#f4a261' } },
+    data
+  }];
+  if (STATE.arcs){
+    const links = ds.flux_zones.links.filter(l => CP[l.source] && CP[l.target])
+      .filter(l => STATE.zone == null || l.source === STATE.zone || l.target === STATE.zone);
+    series.push({
+      type:'lines', coordinateSystem:'geo', zlevel:2,
+      effect:{ show:true, period:4, trailLength:.25, symbol:'arrow', symbolSize:4, color:'#e9c46a' },
+      lineStyle:{ color:'#f4a261', width:1.2, opacity:.45, curveness:.3 },
+      tooltip:{ show:false },
+      data: links.map(l => ({ coords:[CP[l.source], CP[l.target]], value:l.count,
+        from:l.source, to:l.target }))
     });
   }
+  mk(`map-${i}`).setOption({
+    ...BASE,
+    geo:{ map:'nyczones', roam:true, silent:true,
+          itemStyle:{ areaColor:'#203844', borderColor:'rgba(255,255,255,.12)' } },
+    tooltip:{ formatter:p => {
+      if (p.seriesType === 'lines') return '';
+      const d = p.data || {};
+      return `<b>${p.name}</b> <span style="color:#6d8a90">· ${d.borough || '?'}</span><br>` +
+        `Départs : ${fmt(d.pickups || 0)}<br>Arrivées : ${fmt(d.dropoffs || 0)}<br>` +
+        `Tarif moyen : ${d.tarif != null ? '$'+fmt2(d.tarif) : '—'}<br>` +
+        `Prix/km : ${d.pk != null ? fmt2(d.pk) : '—'}`;
+    } },
+    visualMap:{ min:0, max: Math.max(...vals, 1), calculable:true, orient:'vertical',
+      right:8, top:'center', textStyle:{color:'#9fb8bc'},
+      inRange:{ color: VIRIDIS } },
+    series
+  }, true);
+  const top = [...agg].sort((a,b) => b.pickups - a.pickups)[0];
+  document.getElementById(`tk-map-${i}`).innerHTML = top
+    ? `Zone la plus active sur le filtre courant : <b>${zname(top.zone)}</b> ` +
+      `(${zbor(top.zone)}) avec ${fmt(top.pickups)} départs. ` +
+      `Cliquez une zone sur la carte pour la mettre au focus${STATE.zone != null
+        ? ` — focus actuel : <b>${zname(STATE.zone)}</b>.` : '.'}`
+    : 'Aucune donnée zonée dans le filtre courant (2009 = GPS brut, sans LocationID).';
+}
 
-  /* ---------- Vue d'ensemble : barres par année ---------- */
-  {
-    const ans = Object.entries(ds.kpis.par_annee).sort((a,b) => a[0].localeCompare(b[0]));
-    mk(`baran-${i}`).setOption({
-      ...BASE,
-      tooltip:{ trigger:'axis', axisPointer:{type:'shadow'} },
-      grid:{ left:70, right:24, top:20, bottom:40 },
-      xAxis:{ type:'category', data:ans.map(a=>a[0]),
-              axisLabel:{color:'#9fb8bc'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}} },
-      yAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
-              splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
-      series:[{ type:'bar', barMaxWidth:46,
-        data:ans.map((a,j,arr) => ({ value:a[1],
-          itemStyle:{ color:vcolor(arr.length>1 ? j/(arr.length-1) : .5), borderRadius:[6,6,0,0] } })),
-        label:{ show:true, position:'top', color:'#9fb8bc', fontSize:10,
-                formatter:p=>fmt(p.value) } }]
-    });
+function renderTopZones(){
+  const agg = [...zoneAgg()].sort((a,b) => b.pickups - a.pickups).slice(0, 12);
+  const cols = spread(agg.length || 1);
+  mk(`topz-${i}`).setOption({
+    ...BASE,
+    tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+      formatter:p => `<b>${p[0].name}</b><br>${fmt(p[0].value)} départs` },
+    grid:{ left:10, right:60, top:10, bottom:10, containLabel:true },
+    xAxis:{ type:'value', show:false },
+    yAxis:{ type:'category', inverse:true, data:agg.map(b => zname(b.zone)),
+            axisLabel:{color:'#eef4f4', fontSize:11, width:120, overflow:'truncate'},
+            axisLine:{show:false}, axisTick:{show:false} },
+    series:[{ type:'bar', barMaxWidth:14,
+      data:[...agg].reverse().map((b,j) => ({ value:b.pickups,
+        itemStyle:{ color:cols[agg.length-1-j], borderRadius:[0,5,5,0] } })) }]
+  }, true);
+}
+
+function renderZoneCard(){
+  const card = document.getElementById(`zcard-${i}`);
+  if (STATE.zone == null){
+    card.innerHTML = `<div class="zn">Aucune zone sélectionnée</div>
+      <div class="zb">cliquez la carte pour focus une zone</div>
+      <div class="zrow"><span>Départs</span><b>—</b></div>
+      <div class="zrow"><span>Arrivées</span><b>—</b></div>
+      <div class="zrow"><span>Tarif moyen</span><b>—</b></div>
+      <div class="zrow"><span>Prix/km moyen</span><b>—</b></div>`;
+    return;
   }
+  const b = zoneAgg().find(x => x.zone === STATE.zone);
+  card.innerHTML = `<div class="zn">${zname(STATE.zone)}</div>
+    <div class="zb">${zbor(STATE.zone) || '?'} · LocationID ${STATE.zone}</div>
+    <div class="zrow"><span>Départs</span><b>${b ? fmt(b.pickups) : '—'}</b></div>
+    <div class="zrow"><span>Arrivées</span><b>${b ? fmt(b.dropoffs) : '—'}</b></div>
+    <div class="zrow"><span>Tarif moyen</span><b>${b && b.tarifN ? '$'+fmt2(b.tarifS/b.tarifN) : '—'}</b></div>
+    <div class="zrow"><span>Prix/km moyen</span><b>${b && b.pkN ? '$'+fmt2(b.pkS/b.pkN) : '—'}</b></div>
+    <button class="clear" id="zclear-${i}">Retirer le focus</button>`;
+  document.getElementById(`zclear-${i}`).addEventListener('click', () => {
+    STATE.zone = null; renderMap(); renderZoneCard();
+  });
+}
 
-  /* ---------- Analyse 1 : suppléments tarifaires ---------- */
-  {
-    const vehicules = [...new Set(ds.surcharges.rows.map(r => r.vehicle_type))].sort();
-    const getSel = chipBox(`veh-chips-${i}`, vehicules, draw, {fmt: v=>v});
-    const getMet = segCtl(`met-seg-${i}`, draw);
-    const annees = [...new Set(ds.surcharges.rows.map(r => r.annee))].sort((a,b)=>a-b);
+const getMapMetric = segCtl(`map-metric-${i}`, v => { STATE.mapMetric = v; renderMap(); renderTopZones(); });
+const getMapArcs = segCtl(`map-arcs-${i}`, v => { STATE.arcs = v === 'on'; renderMap(); });
+mk(`map-${i}`).on('click', params => {
+  if (params.componentType === 'series' && params.seriesType === 'map' && params.data){
+    STATE.zone = params.data.locationid;
+    renderMap(); renderZoneCard();
+  }
+});
 
-    function draw(){
-      const veSel = getSel(), met = getMet();
-      const field = met === 'total' ? '_total' : '_moyen';
-      const series = [];
-      let anyData = false;
-      vehicules.forEach(v => {
-        if (!veSel.includes(v)) return;
-        const vi = veSel.indexOf(v);
-        const rows = Object.fromEntries(ds.surcharges.rows.filter(r => r.vehicle_type === v).map(r => [r.annee, r]));
-        ds.surcharges.supplements.forEach(s => {
-          if (!ds.surcharges.rows.some(r => r.vehicle_type === v && r[s + field] !== null)) return;
-          anyData = true;
-          series.push({
-            name: vehicules.length > 1 ? `${SUP_LABELS[s]||s} · ${v}` : (SUP_LABELS[s]||s),
-            type:'line', smooth:true, symbol:'circle', symbolSize:6, connectNulls:false,
-            data: annees.map(a => rows[a] ? rows[a][s+field] : null),
-            itemStyle:{ color:SUP_COLORS[s] || '#9fb8bc' },
-            lineStyle:{ width:2.4, type:dashFor(vi), color:SUP_COLORS[s] || '#9fb8bc' }
-          });
-        });
+/* ---------- analyse 1 : suppléments ---------- */
+const getMet = segCtl(`met-seg-${i}`, () => renderSurcharge());
+function renderSurcharge(){
+  const veSel = [...STATE.veh];
+  const met = getMet();
+  const field = met === 'total' ? '_total' : '_moyen';
+  const rows0 = ds.surcharges.rows.filter(r => STATE.years.has(r.annee));
+  const annees = [...new Set(rows0.map(r => r.annee))].sort((a,b)=>a-b);
+  const series = [];
+  const vehSelOrder = ALL_VEH.filter(v => veSel.includes(v));
+  vehSelOrder.forEach(v => {
+    const vi = vehSelOrder.indexOf(v);
+    const rows = Object.fromEntries(rows0.filter(r => r.vehicle_type === v).map(r => [r.annee, r]));
+    ds.surcharges.supplements.forEach(s => {
+      if (!rows0.some(r => r.vehicle_type === v && r[s + field] !== null)) return;
+      series.push({
+        name: vehSelOrder.length > 1 ? `${SUP_LABELS[s]||s} · ${v}` : (SUP_LABELS[s]||s),
+        type:'line', smooth:true, symbol:'circle', symbolSize:6, connectNulls:false,
+        data: annees.map(a => rows[a] ? rows[a][s+field] : null),
+        itemStyle:{ color:SUP_COLORS[s] || '#9fb8bc' },
+        lineStyle:{ width:2.4, type:dashFor(vi), color:SUP_COLORS[s] || '#9fb8bc' }
       });
-      const yName = met === 'total' ? '$ cumulés' : '$/course';
-      mk(`surcharge-${i}`).setOption({
-        ...BASE,
-        tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':(met==='total'?'$'+fmt(v):'$'+Number(v).toFixed(3)) },
-        legend:{ top:0, type:'scroll', textStyle:{color:'#9fb8bc'}, icon:'roundRect' },
-        grid:{ left:64, right:30, top:56, bottom:45 },
-        xAxis:{ type:'category', data:annees, ...AX },
-        yAxis:{ type:'value', name:yName, nameTextStyle:{color:'#9fb8bc'}, ...AX },
-        series
-      }, true);
-      if (!anyData){ mk(`surcharge-${i}`).clear(); }
-      const dispo = ds.surcharges.supplements.filter(s =>
-        ds.surcharges.rows.some(r => r[s + '_moyen'] !== null));
-      document.getElementById(`tk-surcharge-${i}`).innerHTML = dispo.length
-        ? `Sur cet extrait, les composants renseignés sont : <b>${dispo.map(s=>SUP_LABELS[s]).join(', ')}</b>. ` +
-          `Les autres restent à <b>null</b> : ils n'existaient pas encore à ces dates, ce qui n'équivaut pas à $0.`
-        : `Aucun supplément renseigné dans cet échantillon.`;
-    }
-    draw();
-  }
+    });
+  });
+  const yName = met === 'total' ? '$ cumulés' : '$/course';
+  mk(`surcharge-${i}`).setOption({
+    ...BASE,
+    tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':(met==='total'?'$'+fmt(v):'$'+fmt2(v)) },
+    legend:{ top:0, type:'scroll', textStyle:{color:'#9fb8bc'}, icon:'roundRect' },
+    grid:{ left:64, right:30, top:56, bottom:45 },
+    xAxis:{ type:'category', data:annees, ...AX },
+    yAxis:{ type:'value', name:yName, nameTextStyle:{color:'#9fb8bc'}, ...AX },
+    series
+  }, true);
+  const dispo = ds.surcharges.supplements.filter(s =>
+    ds.surcharges.rows.some(r => r[s + '_moyen'] !== null));
+  document.getElementById(`tk-surcharge-${i}`).innerHTML = dispo.length
+    ? `Composants renseignés sur l'extrait : <b>${dispo.map(s=>SUP_LABELS[s]).join(', ')}</b>. ` +
+      `Les autres restent à <b>null</b> : ils n'existaient pas encore à ces dates, ce qui n'équivaut pas à $0.`
+    : `Aucun supplément renseigné dans cet échantillon.`;
+}
 
-  /* ---------- Analyse 2 : flux entre zones (corde / sankey / barres) ---------- */
-  {
-    const fz = ds.flux_zones;
-    const box = document.getElementById(`chord-${i}`);
-    const getFlow = segCtl(`flow-seg-${i}`, drawFlow);
-
-    function renderChord(){
-      if (!fz.nodes.length){
-        box.innerHTML = '<p class="empty">Aucune course avec identifiants de zone dans cet échantillon ' +
-                        '(les fichiers 2009 contiennent du GPS brut, pas de LocationID).</p>';
-        document.getElementById(`tk-chord-${i}`).innerHTML = '';
-        return true;
-      }
-      const nodeIds = new Set(fz.nodes.map(n => n.id));
-      const links = fz.links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
-      const maxPick = Math.max(...fz.nodes.map(n => n.pickups), 1);
-      const maxLink = links.length ? links[0].count : 1;
-      const cols = spread(fz.nodes.length);
+/* ---------- analyse 2 : flux (corde / sankey / barres) ---------- */
+const getFlow = segCtl(`flow-seg-${i}`, () => renderFlow());
+function renderFlow(){
+  const fz = ds.flux_zones;
+  const box = document.getElementById(`chord-${i}`);
+  const empty = () => {
+    box.innerHTML = '<p class="empty">Aucune course avec identifiants de zone dans cet échantillon ' +
+                    '(les fichiers 2009 contiennent du GPS brut, pas de LocationID).</p>';
+    document.getElementById(`tk-chord-${i}`).innerHTML = '';
+    return false;
+  };
+  if (!fz.nodes.length) { empty(); return; }
+  const nodeIds = new Set(fz.nodes.map(n => n.id));
+  const links = fz.links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
+  const v = getFlow();
+  if (v === 'chord'){
+    const maxPick = Math.max(...fz.nodes.map(n => n.pickups), 1);
+    const maxLink = links.length ? links[0].count : 1;
+    const cols = spread(fz.nodes.length);
+    mk(`chord-${i}`).setOption({
+      ...BASE,
+      title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
+              textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
+      tooltip:{ formatter:p => p.dataType === 'edge'
+        ? `<b>${zname(p.data.source)} → ${zname(p.data.target)}</b><br>${fmt(p.data.value)} courses`
+        : `<b>${p.name}</b><br>${fmt(fz.nodes.find(n=>zname(n.id)===p.name)?.pickups ?? 0)} départs` },
+      series:[{
+        type:'graph', layout:'circular', circular:{ rotateLabel:true },
+        data: fz.nodes.map((n,j) => ({ name: zname(n.id),
+          symbolSize: 8 + 26*n.pickups/maxPick,
+          itemStyle:{ color:cols[j], borderColor:'#13222a', borderWidth:2 } })),
+        links: links.map(l => ({ source: zname(l.source), target: zname(l.target),
+          value:l.count, lineStyle:{ width: 1 + 6*l.count/maxLink,
+            color:'#f4a261', opacity:.5, curveness:.35 } })),
+        emphasis:{ focus:'adjacency', lineStyle:{ opacity:1, width:5 } },
+        label:{ color:'#eef4f4', fontSize:10 },
+        roam:true
+      }]
+    }, true);
+  } else if (v === 'sankey'){
+    const cols = spread(fz.nodes.length);
+    try {
       mk(`chord-${i}`).setOption({
         ...BASE,
         title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
                 textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
-        tooltip:{ formatter:p => p.dataType === 'edge'
-          ? `<b>Zone ${p.data.source.replace('Zone ','')} → Zone ${p.data.target.replace('Zone ','')}</b><br>${fmt(p.data.value)} courses`
-          : `<b>${p.name}</b><br>${fmt(fz.nodes.find(n=>'Zone '+n.id===p.name)?.pickups ?? 0)} départs` },
+        tooltip:{ trigger:'item' },
         series:[{
-          type:'graph', layout:'circular', circular:{ rotateLabel:true },
-          data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id,
-            symbolSize: 8 + 26*n.pickups/maxPick,
-            itemStyle:{ color:cols[j], borderColor:'#13222a', borderWidth:2 } })),
-          links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target,
-            value:l.count, lineStyle:{ width: 1 + 6*l.count/maxLink,
-              color:'#f4a261', opacity:.5, curveness:.35 } })),
-          emphasis:{ focus:'adjacency', lineStyle:{ opacity:1, width:5 } },
-          label:{ color:'#eef4f4', fontSize:11 },
-          roam:true
+          type:'sankey', left:20, right:170, top:40, bottom:20,
+          nodeWidth:14, nodeGap:12,
+          data: fz.nodes.map((n,j) => ({ name: zname(n.id), value:n.pickups,
+            itemStyle:{ color:cols[j], borderColor:'transparent' } })),
+          links: links.map(l => ({ source: zname(l.source), target: zname(l.target), value:l.count })),
+          label:{ color:'#eef4f4', fontSize:10 },
+          lineStyle:{ color:'gradient', opacity:.35, curveness:.5 },
+          emphasis:{ focus:'adjacency' }
         }]
       }, true);
-      document.getElementById(`tk-chord-${i}`).innerHTML =
-        `L'axe dominant est <b>Zone ${links[0].source} → Zone ${links[0].target}</b> avec ` +
-        `${fmt(links[0].count)} courses (${fmt(fz.courses_non_zonees)} courses hors périmètre zoné).`;
-      return true;
+    } catch(e){
+      box.innerHTML = '<p class="empty">Vue Sankey indisponible pour ce graphe (flux cycliques).</p>';
     }
-
-    function renderSankey(){
-      if (!fz.nodes.length) return renderChord();
-      const nodeIds = new Set(fz.nodes.map(n => n.id));
-      const links = fz.links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
-      const cols = spread(fz.nodes.length);
-      try {
-        mk(`chord-${i}`).setOption({
-          ...BASE,
-          title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
-                  textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
-          tooltip:{ trigger:'item' },
-          series:[{
-            type:'sankey', left:20, right:150, top:40, bottom:20,
-            nodeWidth:14, nodeGap:12,
-            data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id, value:n.pickups,
-              itemStyle:{ color:cols[j], borderColor:'transparent' } })),
-            links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target, value:l.count })),
-            label:{ color:'#eef4f4', fontSize:11 },
-            lineStyle:{ color:'gradient', opacity:.35, curveness:.5 },
-            emphasis:{ focus:'adjacency' }
-          }]
-        }, true);
-      } catch(e){
-        box.innerHTML = '<p class="empty">Vue Sankey indisponible pour ce graphe (flux cycliques).</p>';
-      }
-      return true;
-    }
-
-    function renderBars(){
-      if (!fz.nodes.length) return renderChord();
-      const tops = [...fz.nodes].sort((a,b) => b.pickups-a.pickups).slice(0, 12);
-      const cols = spread(tops.length);
-      mk(`chord-${i}`).setOption({
-        ...BASE,
-        title:{ text:`${fmt(fz.courses_zonees)} courses zonées — départs par zone (top ${tops.length})`,
-                left:'center', top:6, textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
-        tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
-                  formatter:p => `<b>${p[0].name}</b><br>${fmt(p[0].value)} départs` },
-        grid:{ left:90, right:50, top:40, bottom:30 },
-        xAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
-                splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
-        yAxis:{ type:'category', data:tops.map(n=>'Zone '+n.id).reverse(),
-                axisLabel:{color:'#eef4f4'}, axisLine:{show:false}, axisTick:{show:false} },
-        series:[{ type:'bar', barMaxWidth:22,
-          data:[...tops].reverse().map((n,j) => ({ value:n.pickups,
-            itemStyle:{ color:cols[tops.length-1-j], borderRadius:[0,6,6,0] } })) }]
-      }, true);
-      return true;
-    }
-
-    function drawFlow(){
-      const v = getFlow();
-      if (v === 'chord') renderChord();
-      else if (v === 'sankey') renderSankey();
-      else renderBars();
-    }
-    drawFlow();
+  } else {
+    const tops = [...fz.nodes].sort((a,b) => b.pickups-a.pickups).slice(0, 12);
+    const cols = spread(tops.length);
+    mk(`chord-${i}`).setOption({
+      ...BASE,
+      title:{ text:`${fmt(fz.courses_zonees)} courses zonées — départs par zone (top ${tops.length})`,
+              left:'center', top:6, textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
+      tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
+                formatter:p => `<b>${p[0].name}</b><br>${fmt(p[0].value)} départs` },
+      grid:{ left:20, right:50, top:40, bottom:30, containLabel:true },
+      xAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
+              splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
+      yAxis:{ type:'category', data:tops.map(n=>zname(n.id)).reverse(),
+              axisLabel:{color:'#eef4f4', width:130, overflow:'truncate'},
+              axisLine:{show:false}, axisTick:{show:false} },
+      series:[{ type:'bar', barMaxWidth:22,
+        data:[...tops].reverse().map((n,j) => ({ value:n.pickups,
+          itemStyle:{ color:cols[tops.length-1-j], borderRadius:[0,6,6,0] } })) }]
+    }, true);
   }
+  document.getElementById(`tk-chord-${i}`).innerHTML =
+    `L'axe dominant est <b>${zname(links[0].source)} → ${zname(links[0].target)}</b> avec ` +
+    `${fmt(links[0].count)} courses (${fmt(fz.courses_non_zonees)} courses hors périmètre zoné).`;
+}
 
-  /* ---------- Analyse 3 : ridgeline prix / km ---------- */
-  {
-    const zones = ds.prix_km.zones;
-    const sel = document.getElementById(`zone-sel-${i}`);
-    if (!zones.length){
-      sel.closest('.controls').style.display = 'none';
-      document.getElementById(`ridge-${i}`).innerHTML =
-        '<p class="empty">Pas assez de données tarifaires zonées dans cet échantillon.</p>';
-      document.getElementById(`tk-ridge-${i}`).innerHTML = '';
-      const cmpBox = document.getElementById(`cmpzone-${i}`);
-      cmpBox.innerHTML = '<p class="empty">Comparateur indisponible sans zones.</p>';
-      document.getElementById(`tk-cmpzone-${i}`).innerHTML = '';
-    } else {
-      const H = 1;
-      const centers = ds.prix_km.bins.map((b, k) => k + 0.5);
+/* ---------- analyse 3 : ridgeline + comparateur ---------- */
+const CMP_ZONES = ds.prix_km.zones.slice(0, Math.min(ds.prix_km.zones.length, 6));
+let cmpGet = null;
+function buildCmpChips(){
+  if (CMP_ZONES.length) cmpGet = chipBox(`zone-chips-${i}`, CMP_ZONES, drawCmp, {fmt: v => zname(+v)});
+}
 
-      function drawRidge(){
-        const zone = +sel.value;
-        const rows = ds.prix_km.rows.filter(r => r.zone === zone);
-        const annees = [...new Set(rows.map(r => r.annee))].sort((a,b)=>a-b);
-        const maxCount = Math.max(...rows.map(r => Math.max(...r.hist)), 1);
-        const series = [];
-        annees.forEach((a, j) => {
-          const r = rows.find(x => x.annee === a);
-          const off = j * H;
-          const col = vcolor(annees.length > 1 ? j/(annees.length-1) : .5);
-          const pts = [[centers[0]-0.55, off]]
-            .concat(centers.map((c, k) => [c, off + (r.hist[k]/maxCount)*0.92]))
-            .concat([[centers[centers.length-1]+0.55, off]]);
-          series.push({
-            type:'line', smooth:true, symbol:'none', z:j+1, name:String(a), data:pts,
-            lineStyle:{ width:1.6, color:col },
-            areaStyle:{ color:col.replace('rgb','rgba').replace(')', ',.25)') }
-          });
-        });
-        mk(`ridge-${i}`).setOption({
-          ...BASE,
-          tooltip:{ formatter:p => `Année ${p.seriesName} · ` +
-            `${ds.prix_km.bins[Math.min(Math.max(Math.floor(p.value[0]),0), ds.prix_km.bins.length-1)]}` },
-          grid:{ left:60, right:30, top:20, bottom:50 },
-          xAxis:{ type:'value', min:-1, max:ds.prix_km.bins.length,
-                  axisLabel:{ color:'#9fb8bc', formatter:v => Number.isInteger(v) ? v+'$' : '' },
-                  splitLine:{ show:false } },
-          yAxis:{ type:'value', max:(annees.length)*H + 0.6,
-                  axisLabel:{ show:false }, splitLine:{ show:false } },
-          series
-        }, true);
-        const last = rows.filter(r => r.annee === annees[annees.length-1]);
-        const moy = last.length ? last.reduce((s,r)=>s+r.prix_km_moyen*r.courses,0) /
-                    last.reduce((s,r)=>s+r.courses,0) : null;
-        document.getElementById(`tk-ridge-${i}`).innerHTML =
-          `Distribution des prix/km pour la <b>Zone ${zone}</b>, une crête par année ` +
-          `(de ${annees[0]} en bas — clair — à ${annees[annees.length-1]} en haut — foncé)` +
-          (moy != null ? `, moyenne ${String(moy).replace('.', ',')} $/km la dernière année.` : '.');
-      }
-      zones.forEach(z => sel.add(new Option('Zone ' + z, z)));
-      sel.addEventListener('change', drawRidge);
-      drawRidge();
-
-      /* --- Comparateur de zones --- */
-      const cmpZones = zones.slice(0, Math.min(zones.length, 6));
-      const getCmp = chipBox(`zone-chips-${i}`, cmpZones, drawCmp, {fmt: v=>'Zone '+v});
-      function drawCmp(){
-        const picked = getCmp().map(Number);
-        const annees = [...new Set(ds.prix_km.rows.filter(r=>picked.includes(r.zone)).map(r => r.annee))]
-                       .sort((a,b)=>a-b);
-        const cols = spread(picked.length);
-        const series = picked.map((z, j) => ({
-          name:'Zone ' + z, type:'line', smooth:true, symbol:'circle', symbolSize:7,
-          data: annees.map(a => {
-            const r = ds.prix_km.rows.find(x => x.zone===z && x.annee===a);
-            return r && r.courses ? +(r.prix_km_moyen.toFixed(3)) : null;
-          }),
-          itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
-          emphasis:{ focus:'series' }
-        }));
-        mk(`cmpzone-${i}`).setOption({
-          ...BASE,
-          tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':String(v).replace('.', ',')+' $/km' },
-          legend:{ top:0, textStyle:{color:'#9fb8bc'} },
-          grid:{ left:64, right:30, top:44, bottom:45 },
-          xAxis:{ type:'category', data:annees, ...AX },
-          yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9fb8bc'}, ...AX },
-          series
-        }, true);
-        const flat = ds.prix_km.rows.filter(r => picked.includes(r.zone));
-        const best = flat.length
-          ? flat.reduce((m,r) => r.prix_km_moyen < m.prix_km_moyen ? r : m)
-          : null;
-        document.getElementById(`tk-cmpzone-${i}`).innerHTML = best
-          ? `Sur les années couvertes, la zone la moins chère au km parmi la sélection est la ` +
-            `<b>Zone ${best.zone}</b> (${String(best.prix_km_moyen).replace('.', ',')} $/km en ${best.annee}).`
-          : '';
-      }
-      drawCmp();
-    }
+function renderRidge(){
+  const zones = ds.prix_km.zones;
+  const sel = document.getElementById(`zone-sel-${i}`);
+  if (!zones.length){
+    sel.closest('.controls').style.display = 'none';
+    document.getElementById(`ridge-${i}`).innerHTML =
+      '<p class="empty">Pas assez de données tarifaires zonées dans cet échantillon.</p>';
+    document.getElementById(`tk-ridge-${i}`).innerHTML = '';
+    document.getElementById(`cmpzone-${i}`).innerHTML =
+      '<p class="empty">Comparateur indisponible sans zones.</p>';
+    document.getElementById(`tk-cmpzone-${i}`).innerHTML = '';
+    return;
   }
-
-  /* ---------- Analyse 4 : heatmap jour x heure + profil horaire ---------- */
-  {
-    const anSel = document.getElementById(`an-sel-${i}`);
-    const vtSel = document.getElementById(`vt-sel-${i}`);
-    const annees = Object.keys(ds.heatmap).sort();
-    annees.forEach(a => anSel.add(new Option(a, a)));
-
-    function fillVeh(){
-      vtSel.innerHTML = '';
-      Object.keys(ds.heatmap[anSel.value] || {}).sort().forEach(v => vtSel.add(new Option(v, v)));
-    }
-    function draw(){
-      const cell = (ds.heatmap[anSel.value] || {})[vtSel.value];
-      if (!cell){ return; }
-      let maxV = 0, bj=0, bh=0;
-      cell.matrice.forEach((row,j)=>row.forEach((v,h)=>{ if(v>maxV){maxV=v;bj=j;bh=h;} }));
-      const data = [];
-      cell.matrice.forEach((row,j)=>row.forEach((v,h)=>data.push([h,j,v])));
-      mk(`heat-${i}`).setOption({
-        ...BASE,
-        tooltip:{ position:'top',
-          formatter:p=>`${cell.jours[p.value[1]]} ${p.value[0]}h : ${fmt(p.value[2])} courses` },
-        grid:{ left:80, right:20, top:20, bottom:70 },
-        xAxis:{ type:'category', data:cell.heures.map(h=>h+'h'), splitArea:{show:true},
-                axisLine:{show:false}, axisTick:{show:false},
-                axisLabel:{color:'#9fb8bc', interval:1} },
-        yAxis:{ type:'category', data:cell.jours, inverse:true,
-                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#eef4f4'} },
-        visualMap:{ min:0, max:maxV||1, calculable:false, orient:'horizontal', left:'center', bottom:6,
-          textStyle:{color:'#9fb8bc'},
-          inRange:{ color:['#fde725','#f8e621','#f1e51d','#ece51b','#e5e419','#dfe318','#d8e219','#d0e11c',
-'#cae11f','#c2df23','#bddf26','#b5de2b','#addc30','#a8db34','#a0da39','#9bd93c',
-'#93d741','#8ed645','#86d549','#7fd34e','#7ad151','#73d056','#6ece58','#67cc5c',
-'#60ca60','#5cc863','#56c667','#52c569','#4cc26c','#48c16e','#42be71','#3dbc74',
-'#3aba76','#35b779','#32b67a','#2eb37c','#2ab07f','#28ae80','#25ac82','#24aa83',
-'#22a785','#20a486','#1fa287','#1fa088','#1f9e89','#1e9b8a','#1f998a','#1f968b',
-'#20938c','#20928c','#218f8d','#228d8d','#238a8d','#24878e','#25858e','#26828e',
-'#26818e','#277e8e','#287c8e','#29798e','#2a768e','#2b748e','#2c718e','#2d708e',
-'#2e6d8e','#306a8e','#31688e','#32658e','#33638d','#34608d','#365d8d','#375b8d',
-'#38588c','#39558c','#3b528b','#3c508b','#3d4d8a','#3e4989','#3f4788','#414487',
-'#424186','#433e85','#443a83','#453882','#463480','#46327e','#472e7c','#472c7a',
-'#482878','#482475','#482173','#481d6f','#481b6d','#481769','#471365','#471063',
-'#460b5e','#46085c','#450457','#440154'] } },
-        series:[{ type:'heatmap', data, label:{show:false},
-          itemStyle:{ borderColor:'#1b313b', borderWidth:2 },
-          emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(233,196,106,.6)' } } }]
-      }, true);
-      document.getElementById(`tk-heat-${i}`).innerHTML =
-        `${anSel.value}, ${vtSel.value} : le créneau le plus chargé est ` +
-        `<b>${cell.jours[bj]} autour de ${bh}h-${(bh+1)%24}h</b> (${fmt(maxV)} courses).`;
-    }
-
-    function drawProfil(){
-      const yearData = ds.heatmap[anSel.value] || {};
-      const vehs = Object.keys(yearData).sort();
-      const heures = yearData[vehs[0]]?.heures || [];
-      const cols = spread(vehs.length || 1);
-      const series = vehs.map((v, j) => {
-        const prof = heures.map((_, h) => yearData[v].matrice.reduce((s,row) => s + (row[h]||0), 0));
-        return { name:v, type:'line', smooth:true, symbol:'circle', symbolSize:5,
-                 data:prof, itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
-                 areaStyle:{ color:cols[j].replace('rgb','rgba').replace(')', ',.08)') } };
-      });
-      mk(`profil-${i}`).setOption({
-        ...BASE,
-        tooltip:{ trigger:'axis' },
-        legend:{ top:0, textStyle:{color:'#9fb8bc'} },
-        grid:{ left:70, right:24, top:40, bottom:40 },
-        xAxis:{ type:'category', data:heures.map(h=>h+'h'), boundaryGap:false, ...AX },
-        yAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
-                splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
-        series
-      }, true);
-      let peak = null;
-      vehs.forEach(v => {
-        const prof = heures.map((_, h) => (ds.heatmap[anSel.value][v].matrice.reduce((s,row)=>s+(row[h]||0),0)));
-        prof.forEach((val,h) => { if (!peak || val > peak.val) peak = {v, h, val}; });
-      });
-      document.getElementById(`tk-profil-${i}`).innerHTML = peak
-        ? `En ${anSel.value}, toutes fenêtres horaires confondues, le pic absolu revient à ` +
-          `<b>${peak.v}</b> à <b>${peak.h}h</b> (${fmt(peak.val)} courses sur la semaine). ` +
-          `Les légendes sont cliquables pour isoler un véhicule.`
-        : '';
-    }
-
-    anSel.addEventListener('change', () => { fillVeh(); draw(); drawProfil(); });
-    vtSel.addEventListener('change', draw);
-    fillVeh();
-    draw();
-    drawProfil();
+  if (sel.options.length !== zones.length){
+    sel.innerHTML = '';
+    zones.forEach(z => sel.add(new Option(zname(z), z)));
   }
+  const H = 1;
+  const centers = ds.prix_km.bins.map((b, k) => k + 0.5);
+  const zone = +sel.value;
+  const rows = ds.prix_km.rows.filter(r => r.zone === zone && STATE.years.has(r.annee));
+  const annees = [...new Set(rows.map(r => r.annee))].sort((a,b)=>a-b);
+  const maxCount = rows.length ? Math.max(...rows.map(r => Math.max(...r.hist)), 1) : 1;
+  const series = [];
+  annees.forEach((a, j) => {
+    const r = rows.find(x => x.annee === a);
+    const off = j * H;
+    const col = vcolor(annees.length > 1 ? j/(annees.length-1) : .5);
+    const pts = [[centers[0]-0.55, off]]
+      .concat(centers.map((c, k) => [c, off + (r.hist[k]/maxCount)*0.92]))
+      .concat([[centers[centers.length-1]+0.55, off]]);
+    series.push({
+      type:'line', smooth:true, symbol:'none', z:j+1, name:String(a), data:pts,
+      lineStyle:{ width:1.6, color:col },
+      areaStyle:{ color:col.replace('rgb','rgba').replace(')', ',.25)') }
+    });
+  });
+  mk(`ridge-${i}`).setOption({
+    ...BASE,
+    tooltip:{ formatter:p => `Année ${p.seriesName} · ` +
+      `${ds.prix_km.bins[Math.min(Math.max(Math.floor(p.value[0]),0), ds.prix_km.bins.length-1)]}` },
+    grid:{ left:60, right:30, top:20, bottom:50 },
+    xAxis:{ type:'value', min:-1, max:ds.prix_km.bins.length,
+            axisLabel:{ color:'#9fb8bc', formatter:v => Number.isInteger(v) ? v+'$' : '' },
+            splitLine:{ show:false } },
+    yAxis:{ type:'value', max:Math.max(annees.length,1)*H + 0.6,
+            axisLabel:{ show:false }, splitLine:{ show:false } },
+    series
+  }, true);
+  const last = rows.filter(r => r.annee === annees[annees.length-1]);
+  const moy = last.length ? last.reduce((s,r)=>s+r.prix_km_moyen*r.courses,0) /
+              last.reduce((s,r)=>s+r.courses,0) : null;
+  document.getElementById(`tk-ridge-${i}`).innerHTML =
+    `Distribution des prix/km pour <b>${zname(zone)}</b>, une crête par année ` +
+    `(de ${annees[0] ?? '—'} en bas — clair — à ${annees[annees.length-1] ?? '—'} en haut — foncé)` +
+    (moy != null ? `, moyenne ${fmt2(moy)} $/km la dernière année.` : '.');
+}
+document.getElementById(`zone-sel-${i}`).addEventListener('change', renderRidge);
 
-  /* ---------- Analyse 5 : météo ---------- */
-  {
-    const box = document.getElementById(`meteo-${i}`);
-    if (ds.meteo.statut === 'en_attente'){
-      box.innerHTML = `<div class="card warn"><div class="t">En attente de l'ingestion météo</div>
-        <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
-    } else {
-      box.innerHTML = `<div class="card"><div class="t">Table météo disponible</div>
-        <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
-    }
+function drawCmp(){
+  const picked = cmpGet ? cmpGet().map(Number) : CMP_ZONES;
+  const rowsF = ds.prix_km.rows.filter(r => picked.includes(r.zone) && STATE.years.has(r.annee));
+  const annees = [...new Set(rowsF.map(r => r.annee))].sort((a,b)=>a-b);
+  const cols = spread(picked.length || 1);
+  const series = picked.map((z, j) => ({
+    name: zname(z), type:'line', smooth:true, symbol:'circle', symbolSize:7,
+    data: annees.map(a => {
+      const r = rowsF.find(x => x.zone===z && x.annee===a);
+      return r && r.courses ? +(r.prix_km_moyen.toFixed(3)) : null;
+    }),
+    itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
+    emphasis:{ focus:'series' }
+  }));
+  mk(`cmpzone-${i}`).setOption({
+    ...BASE,
+    tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':fmt2(v)+' $/km' },
+    legend:{ top:0, textStyle:{color:'#9fb8bc'} },
+    grid:{ left:64, right:30, top:44, bottom:45 },
+    xAxis:{ type:'category', data:annees, ...AX },
+    yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9fb8bc'}, ...AX },
+    series
+  }, true);
+  const best = rowsF.length
+    ? rowsF.reduce((m,r) => r.prix_km_moyen < m.prix_km_moyen ? r : m) : null;
+  document.getElementById(`tk-cmpzone-${i}`).innerHTML = best
+    ? `Zone la moins chère au km parmi la sélection : <b>${zname(best.zone)}</b> ` +
+      `(${fmt2(best.prix_km_moyen)} $/km en ${best.annee}).`
+    : '';
+}
+
+/* ---------- analyse 4 : heatmap + profil ---------- */
+function fillHeatSelectors(){
+  const anSel = document.getElementById(`an-sel-${i}`);
+  const vtSel = document.getElementById(`vt-sel-${i}`);
+  const cur = anSel.value;
+  anSel.innerHTML = '';
+  ALL_YEARS.filter(y => STATE.years.has(y) && ds.heatmap[String(y)]).forEach(a =>
+    anSel.add(new Option(a, a)));
+  if ([...anSel.options].some(o => o.value === cur)) anSel.value = cur;
+  fillVt();
+}
+function fillVt(){
+  const anSel = document.getElementById(`an-sel-${i}`);
+  const vtSel = document.getElementById(`vt-sel-${i}`);
+  const cur = vtSel.value;
+  vtSel.innerHTML = '';
+  Object.keys(ds.heatmap[anSel.value] || {}).sort()
+    .filter(v => STATE.veh.has(v))
+    .forEach(v => vtSel.add(new Option(v, v)));
+  if ([...vtSel.options].some(o => o.value === cur)) vtSel.value = cur;
+}
+function renderHeat(){
+  const anSel = document.getElementById(`an-sel-${i}`);
+  const vtSel = document.getElementById(`vt-sel-${i}`);
+  const cell = (ds.heatmap[anSel.value] || {})[vtSel.value];
+  if (!cell){ mk(`heat-${i}`).clear(); return; }
+  let maxV = 0, bj=0, bh=0;
+  cell.matrice.forEach((row,j)=>row.forEach((v,h)=>{ if(v>maxV){maxV=v;bj=j;bh=h;} }));
+  const data = [];
+  cell.matrice.forEach((row,j)=>row.forEach((v,h)=>data.push([h,j,v])));
+  mk(`heat-${i}`).setOption({
+    ...BASE,
+    tooltip:{ position:'top',
+      formatter:p=>`${cell.jours[p.value[1]]} ${p.value[0]}h : ${fmt(p.value[2])} courses` },
+    grid:{ left:80, right:20, top:20, bottom:70 },
+    xAxis:{ type:'category', data:cell.heures.map(h=>h+'h'), splitArea:{show:true},
+            axisLine:{show:false}, axisTick:{show:false},
+            axisLabel:{color:'#9fb8bc', interval:1} },
+    yAxis:{ type:'category', data:cell.jours, inverse:true,
+            axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#eef4f4'} },
+    visualMap:{ min:0, max:maxV||1, calculable:false, orient:'horizontal', left:'center', bottom:6,
+      textStyle:{color:'#9fb8bc'}, inRange:{ color: VIRIDIS } },
+    series:[{ type:'heatmap', data, label:{show:false},
+      itemStyle:{ borderColor:'#1b313b', borderWidth:2 },
+      emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(233,196,106,.6)' } } }]
+  }, true);
+  document.getElementById(`tk-heat-${i}`).innerHTML =
+    `${anSel.value}, ${vtSel.value} : le créneau le plus chargé est ` +
+    `<b>${cell.jours[bj]} autour de ${bh}h-${(bh+1)%24}h</b> (${fmt(maxV)} courses).`;
+}
+function renderProfil(){
+  const anSel = document.getElementById(`an-sel-${i}`);
+  const yearData = ds.heatmap[anSel.value] || {};
+  const vehs = Object.keys(yearData).sort().filter(v => STATE.veh.has(v));
+  const heures = (yearData[vehs[0]] || {}).heures || [];
+  const cols = spread(vehs.length || 1);
+  const series = vehs.map((v, j) => {
+    const prof = heures.map((_, h) => yearData[v].matrice.reduce((s,row) => s + (row[h]||0), 0));
+    return { name:v, type:'line', smooth:true, symbol:'circle', symbolSize:5,
+             data:prof, itemStyle:{color:cols[j]}, lineStyle:{width:2.6, color:cols[j]},
+             areaStyle:{ color:cols[j].replace('rgb','rgba').replace(')', ',.08)') } };
+  });
+  mk(`profil-${i}`).setOption({
+    ...BASE,
+    tooltip:{ trigger:'axis' },
+    legend:{ top:0, textStyle:{color:'#9fb8bc'} },
+    grid:{ left:70, right:24, top:40, bottom:40 },
+    xAxis:{ type:'category', data:heures.map(h=>h+'h'), boundaryGap:false, ...AX },
+    yAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
+            splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
+    series
+  }, true);
+  let peak = null;
+  vehs.forEach(v => {
+    heures.forEach((_, h) => {
+      const val = yearData[v].matrice.reduce((s,row)=>s+(row[h]||0),0);
+      if (!peak || val > peak.val) peak = {v, h, val};
+    });
+  });
+  document.getElementById(`tk-profil-${i}`).innerHTML = peak
+    ? `En ${anSel.value}, le pic horaire absolu revient à <b>${peak.v}</b> à ` +
+      `<b>${peak.h}h</b> (${fmt(peak.val)} courses sur la semaine).`
+    : '';
+}
+document.getElementById(`an-sel-${i}`).addEventListener('change', () => { fillVt(); renderHeat(); renderProfil(); });
+document.getElementById(`vt-sel-${i}`).addEventListener('change', () => { renderHeat(); });
+
+/* ---------- analyse 5 : météo ---------- */
+{
+  const box = document.getElementById(`meteo-${i}`);
+  if (ds.meteo.statut === 'en_attente'){
+    box.innerHTML = `<div class="card warn"><div class="t">En attente de l'ingestion météo</div>
+      <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
+  } else {
+    box.innerHTML = `<div class="card"><div class="t">Table météo disponible</div>
+      <p style="color:var(--muted)">${ds.meteo.message}</p></div>`;
   }
+}
 
+/* ---------- orchestration des filtres ---------- */
+function applyFilters(){
+  STATE.years = new Set(getGY().map(Number));
+  STATE.veh = new Set(getGV());
+  renderKpis(); renderOverview(); renderTimeline(); renderSurcharge(); renderFlow();
+  renderRidge(); drawCmp(); fillHeatSelectors(); renderHeat(); renderProfil();
+  renderMap(); renderTopZones(); renderZoneCard();
+}
+
+buildCmpChips();
+renderKpis(); renderOverview(); renderTimeline(); renderSurcharge(); renderFlow();
+renderRidge(); fillHeatSelectors(); renderHeat(); renderProfil();
 });
 </script>
 </body>
