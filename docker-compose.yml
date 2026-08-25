@@ -1,0 +1,103 @@
+name: datalake-nyc-taxi-atelier
+
+# Image Spark personnalisee (jars S3A + deps python) construite localement
+x-spark-build: &spark-build
+  context: .
+  dockerfile: docker/Dockerfile
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio-atelier
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    # Ports hote decales (19xxx / 18081) pour coexister avec la stack DataLakeModule
+    ports:
+      - "19100:9000"
+      - "19101:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+      start_period: 10s
+
+  minio-setup:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $$MINIO_ROOT_USER $$MINIO_ROOT_PASSWORD &&
+      mc mb --ignore-existing local/bronze local/silver local/gold &&
+      echo '>> Buckets bronze / silver / gold prets'
+      "
+
+  spark-master:
+    image: datalake-spark:3.5.5
+    build: *spark-build
+    container_name: spark-master-atelier
+    hostname: spark-master
+    command: ["/opt/spark/sbin/start-master.sh"]
+    environment:
+      SPARK_NO_DAEMONIZE: "true"
+    ports:
+      - "18081:8080"
+    healthcheck:
+      test: ["CMD", "/usr/bin/bash", "-c", "</dev/tcp/spark-master/7077"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+
+  spark-worker:
+    image: datalake-spark:3.5.5
+    container_name: spark-worker-atelier
+    command: ["/opt/spark/sbin/start-worker.sh", "spark://spark-master:7077"]
+    depends_on:
+      spark-master:
+        condition: service_healthy
+    environment:
+      SPARK_NO_DAEMONIZE: "true"
+      SPARK_WORKER_CORES: "2"
+      SPARK_WORKER_MEMORY: "6G"
+
+  pipeline:
+    image: datalake-spark:3.5.5
+    build: *spark-build
+    profiles: ["jobs"]
+    depends_on:
+      minio-setup:
+        condition: service_completed_successfully
+      spark-master:
+        condition: service_healthy
+      spark-worker:
+        condition: service_started
+    environment:
+      SPARK_MASTER_URL: spark://spark-master:7077
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      RAW_DIR: /data/raw
+      SITE_DIR: /out/site
+      SAMPLE: ${SAMPLE:-0}
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - type: bind
+        source: ${DATA_PATH:-data}
+        target: /data/raw
+        read_only: true
+      - type: bind
+        source: ./dashboard/site
+        target: /out/site
+
+volumes:
+  minio-data:

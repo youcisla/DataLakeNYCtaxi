@@ -1,1 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Environnement local
+.env
+.env.*
+
+# Donnees brutes TLC (~8 Go) et lake local de test
 data/*
+lake_local/
+
+# Sorties du dashboard regenerees par make export && make site
+dashboard/site/
+
+# Docker / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
