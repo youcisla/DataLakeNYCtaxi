@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -148,6 +148,7 @@
   <a href="#analyse2-{{i}}">Flux</a>
   <a href="#analyse3-{{i}}">Prix/km</a>
   <a href="#analyse4-{{i}}">Activité</a>
+  <a href="#analyse6-{{i}}">Distance</a>
   <a href="#analyse5-{{i}}">Météo</a>
   {% endfor %}
 </nav>
@@ -169,7 +170,7 @@
     des ans (GPS brut avant juillet&nbsp;2016, identifiants de zone ensuite, suppléments apparus
     progressivement). Un pipeline en une seule commande&nbsp;: ingestion telle quelle dans un stockage
     objet, réconciliation distribuée avec Spark (<code>{{ payload.spark_master }}</code>), agrégats
-    métier, puis ce dashboard statique — habillé avec la palette
+    métier, puis ce dashboard statique. Habillage :
     <code>#264653 · #2a9d8f · #e9c46a · #f4a261 · #e76f51</code>, heatmap et carte en
     <code>viridis</code> 100 pas, du clair au foncé. Les filtres années × véhicules de la barre
     ci-dessus pilotent tous les graphiques ; cliquez une zone sur la carte pour la mettre au focus.
@@ -254,7 +255,7 @@
 <section id="timeline-{{i}}">
   <div class="sec-head"><span class="idx">03</span><h2>Chronologie mensuelle</h2></div>
   <blockquote>«&nbsp;Comment l'activité évolue-t-elle mois par mois, par type de véhicule&nbsp;?&nbsp;»
-  — empilements par véhicule, zoom par glissement (slider) ou molette.</blockquote>
+  Empilements par véhicule, zoom au slider ou à la molette.</blockquote>
   <div id="tl-{{i}}" class="chart" style="height:420px"></div>
   <div class="takeaway" id="tk-tl-{{i}}"></div>
 </section>
@@ -271,6 +272,8 @@
       <button data-v="dropoffs">Arrivées</button>
       <button data-v="tarif">Tarif moyen</button>
       <button data-v="prix_km">Prix/km</button>
+      <button data-v="pluie">Prix/km sous la pluie</button>
+      <button data-v="ratio_pluie">Pluie / dégagé</button>
     </div>
     <label>Couches</label>
     <div class="seg" id="map-arcs-{{i}}">
@@ -279,7 +282,7 @@
     </div>
   </div>
   <div class="mapgrid">
-    <div id="map-{{i}}" class="chart" style="height:620px"></div>
+    <div id="map-{{i}}" class="chart" style="height:620px"><p class="empty" style="padding-top:270px">Chargement de la carte des 263 zones…</p></div>
     <div>
       <div class="chart-title"><b>Top zones (filtre courant)</b><span>départs</span></div>
       <div id="topz-{{i}}" class="chart chart-pad" style="height:330px"></div>
@@ -332,13 +335,13 @@
   <blockquote>«&nbsp;Un ridgeline plot montrant l'évolution des prix par km au fil des années, pour une zone
      de départ donnée.&nbsp;»</blockquote>
   <div class="controls">
-    <label>Ridgeline — zone</label>
+    <label>Ridgeline, zone</label>
     <select id="zone-sel-{{i}}"></select>
   </div>
   <div id="ridge-{{i}}" class="chart" style="height:520px"></div>
   <div class="takeaway" id="tk-ridge-{{i}}"></div>
 
-  <div class="chart-title" style="margin-top:34px"><b>Comparateur de zones</b><span>prix/km moyen pondéré par année — cochez plusieurs zones pour les superposer</span></div>
+  <div class="chart-title" style="margin-top:34px"><b>Comparateur de zones</b><span>prix/km moyen pondéré par année. Cochez plusieurs zones pour les superposer</span></div>
   <div class="controls">
     <label>Zones</label>
     <div class="chips" id="zone-chips-{{i}}"></div>
@@ -360,13 +363,30 @@
   <div id="heat-{{i}}" class="chart" style="height:450px"></div>
   <div class="takeaway" id="tk-heat-{{i}}"></div>
 
-  <div class="chart-title" style="margin-top:34px"><b>Profil horaire</b><span>somme des 7 jours — tous les véhicules de l'année sélectionnée</span></div>
+  <div class="chart-title" style="margin-top:34px"><b>Profil horaire</b><span>somme des 7 jours, tous les véhicules de l'année sélectionnée</span></div>
   <div id="profil-{{i}}" class="chart" style="height:330px"></div>
   <div class="takeaway" id="tk-profil-{{i}}"></div>
 </section>
 
+<section id="analyse6-{{i}}">
+  <div class="sec-head"><span class="idx">09</span><h2>Distance et pourboire</h2></div>
+  <blockquote>«&nbsp;Le prix au km s'effondre-t-il sur les longs trajets ? Et le pourboire
+     suit-il les années ?&nbsp;»</blockquote>
+  <div class="duo">
+    <div>
+      <div class="chart-title"><b>Prix/km par bande de distance</b><span>une courbe par année · filtres globaux actifs</span></div>
+      <div id="dist-{{i}}" class="chart chart-pad" style="height:360px"></div>
+    </div>
+    <div>
+      <div class="chart-title"><b>Taux de pourboire par année</b><span>pourboires cumulés / tarifs cumulés · légende cliquable</span></div>
+      <div id="tips-{{i}}" class="chart chart-pad" style="height:360px"></div>
+    </div>
+  </div>
+  <div class="takeaway" id="tk-dist-{{i}}"></div>
+</section>
+
 <section id="analyse5-{{i}}">
-  <div class="sec-head"><span class="idx">09</span><h2>Écart de prix selon la météo</h2></div>
+  <div class="sec-head"><span class="idx">10</span><h2>Écart de prix selon la météo</h2></div>
   <blockquote>«&nbsp;Comparer le prix des courses (par km) selon les conditions météo au moment de la course,
      par rapport au prix moyen général.&nbsp;»</blockquote>
   <div id="meteo-{{i}}"></div>
@@ -398,7 +418,7 @@ function mk(id){
   if (!cache[id]) { cache[id] = echarts.init(el); charts.push(cache[id]); }
   return cache[id];
 }
-window.addEventListener('resize', () => charts.forEach(c => c.resize()));
+window.addEventListener('resize', () => charts.forEach(c => { if (!c.isDisposed()) c.resize(); }));
 
 /* ---------- palettes ---------- */
 const SUP_COLORS = {
@@ -487,6 +507,25 @@ function filteredZS(){
 /* ---------- barre de filtres globale ---------- */
 const getGY = chipBox('g-years', ALL_YEARS, applyFilters, {fmt: v => String(v)});
 const getGV = chipBox('g-veh', ALL_VEH, applyFilters, {fmt: v => v});
+
+/* Filtres partageables : #f=2009,2016|yellow,green */
+function readHash(){
+  const m = location.hash.match(/f=([^&]+)/);
+  if (!m) return;
+  const parts = decodeURIComponent(m[1]).split('|');
+  if (parts[0]){
+    const ys = parts[0].split(',').map(Number).filter(y => ALL_YEARS.includes(y));
+    if (ys.length) STATE.years = new Set(ys);
+  }
+  if (parts[1]){
+    const vs = parts[1].split(',').filter(v => ALL_VEH.includes(v));
+    if (vs.length) STATE.veh = new Set(vs);
+  }
+  document.querySelectorAll('#g-years input').forEach(c => c.checked = STATE.years.has(+c.value));
+  document.querySelectorAll('#g-veh input').forEach(c => c.checked = STATE.veh.has(c.value));
+}
+readHash();
+
 document.getElementById('g-reset').addEventListener('click', () => {
   STATE.years = new Set(ALL_YEARS); STATE.veh = new Set(ALL_VEH);
   STATE.zone = null;
@@ -495,10 +534,19 @@ document.getElementById('g-reset').addEventListener('click', () => {
 });
 
 /* ---------- KPI dynamiques ---------- */
+function countUp(el, target){
+  const start = performance.now(), dur = 600;
+  function step(t){
+    const p = Math.min((t - start) / dur, 1);
+    el.textContent = fmt(target * (1 - Math.pow(1 - p, 3)));
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
 function renderKpis(){
   const tl = filteredTL();
   const total = tl.reduce((s,r) => s + r.courses, 0);
-  document.querySelector(`[data-kpi="total-${i}"]`).textContent = fmt(total);
+  countUp(document.querySelector(`[data-kpi="total-${i}"]`), total);
   if (tl.length){
     const keys = tl.map(r => r.annee * 100 + r.mois).sort((a,b) => a-b);
     const lo = keys[0], hi = keys[keys.length-1];
@@ -596,6 +644,11 @@ let CP = {};
 fetch(GEO_URL).then(r => r.json()).then(gj => {
   echarts.registerMap('nyczones', {geoJSON: gj});
   gj.features.forEach(f => { CP[f.properties.locationid] = f.properties.cp; });
+  /* le placeholder texte a coexiste avec l'instance creee au chargement du script :
+     on nettoie le DOM ET on re-initialise l'instance sur un div propre. */
+  const mapEl = document.getElementById(`map-${i}`);
+  mapEl.innerHTML = '';
+  if (cache[`map-${i}`]){ cache[`map-${i}`].dispose(); delete cache[`map-${i}`]; }
   renderMap(); renderTopZones();
 }).catch(() => {
   document.getElementById(`map-${i}`).innerHTML =
@@ -614,22 +667,49 @@ function zoneAgg(){
   });
   return Object.values(by);
 }
+/* Prix/km par zone et condition météo (toutes années confondues), pour la carte. */
+const WZONE = {};
+if (ds.meteo.statut === 'ok'){
+  ds.meteo.zone_rows.forEach(r => {
+    const b = WZONE[r.zone] = WZONE[r.zone] || {};
+    b[r.condition] = {v: r.prix_km_moyen, c: r.courses};
+  });
+}
 function metricValue(b, metric){
   if (metric === 'pickups') return b.pickups;
   if (metric === 'dropoffs') return b.dropoffs;
   if (metric === 'tarif') return b.tarifN ? b.tarifS / b.tarifN : null;
+  if (metric === 'pluie'){
+    const w = WZONE[b.zone];
+    return (w && w['Pluie'] && w['Pluie'].c >= 200) ? w['Pluie'].v : null;
+  }
+  if (metric === 'ratio_pluie'){
+    const w = WZONE[b.zone];
+    if (w && w['Pluie'] && w['Dégagé'] && w['Pluie'].c >= 200 && w['Dégagé'].c >= 200)
+      return w['Pluie'].v / w['Dégagé'].v;
+    return null;
+  }
   return b.pkN ? b.pkS / b.pkN : null;
 }
-const METRIC_LABEL = {pickups:'départs', dropoffs:'arrivées', tarif:'tarif moyen $', prix_km:'$/km moyen'};
+const METRIC_LABEL = {pickups:'départs', dropoffs:'arrivées', tarif:'tarif moyen $',
+                      prix_km:'$/km moyen', pluie:'$/km sous la pluie',
+                      ratio_pluie:'ratio pluie / dégagé'};
 
 function renderMap(){
   const agg = zoneAgg();
   const metric = STATE.mapMetric;
   const vals = agg.map(b => metricValue(b, metric)).filter(v => v != null && v > 0);
-  const data = agg.map(b => ({ name: zname(b.zone), value: metricValue(b, metric),
-    locationid: b.zone, borough: zbor(b.zone),
-    pickups: b.pickups, dropoffs: b.dropoffs,
-    tarif: b.tarifN ? b.tarifS/b.tarifN : null, pk: b.pkN ? b.pkS/b.pkN : null }));
+  const data = agg.map(b => {
+    const w = WZONE[b.zone] || {};
+    const pluie = (w['Pluie'] && w['Pluie'].c >= 200) ? w['Pluie'].v : null;
+    const clair = (w['Dégagé'] && w['Dégagé'].c >= 200) ? w['Dégagé'].v : null;
+    return { name: zname(b.zone), value: metricValue(b, metric),
+      locationid: b.zone, borough: zbor(b.zone),
+      pickups: b.pickups, dropoffs: b.dropoffs,
+      tarif: b.tarifN ? b.tarifS/b.tarifN : null, pk: b.pkN ? b.pkS/b.pkN : null,
+      pluie, clair, ratio: (pluie != null && clair != null) ? pluie/clair : null,
+      pluieN: w['Pluie'] ? w['Pluie'].c : 0 };
+  });
   const series = [{
     type:'map', map:'nyczones', roam:true, geoIndex:0,
     selectedMode:'single',
@@ -659,14 +739,22 @@ function renderMap(){
     tooltip:{ formatter:p => {
       if (p.seriesType === 'lines') return '';
       const d = p.data || {};
+      let extra = '';
+      if (STATE.mapMetric === 'pluie' && d.pluie != null)
+        extra = `<br>Prix/km sous la pluie : ${fmt2(d.pluie)} (${fmt(d.pluieN)} courses)`;
+      if (STATE.mapMetric === 'ratio_pluie' && d.ratio != null)
+        extra = `<br>Pluie / dégagé : ${fmt2(d.ratio)} (pluie ${fmt2(d.pluie)}, dégagé ${fmt2(d.clair)})`;
       return `<b>${p.name}</b> <span style="color:#6d8a90">· ${d.borough || '?'}</span><br>` +
         `Départs : ${fmt(d.pickups || 0)}<br>Arrivées : ${fmt(d.dropoffs || 0)}<br>` +
         `Tarif moyen : ${d.tarif != null ? '$'+fmt2(d.tarif) : '—'}<br>` +
-        `Prix/km : ${d.pk != null ? fmt2(d.pk) : '—'}`;
+        `Prix/km : ${d.pk != null ? fmt2(d.pk) : '—'}` + extra;
     } },
-    visualMap:{ min:0, max: Math.max(...vals, 1), calculable:true, orient:'vertical',
+    visualMap:{ min: metric === 'ratio_pluie' ? Math.min(0.85, ...(vals.length ? vals : [1])) : 0,
+      max: metric === 'ratio_pluie' ? Math.max(1.15, ...(vals.length ? vals : [1])) : Math.max(...vals, 1),
+      calculable:true, orient:'vertical',
       right:8, top:'center', textStyle:{color:'#9fb8bc'},
-      inRange:{ color: VIRIDIS } },
+      inRange:{ color: VIRIDIS },
+      outOfRange:{ areaColor:'#24363f' } },
     series
   }, true);
   const top = [...agg].sort((a,b) => b.pickups - a.pickups)[0];
@@ -674,7 +762,7 @@ function renderMap(){
     ? `Zone la plus active sur le filtre courant : <b>${zname(top.zone)}</b> ` +
       `(${zbor(top.zone)}) avec ${fmt(top.pickups)} départs. ` +
       `Cliquez une zone sur la carte pour la mettre au focus${STATE.zone != null
-        ? ` — focus actuel : <b>${zname(STATE.zone)}</b>.` : '.'}`
+        ? `. Focus actuel : <b>${zname(STATE.zone)}</b>.` : '.'}`
     : 'Aucune donnée zonée dans le filtre courant (2009 = GPS brut, sans LocationID).';
 }
 
@@ -1055,6 +1143,69 @@ function renderProfil(){
 document.getElementById(`an-sel-${i}`).addEventListener('change', () => { fillVt(); renderHeat(); renderProfil(); });
 document.getElementById(`vt-sel-${i}`).addEventListener('change', () => { renderHeat(); });
 
+/* ---------- analyse 6 : distance + pourboire ---------- */
+function renderDistanceTips(){
+  const anneesF = [...STATE.years].sort((a,b) => a-b);
+
+  /* prix/km par bande de distance : une courbe par annee */
+  {
+    const rows = ds.distance.rows.filter(r => STATE.years.has(r.annee));
+    const series = anneesF.map((a, j) => {
+      const col = vcolor(anneesF.length > 1 ? j/(anneesF.length-1) : .5);
+      return { name:String(a), type:'line', smooth:true, symbol:'circle', symbolSize:6,
+        data: ds.distance.bandes.map(b => {
+          const r = rows.find(x => x.annee === a && x.bande === b);
+          return r ? r.prix_km_moyen : null;
+        }),
+        itemStyle:{color:col}, lineStyle:{width:2.4, color:col} };
+    });
+    mk(`dist-${i}`).setOption({
+      ...BASE,
+      tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':fmt2(v)+' $/km' },
+      legend:{ top:0, textStyle:{color:'#9fb8bc'} },
+      grid:{ left:56, right:20, top:36, bottom:50 },
+      xAxis:{ type:'category', data:ds.distance.bandes, ...AX },
+      yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9fb8bc'}, ...AX },
+      series
+    }, true);
+    const short = rows.filter(r => r.bande === '0-1 km');
+    const long = rows.filter(r => r.bande === '20+ km');
+    if (short.length && long.length){
+      const sAvg = short.reduce((s,r)=>s+r.prix_km_moyen*r.courses,0)/short.reduce((s,r)=>s+r.courses,0);
+      const lAvg = long.reduce((s,r)=>s+r.prix_km_moyen*r.courses,0)/long.reduce((s,r)=>s+r.courses,0);
+      document.getElementById(`tk-dist-${i}`).innerHTML =
+        `Une course de moins d'1 km coûte <b>${fmt2(sAvg)} $/km</b> contre ` +
+        `<b>${fmt2(lAvg)} $/km</b> au-delà de 20 km, soit ` +
+        `<b>${fmt2(sAvg/lAvg)}× plus cher au kilomètre</b> : la prise en charge est amortie ` +
+        `sur la durée, pas sur la distance.`;
+    }
+  }
+
+  /* taux de pourboire par annee : une courbe par vehicule */
+  {
+    const rows = ds.tips.rows.filter(r => STATE.years.has(r.annee) && STATE.veh.has(r.vehicle));
+    const vehs = ALL_VEH.filter(v => STATE.veh.has(v) && rows.some(r => r.vehicle === v));
+    const cols = spread(vehs.length || 1);
+    const series = vehs.map((v, j) => ({
+      name:v, type:'line', smooth:true, symbol:'circle', symbolSize:6,
+      data: anneesF.map(a => {
+        const r = rows.find(x => x.annee === a && x.vehicle === v);
+        return r ? r.taux_pct : null;
+      }),
+      itemStyle:{color:cols[j]}, lineStyle:{width:2.4, color:cols[j]}
+    }));
+    mk(`tips-${i}`).setOption({
+      ...BASE,
+      tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':fmt2(v)+' % du tarif' },
+      legend:{ top:0, textStyle:{color:'#9fb8bc'} },
+      grid:{ left:56, right:20, top:36, bottom:50 },
+      xAxis:{ type:'category', data:anneesF.map(String), ...AX },
+      yAxis:{ type:'value', name:'% du tarif', nameTextStyle:{color:'#9fb8bc'}, ...AX },
+      series
+    }, true);
+  }
+}
+
 /* ---------- analyse 5 : météo ---------- */
 let weatherReady = false;
 function renderWeather(){
@@ -1074,6 +1225,9 @@ function renderWeather(){
       <div class="chart-title" style="margin-top:20px"><b>Prix/km selon la température</b>
         <span>bandes de 10°C à l'heure de la course</span></div>
       <div id="wtemp-${i}" class="chart" style="height:360px"></div>
+      <div class="chart-title" style="margin-top:20px"><b>Heatmap condition × heure</b>
+        <span>prix/km moyen, 24h × météo · viridis du clair au foncé</span></div>
+      <div id="wheat-${i}" class="chart" style="height:360px"></div>
       <div class="takeaway" id="tk-meteo-${i}"></div>`;
     weatherReady = true;
   }
@@ -1121,6 +1275,45 @@ function renderWeather(){
   }
   drawChart(`wcond-${i}`, ds.meteo.rows, 'condition', ds.meteo.conditions);
   drawChart(`wtemp-${i}`, ds.meteo.temp_rows, 'bande', ds.meteo.temp_bandes);
+
+  /* heatmap condition x heure */
+  {
+    const hRows = pick(ds.meteo.hour_rows || []);
+    const aggH = {};
+    hRows.forEach(r => {
+      const b = aggH[r.condition + '_' + r.heure] =
+        aggH[r.condition + '_' + r.heure] || {c:0, s:0};
+      b.c += r.courses; b.s += r.prix_km_moyen * r.courses;
+    });
+    const conds = ds.meteo.conditions.filter(c =>
+      ds.meteo.hour_rows.some(r => r.condition === c && STATE.years.has(r.annee)));
+    const data = [];
+    let maxV = 0;
+    conds.forEach((c, yi) => {
+      for (let h = 0; h < 24; h++){
+        const b = aggH[c + '_' + h];
+        if (b && b.c){ data.push([h, yi, +(b.s/b.c).toFixed(2)]); if (b.s/b.c > maxV) maxV = b.s/b.c; }
+      }
+    });
+    mk(`wheat-${i}`).setOption({
+      ...BASE,
+      tooltip:{ position:'top',
+        formatter:p => `<b>${conds[p.value[1]]}</b> à ${p.value[0]}h<br>` +
+          `${fmt2(p.value[2])} $/km en moyenne` },
+      grid:{ left:80, right:20, top:16, bottom:60 },
+      xAxis:{ type:'category', data:[...Array(24).keys()].map(h => h + 'h'),
+              splitArea:{show:true}, axisLine:{show:false}, axisTick:{show:false},
+              axisLabel:{color:'#9fb8bc', interval:2} },
+      yAxis:{ type:'category', data:conds, inverse:true,
+              axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#eef4f4'} },
+      visualMap:{ min:0, max:maxV || 1, calculable:true, orient:'horizontal',
+        left:'center', bottom:4, textStyle:{color:'#9fb8bc'}, inRange:{ color: VIRIDIS } },
+      series:[{ type:'heatmap', data,
+        itemStyle:{ borderColor:'#1b313b', borderWidth:2 },
+        emphasis:{ itemStyle:{ shadowBlur:8, shadowColor:'rgba(233,196,106,.6)' } } }]
+    }, true);
+  }
+
   const condAgg = aggBy(ds.meteo.rows, 'condition');
   const chere = condAgg[0], cmoins = condAgg[condAgg.length-1];
   document.getElementById(`tk-meteo-${i}`).innerHTML =
@@ -1137,14 +1330,17 @@ renderWeather();
 function applyFilters(){
   STATE.years = new Set(getGY().map(Number));
   STATE.veh = new Set(getGV());
+  history.replaceState(null, '', '#f=' + [...STATE.years].join(',') + '|' + [...STATE.veh].join(','));
   renderKpis(); renderOverview(); renderTimeline(); renderSurcharge(); renderFlow();
   renderRidge(); drawCmp(); fillHeatSelectors(); renderHeat(); renderProfil();
+  renderDistanceTips();
   renderMap(); renderTopZones(); renderZoneCard(); renderWeather();
 }
 
 buildCmpChips();
 renderKpis(); renderOverview(); renderTimeline(); renderSurcharge(); renderFlow();
 renderRidge(); fillHeatSelectors(); renderHeat(); renderProfil();
+renderDistanceTips();
 });
 </script>
 </body>

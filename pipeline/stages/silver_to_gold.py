@@ -191,22 +191,6 @@ def weather_deviation(spark, s3, trips_base):
         f"{lake_uri(config.BUCKET_SILVER, config.DATASET_ID)}/weather")
     trips = spark.read.parquet(trips_base)
 
-    hourly = (
-        trips.filter((F.col("trip_distance") > 0) & F.col("total_amount").isNotNull())
-             .groupBy("year", "month",
-                      F.dayofmonth("pickup_ts").alias("jour"),
-                      F.hour("pickup_ts").alias("heure"), "vehicle_type")
-             .agg(F.count("*").alias("courses"),
-                  F.sum("total_amount").alias("somme_total"),
-                  F.sum("trip_distance").alias("somme_km"))
-    )
-    joined = hourly.join(
-        weather.select("ts", "temperature", "weather_code",
-                       F.year("ts").alias("year"), F.month("ts").alias("month"),
-                       F.dayofmonth("ts").alias("jour"), F.hour("ts").alias("heure")),
-        ["year", "month", "jour", "heure"], "inner"
-    ).withColumn("prix_km", F.col("somme_total") / F.col("somme_km"))
-
     def categorie(code):
         return (F.when(code.isNull(), "Inconnu")
                  .when(code == 0, "Dégagé")
@@ -217,6 +201,38 @@ def weather_deviation(spark, s3, trips_base):
                  .when(code < 83, "Averses")
                  .when(code < 95, "Neige")
                  .otherwise("Orage"))
+
+    wdim = weather.select(
+        "ts", "temperature", "weather_code",
+        F.year("ts").alias("year"), F.month("ts").alias("month"),
+        F.dayofmonth("ts").alias("jour"), F.hour("ts").alias("heure"))
+
+    hourly = (
+        trips.filter((F.col("trip_distance") > 0) & F.col("total_amount").isNotNull())
+             .groupBy("year", "month",
+                      F.dayofmonth("pickup_ts").alias("jour"),
+                      F.hour("pickup_ts").alias("heure"), "vehicle_type")
+             .agg(F.count("*").alias("courses"),
+                  F.sum("total_amount").alias("somme_total"),
+                  F.sum("trip_distance").alias("somme_km"))
+    )
+    joined = (hourly.join(wdim, ["year", "month", "jour", "heure"], "inner")
+                    .withColumn("prix_km", F.col("somme_total") / F.col("somme_km"))
+                    .withColumn("condition", categorie(F.col("weather_code"))))
+
+    # Variante par zone de depart : pour la carte « prix/km sous la pluie ».
+    hourly_z = (
+        trips.filter((F.col("trip_distance") > 0) & F.col("total_amount").isNotNull()
+                     & F.col("pulocation_id").isNotNull())
+             .groupBy("year", "month",
+                      F.dayofmonth("pickup_ts").alias("jour"),
+                      F.hour("pickup_ts").alias("heure"), "pulocation_id")
+             .agg(F.count("*").alias("courses"),
+                  F.sum("total_amount").alias("somme_total"),
+                  F.sum("trip_distance").alias("somme_km"))
+    )
+    joined_z = (hourly_z.join(wdim, ["year", "month", "jour", "heure"], "inner")
+                      .withColumn("condition", categorie(F.col("weather_code"))))
 
     def bande(temp):
         return (F.when(temp < 0, "< 0°C")
@@ -243,17 +259,70 @@ def weather_deviation(spark, s3, trips_base):
                   "prix_km_moyen": round(float(r["tot"]) / float(r["km"]), 2)}
                  for r in glob]
 
+    hour_rows = (joined.groupBy("year", "condition", "heure")
+                       .agg(F.sum("courses").alias("courses"),
+                            F.sum("somme_total").alias("tot"),
+                            F.sum("somme_km").alias("km")).collect())
+    hour_rows = [{"annee": int(r["year"]), "condition": r["condition"],
+                  "heure": int(r["heure"]), "courses": int(r["courses"]),
+                  "prix_km_moyen": round(float(r["tot"]) / float(r["km"]), 2)}
+                 for r in hour_rows]
+
+    zone_rows = (joined_z.groupBy("pulocation_id", "condition")
+                         .agg(F.sum("courses").alias("courses"),
+                              F.sum("somme_total").alias("tot"),
+                              F.sum("somme_km").alias("km")).collect())
+    zone_rows = [{"zone": int(r["pulocation_id"]), "condition": r["condition"],
+                  "courses": int(r["courses"]),
+                  "prix_km_moyen": round(float(r["tot"]) / float(r["km"]), 2)}
+                 for r in zone_rows if r["courses"] >= 200]
+
     return {
         "statut": "ok",
         "conditions": ["Dégagé", "Nuageux", "Brouillard", "Pluie", "Neige", "Averses", "Orage"],
-        "rows": agg_rows(joined.withColumn("condition", categorie(F.col("weather_code"))),
-                         "condition"),
+        "rows": agg_rows(joined, "condition"),
         "temp_bandes": ["< 0°C", "0-10°C", "10-20°C", "20-30°C", "≥ 30°C"],
         "temp_rows": agg_rows(joined.withColumn("bande", bande(F.col("temperature"))),
                               "bande"),
         "global_rows": glob_rows,
+        "hour_rows": hour_rows,
+        "zone_rows": zone_rows,
         "message": "Jointure horaire course × météo Open-Meteo (heure locale NYC).",
     }
+
+
+def price_by_distance(trips):
+    # Le prix au km chute avec la distance : course courte = prise en charge amortie
+    # sur quelques kilometres seulement.
+    d = F.col("trip_distance")
+    bande = (F.when(d < 1, "0-1 km").when(d < 2, "1-2 km").when(d < 5, "2-5 km")
+              .when(d < 10, "5-10 km").when(d < 20, "10-20 km").otherwise("20+ km"))
+    rows = (trips.filter((d > 0) & F.col("total_amount").isNotNull())
+                 .groupBy("year", bande.alias("bande"))
+                 .agg(F.count("*").alias("courses"),
+                      F.sum("total_amount").alias("tot"),
+                      F.sum("trip_distance").alias("km"))
+                 .collect())
+    out = [{"annee": int(r["year"]), "bande": r["bande"], "courses": int(r["courses"]),
+            "prix_km_moyen": round(float(r["tot"]) / float(r["km"]), 2)}
+           for r in rows if r["km"]]
+    return {"bandes": ["0-1 km", "1-2 km", "2-5 km", "5-10 km", "10-20 km", "20+ km"],
+            "rows": out}
+
+
+def tip_rates(trips):
+    # Taux de pourboire = pourboires cumules / tarifs cumules, par annee et vehicule.
+    rows = (trips.filter(F.col("tip_amount").isNotNull() & (F.col("fare_amount") > 0))
+                 .groupBy("year", "vehicle_type")
+                 .agg(F.count("*").alias("courses"),
+                      F.round(F.sum("tip_amount") / F.sum("fare_amount") * 100, 2)
+                       .alias("taux"),
+                      F.round(F.avg("tip_amount"), 2).alias("pourboire_moyen"))
+                 .collect())
+    return {"rows": [{"annee": int(r["year"]), "vehicle": r["vehicle_type"],
+                      "courses": int(r["courses"]), "taux_pct": float(r["taux"]),
+                      "pourboire_moyen": float(r["pourboire_moyen"])}
+                     for r in rows]}
 
 
 def main():
@@ -308,6 +377,10 @@ def main():
         zones_stats = zone_stats(trips)
         timeline = monthly_timeline(trips)
 
+        # ---- Analyse 7 : prix/km par distance + taux de pourboire ---------
+        distance = price_by_distance(trips)
+        tips = tip_rates(trips)
+
         # ---- Ecriture dans gold ------------------------------------------
         gk = f"{ds}/"
         put_json(s3, config.BUCKET_GOLD, gk + "kpis.json", kpis)
@@ -319,6 +392,8 @@ def main():
         put_json(s3, config.BUCKET_GOLD, gk + "zone_stats.json", zones_stats)
         put_json(s3, config.BUCKET_GOLD, gk + "timeline.json", timeline)
         put_json(s3, config.BUCKET_GOLD, gk + "zone_lookup.json", zone_lookup())
+        put_json(s3, config.BUCKET_GOLD, gk + "distance.json", distance)
+        put_json(s3, config.BUCKET_GOLD, gk + "tips.json", tips)
         put_json(s3, config.BUCKET_GOLD, gk + "meta.json", {
             "dataset_id": ds,
             "source_dir": man.get("source_dir"),
