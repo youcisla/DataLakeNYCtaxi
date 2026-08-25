@@ -9,18 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b0d10; --bg2:#0e1114; --panel:#14181e; --panel2:#171c23;
+    --bg:#13222a; --bg2:#0f1b22; --panel:#1b313b; --panel2:#203844;
     --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.16);
-    --text:#eceef1; --muted:#9aa3ad; --dim:#68717c;
-    --v-y:#fde725; --v-l:#a0da39; --v-g:#2db27d; --v-t:#21918c; --v-b:#365c8d; --v-p:#46327e;
-    --accent:var(--v-t); --accent2:var(--v-g);
-    --bronze:#cd7f32; --silver:#c0c5ce; --gold:var(--v-y);
+    --text:#eef4f4; --muted:#9fb8bc; --dim:#6d8a90;
+    --slate:#264653; --teal:#2a9d8f; --sand:#e9c46a; --orange:#f4a261; --red:#e76f51;
+    --accent:var(--teal); --accent2:var(--sand);
+    --bronze:var(--orange); --silver:#c0c5ce; --gold:var(--sand);
     --r:16px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;line-height:1.55}
-  ::selection{background:var(--v-t);color:#04121a}
+  ::selection{background:var(--teal);color:#04121a}
   .mono{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
   a{color:inherit}
   h1,h2,h3,.brand,.num{font-family:"Space Grotesk","Segoe UI",sans-serif}
@@ -36,9 +36,9 @@
   .kicker{font-family:"JetBrains Mono",monospace;color:var(--accent);text-transform:uppercase;
           letter-spacing:3px;font-size:.74rem;font-weight:600}
   h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.08;margin:14px 0 16px;letter-spacing:-.5px}
-  h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1.5px var(--v-y)}
+  h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1.5px var(--sand)}
   .sub{max-width:840px;color:var(--muted);font-size:1.05rem}
-  .sub code{font-family:"JetBrains Mono",monospace;color:var(--v-g);font-size:.95em}
+  .sub code{font-family:"JetBrains Mono",monospace;color:var(--teal);font-size:.95em}
   .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
   .badge{border:1px solid var(--line);background:var(--panel2);padding:7px 13px;border-radius:999px;
          font-size:.82rem;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
@@ -68,7 +68,7 @@
   .arrow{align-self:center;color:var(--dim);font-size:1.5rem}
   @media(max-width:900px){.layers{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}}
   .cmd{margin-top:26px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;
-       padding:15px 20px;color:#9fe8c8;font-family:"JetBrains Mono",monospace;overflow-x:auto;white-space:nowrap}
+       padding:15px 20px;color:#e9c46a;font-family:"JetBrains Mono",monospace;overflow-x:auto;white-space:nowrap}
   .cmd .cmt{color:var(--dim)}
 
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px;margin-top:26px}
@@ -84,9 +84,9 @@
   .chart-pad{padding:10px}
   .chart-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px 0;color:var(--muted);font-size:.9rem}
   .chart-title b{color:var(--text);font-weight:600}
-  .takeaway{margin-top:14px;background:color-mix(in srgb,var(--v-g) 7%,transparent);border:1px solid color-mix(in srgb,var(--v-g) 25%,transparent);
+  .takeaway{margin-top:14px;background:color-mix(in srgb,var(--teal) 7%,transparent);border:1px solid color-mix(in srgb,var(--teal) 25%,transparent);
             border-radius:12px;padding:13px 18px;font-size:.94rem;color:var(--text)}
-  .takeaway::before{content:"Lecture : ";color:var(--v-g);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;margin-right:6px}
+  .takeaway::before{content:"Lecture : ";color:var(--teal);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;margin-right:6px}
   .empty{padding:34px;text-align:center;color:var(--muted)}
 
   .controls{display:flex;gap:18px;row-gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
@@ -102,14 +102,14 @@
   .chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
   .chip span{display:inline-block;padding:6px 13px;border-radius:999px;border:1px solid var(--line2);
              color:var(--muted);font-size:.86rem;transition:.15s}
-  .chip input:checked + span{background:color-mix(in srgb,var(--cc,var(--v-t)) 20%,transparent);
-             border-color:var(--cc,var(--v-t));color:var(--text)}
-  .chip:hover span{border-color:var(--cc,var(--v-t))}
+  .chip input:checked + span{background:color-mix(in srgb,var(--cc,var(--teal)) 20%,transparent);
+             border-color:var(--cc,var(--teal));color:var(--text)}
+  .chip:hover span{border-color:var(--cc,var(--teal))}
   .hint{color:var(--dim);font-size:.8rem;margin-top:8px}
 
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-top:14px}
-  .card.warn{border-color:color-mix(in srgb,var(--v-y) 30%,transparent)}
-  .card .t{font-family:"Space Grotesk";font-weight:700;color:var(--v-y);margin-bottom:8px}
+  .card.warn{border-color:color-mix(in srgb,var(--sand) 30%,transparent)}
+  .card .t{font-family:"Space Grotesk";font-weight:700;color:var(--sand);margin-bottom:8px}
 
   footer{border-top:1px solid var(--line);margin-top:90px;padding:36px 28px;text-align:center;color:var(--muted);font-size:.88rem}
   footer .stack{margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
@@ -138,13 +138,14 @@
     (GPS brut avant juillet&nbsp;2016, identifiants de zone ensuite, suppléments apparus
     progressivement). Un pipeline en une seule commande&nbsp;: ingestion telle quelle dans un stockage
     objet, réconciliation distribuée avec Spark (<code>{{ payload.spark_master }}</code>),
-    agrégats métier, puis ce dashboard statique — dont toute la gamme chromatique est
-    dérivée de la palette <code>viridis</code>.
+    agrégats métier, puis ce dashboard statique — habillé avec la palette
+    <code>#264653 · #2a9d8f · #e9c46a · #f4a261 · #e76f51</code>, heatmap en
+    <code>viridis</code> 100 pas, du clair au foncé.
   </p>
   <div class="badges">
     <span class="badge"><span class="sw" style="background:#cd7f32"></span>Bronze : parquets bruts <b>tels quels</b></span>
     <span class="badge"><span class="sw" style="background:#c0c5ce"></span>Silver : schéma canonique typé</span>
-    <span class="badge"><span class="sw" style="background:var(--v-y)"></span>Gold : un mart JSON par analyse</span>
+    <span class="badge"><span class="sw" style="background:var(--sand)"></span>Gold : un mart JSON par analyse</span>
     <span class="badge mono">make run SAMPLE=3</span>
   </div>
 </header>
@@ -196,15 +197,15 @@
 
 {% for ds in payload.datasets %}{% set i = loop.index0 %}
 <section id="apercu-{{i}}">
-  <div class="sec-head"><span class="idx">02</span><h2>Vue d'ensemble{% if ds.meta.sample_mode %} <small style="color:var(--v-y)">(mode échantillon)</small>{% endif %}</h2></div>
+  <div class="sec-head"><span class="idx">02</span><h2>Vue d'ensemble{% if ds.meta.sample_mode %} <small style="color:var(--sand)">(mode échantillon)</small>{% endif %}</h2></div>
   <p class="lead">Données ingérées depuis <span class="mono">{{ ds.meta.source_dir or "data/" }}</span>, traitées sur
      <span class="mono">{{ ds.meta.spark_master }}</span>. Généré le {{ ds.meta.genere_le[:10] }}.</p>
   <div class="kpis">
-    <div class="kpi" style="--kc:var(--v-t)"><div class="v" data-kpi="total-{{i}}"></div><div class="l">courses analysées</div></div>
-    <div class="kpi" style="--kc:var(--v-g)"><div class="v" data-kpi="periode-{{i}}"></div><div class="l">période couverte</div></div>
-    <div class="kpi" style="--kc:var(--v-y)"><div class="v" data-kpi="annees-{{i}}"></div><div class="l">années de données</div></div>
-    <div class="kpi" style="--kc:var(--v-l)"><div class="v" data-kpi="vehicules-{{i}}"></div><div class="l">types de véhicules</div></div>
-    <div class="kpi" style="--kc:var(--v-p)"><div class="v" data-kpi="taille-{{i}}"></div><div class="l">de parquet brut ingéré</div></div>
+    <div class="kpi" style="--kc:var(--teal)"><div class="v" data-kpi="total-{{i}}"></div><div class="l">courses analysées</div></div>
+    <div class="kpi" style="--kc:var(--teal)"><div class="v" data-kpi="periode-{{i}}"></div><div class="l">période couverte</div></div>
+    <div class="kpi" style="--kc:var(--sand)"><div class="v" data-kpi="annees-{{i}}"></div><div class="l">années de données</div></div>
+    <div class="kpi" style="--kc:var(--orange)"><div class="v" data-kpi="vehicules-{{i}}"></div><div class="l">types de véhicules</div></div>
+    <div class="kpi" style="--kc:#7fb2c4"><div class="v" data-kpi="taille-{{i}}"></div><div class="l">de parquet brut ingéré</div></div>
   </div>
   <div class="duo">
     <div>
@@ -323,23 +324,37 @@ function mk(id){
 window.addEventListener('resize', () => charts.forEach(c => c.resize()));
 
 const SUP_COLORS = {
-  'extra':'#fde725', 'mta_tax':'#a0da39', 'improvement_surcharge':'#2db27d',
-  'congestion_surcharge':'#21918c', 'airport_fee':'#365c8d', 'cbd_convenience_fee':'#46327e'
+  'extra':'#e9c46a', 'mta_tax':'#2a9d8f', 'improvement_surcharge':'#f4a261',
+  'congestion_surcharge':'#e76f51', 'airport_fee':'#8ecfc3', 'cbd_convenience_fee':'#7fb2c4'
 };
 const SUP_LABELS = {
   'extra':'Extra', 'mta_tax':'MTA tax', 'improvement_surcharge':'Improvement',
   'congestion_surcharge':'Congestion', 'airport_fee':'Airport fee', 'cbd_convenience_fee':'CBD fee'
 };
-const VIRIDIS = ['#fde725','#d0e11c','#a0da39','#73d056','#4ac16d','#2db27d','#1fa187','#21918c',
-                 '#277f8e','#2e6e8e','#365c8d','#3f4788','#46327e','#481b6d','#440154'];
+const VIRIDIS = [
+'#fde725','#f8e621','#f1e51d','#ece51b','#e5e419','#dfe318','#d8e219','#d0e11c',
+'#cae11f','#c2df23','#bddf26','#b5de2b','#addc30','#a8db34','#a0da39','#9bd93c',
+'#93d741','#8ed645','#86d549','#7fd34e','#7ad151','#73d056','#6ece58','#67cc5c',
+'#60ca60','#5cc863','#56c667','#52c569','#4cc26c','#48c16e','#42be71','#3dbc74',
+'#3aba76','#35b779','#32b67a','#2eb37c','#2ab07f','#28ae80','#25ac82','#24aa83',
+'#22a785','#20a486','#1fa287','#1fa088','#1f9e89','#1e9b8a','#1f998a','#1f968b',
+'#20938c','#20928c','#218f8d','#228d8d','#238a8d','#24878e','#25858e','#26828e',
+'#26818e','#277e8e','#287c8e','#29798e','#2a768e','#2b748e','#2c718e','#2d708e',
+'#2e6d8e','#306a8e','#31688e','#32658e','#33638d','#34608d','#365d8d','#375b8d',
+'#38588c','#39558c','#3b528b','#3c508b','#3d4d8a','#3e4989','#3f4788','#414487',
+'#424186','#433e85','#443a83','#453882','#463480','#46327e','#472e7c','#472c7a',
+'#482878','#482475','#482173','#481d6f','#481b6d','#481769','#471365','#471063',
+'#460b5e','#46085c','#450457','#440154'];
+const PALETTE = ['#e9c46a','#2a9d8f','#457b8d','#f4a261','#e76f51'];
 function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
-function vcolor(t){
+function stops_color(stops, t){
   t = Math.max(0, Math.min(1, t));
-  const x = t * (VIRIDIS.length - 1), k = Math.min(Math.floor(x), VIRIDIS.length - 2), f = x - k;
-  const a = hex2rgb(VIRIDIS[k]), b = hex2rgb(VIRIDIS[k+1]);
+  const x = t * (stops.length - 1), k = Math.min(Math.floor(x), stops.length - 2), f = x - k;
+  const a = hex2rgb(stops[k]), b = hex2rgb(stops[k+1]);
   return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
 }
-function spread(n){ return Array.from({length:n}, (_,j) => vcolor(n > 1 ? j/(n-1) : 0)); }
+function vcolor(t){ return stops_color(VIRIDIS, t); }
+function spread(n){ return Array.from({length:n}, (_,j) => stops_color(PALETTE, n > 1 ? j/(n-1) : 0)); }
 function chipBox(elId, values, onChange, opts={}){
   const box = document.getElementById(elId);
   const cols = spread(values.length || 1);
@@ -365,11 +380,11 @@ function segCtl(elId, onChange){
 }
 function dashFor(idx){ return idx === 0 ? null : [8, 5]; }
 
-const AX = { axisLabel:{color:'#9aa3ad'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}},
+const AX = { axisLabel:{color:'#9fb8bc'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}},
              splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} };
 const BASE = {
   backgroundColor:'transparent',
-  textStyle:{ color:'#eceef1', fontFamily:'inherit' },
+  textStyle:{ color:'#eef4f4', fontFamily:'inherit' },
 };
 
 P.datasets.forEach((ds, i) => {
@@ -394,13 +409,13 @@ P.datasets.forEach((ds, i) => {
     mk(`donut-${i}`).setOption({
       ...BASE,
       tooltip:{ formatter:p => `<b>${p.name}</b><br>${fmt(p.value)} courses (${p.percent}%)` },
-      legend:{ bottom:0, textStyle:{color:'#9aa3ad'}, icon:'circle' },
+      legend:{ bottom:0, textStyle:{color:'#9fb8bc'}, icon:'circle' },
       title:{ text:fmt(total), subtext:'courses', left:'center', top:'38%',
-              textStyle:{color:'#eceef1', fontSize:22, fontWeight:600, fontFamily:'JetBrains Mono'},
-              subtextStyle:{color:'#9aa3ad'} },
+              textStyle:{color:'#eef4f4', fontSize:22, fontWeight:600, fontFamily:'JetBrains Mono'},
+              subtextStyle:{color:'#9fb8bc'} },
       series:[{
         type:'pie', radius:['52%','74%'], center:['50%','44%'],
-        itemStyle:{ borderColor:'#14181e', borderWidth:3, borderRadius:5 },
+        itemStyle:{ borderColor:'#1b313b', borderWidth:3, borderRadius:5 },
         label:{show:false},
         data: ent.map(([k,v], j) => ({ name:k, value:v, itemStyle:{color:cols[j]} }))
       }]
@@ -415,13 +430,13 @@ P.datasets.forEach((ds, i) => {
       tooltip:{ trigger:'axis', axisPointer:{type:'shadow'} },
       grid:{ left:70, right:24, top:20, bottom:40 },
       xAxis:{ type:'category', data:ans.map(a=>a[0]),
-              axisLabel:{color:'#9aa3ad'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}} },
-      yAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
+              axisLabel:{color:'#9fb8bc'}, axisLine:{lineStyle:{color:'rgba(255,255,255,.12)'}} },
+      yAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
               splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
       series:[{ type:'bar', barMaxWidth:46,
         data:ans.map((a,j,arr) => ({ value:a[1],
           itemStyle:{ color:vcolor(arr.length>1 ? j/(arr.length-1) : .5), borderRadius:[6,6,0,0] } })),
-        label:{ show:true, position:'top', color:'#9aa3ad', fontSize:10,
+        label:{ show:true, position:'top', color:'#9fb8bc', fontSize:10,
                 formatter:p=>fmt(p.value) } }]
     });
   }
@@ -449,8 +464,8 @@ P.datasets.forEach((ds, i) => {
             name: vehicules.length > 1 ? `${SUP_LABELS[s]||s} · ${v}` : (SUP_LABELS[s]||s),
             type:'line', smooth:true, symbol:'circle', symbolSize:6, connectNulls:false,
             data: annees.map(a => rows[a] ? rows[a][s+field] : null),
-            itemStyle:{ color:SUP_COLORS[s] || '#9aa3ad' },
-            lineStyle:{ width:2.4, type:dashFor(vi), color:SUP_COLORS[s] || '#9aa3ad' }
+            itemStyle:{ color:SUP_COLORS[s] || '#9fb8bc' },
+            lineStyle:{ width:2.4, type:dashFor(vi), color:SUP_COLORS[s] || '#9fb8bc' }
           });
         });
       });
@@ -458,10 +473,10 @@ P.datasets.forEach((ds, i) => {
       mk(`surcharge-${i}`).setOption({
         ...BASE,
         tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':(met==='total'?'$'+fmt(v):'$'+Number(v).toFixed(3)) },
-        legend:{ top:0, type:'scroll', textStyle:{color:'#9aa3ad'}, icon:'roundRect' },
+        legend:{ top:0, type:'scroll', textStyle:{color:'#9fb8bc'}, icon:'roundRect' },
         grid:{ left:64, right:30, top:56, bottom:45 },
         xAxis:{ type:'category', data:annees, ...AX },
-        yAxis:{ type:'value', name:yName, nameTextStyle:{color:'#9aa3ad'}, ...AX },
+        yAxis:{ type:'value', name:yName, nameTextStyle:{color:'#9fb8bc'}, ...AX },
         series
       }, true);
       if (!anyData){ mk(`surcharge-${i}`).clear(); }
@@ -496,7 +511,7 @@ P.datasets.forEach((ds, i) => {
       mk(`chord-${i}`).setOption({
         ...BASE,
         title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
-                textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
+                textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
         tooltip:{ formatter:p => p.dataType === 'edge'
           ? `<b>Zone ${p.data.source.replace('Zone ','')} → Zone ${p.data.target.replace('Zone ','')}</b><br>${fmt(p.data.value)} courses`
           : `<b>${p.name}</b><br>${fmt(fz.nodes.find(n=>'Zone '+n.id===p.name)?.pickups ?? 0)} départs` },
@@ -504,12 +519,12 @@ P.datasets.forEach((ds, i) => {
           type:'graph', layout:'circular', circular:{ rotateLabel:true },
           data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id,
             symbolSize: 8 + 26*n.pickups/maxPick,
-            itemStyle:{ color:cols[j], borderColor:'#0b0d10', borderWidth:2 } })),
+            itemStyle:{ color:cols[j], borderColor:'#13222a', borderWidth:2 } })),
           links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target,
             value:l.count, lineStyle:{ width: 1 + 6*l.count/maxLink,
-              color:'#a0da39', opacity:.5, curveness:.35 } })),
+              color:'#f4a261', opacity:.5, curveness:.35 } })),
           emphasis:{ focus:'adjacency', lineStyle:{ opacity:1, width:5 } },
-          label:{ color:'#eceef1', fontSize:11 },
+          label:{ color:'#eef4f4', fontSize:11 },
           roam:true
         }]
       }, true);
@@ -528,7 +543,7 @@ P.datasets.forEach((ds, i) => {
         mk(`chord-${i}`).setOption({
           ...BASE,
           title:{ text:`${fmt(fz.courses_zonees)} courses zonées`, left:'center', top:6,
-                  textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
+                  textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
           tooltip:{ trigger:'item' },
           series:[{
             type:'sankey', left:20, right:150, top:40, bottom:20,
@@ -536,7 +551,7 @@ P.datasets.forEach((ds, i) => {
             data: fz.nodes.map((n,j) => ({ name:'Zone '+n.id, value:n.pickups,
               itemStyle:{ color:cols[j], borderColor:'transparent' } })),
             links: links.map(l => ({ source:'Zone '+l.source, target:'Zone '+l.target, value:l.count })),
-            label:{ color:'#eceef1', fontSize:11 },
+            label:{ color:'#eef4f4', fontSize:11 },
             lineStyle:{ color:'gradient', opacity:.35, curveness:.5 },
             emphasis:{ focus:'adjacency' }
           }]
@@ -554,14 +569,14 @@ P.datasets.forEach((ds, i) => {
       mk(`chord-${i}`).setOption({
         ...BASE,
         title:{ text:`${fmt(fz.courses_zonees)} courses zonées — départs par zone (top ${tops.length})`,
-                left:'center', top:6, textStyle:{color:'#9aa3ad', fontSize:13, fontWeight:'normal'} },
+                left:'center', top:6, textStyle:{color:'#9fb8bc', fontSize:13, fontWeight:'normal'} },
         tooltip:{ trigger:'axis', axisPointer:{type:'shadow'},
                   formatter:p => `<b>${p[0].name}</b><br>${fmt(p[0].value)} départs` },
         grid:{ left:90, right:50, top:40, bottom:30 },
-        xAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
+        xAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
                 splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
         yAxis:{ type:'category', data:tops.map(n=>'Zone '+n.id).reverse(),
-                axisLabel:{color:'#eceef1'}, axisLine:{show:false}, axisTick:{show:false} },
+                axisLabel:{color:'#eef4f4'}, axisLine:{show:false}, axisTick:{show:false} },
         series:[{ type:'bar', barMaxWidth:22,
           data:[...tops].reverse().map((n,j) => ({ value:n.pickups,
             itemStyle:{ color:cols[tops.length-1-j], borderRadius:[0,6,6,0] } })) }]
@@ -619,7 +634,7 @@ P.datasets.forEach((ds, i) => {
             `${ds.prix_km.bins[Math.min(Math.max(Math.floor(p.value[0]),0), ds.prix_km.bins.length-1)]}` },
           grid:{ left:60, right:30, top:20, bottom:50 },
           xAxis:{ type:'value', min:-1, max:ds.prix_km.bins.length,
-                  axisLabel:{ color:'#9aa3ad', formatter:v => Number.isInteger(v) ? v+'$' : '' },
+                  axisLabel:{ color:'#9fb8bc', formatter:v => Number.isInteger(v) ? v+'$' : '' },
                   splitLine:{ show:false } },
           yAxis:{ type:'value', max:(annees.length)*H + 0.6,
                   axisLabel:{ show:false }, splitLine:{ show:false } },
@@ -657,10 +672,10 @@ P.datasets.forEach((ds, i) => {
         mk(`cmpzone-${i}`).setOption({
           ...BASE,
           tooltip:{ trigger:'axis', valueFormatter:v=>v==null?'—':String(v).replace('.', ',')+' $/km' },
-          legend:{ top:0, textStyle:{color:'#9aa3ad'} },
+          legend:{ top:0, textStyle:{color:'#9fb8bc'} },
           grid:{ left:64, right:30, top:44, bottom:45 },
           xAxis:{ type:'category', data:annees, ...AX },
-          yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9aa3ad'}, ...AX },
+          yAxis:{ type:'value', name:'$/km', nameTextStyle:{color:'#9fb8bc'}, ...AX },
           series
         }, true);
         const flat = ds.prix_km.rows.filter(r => picked.includes(r.zone));
@@ -701,16 +716,27 @@ P.datasets.forEach((ds, i) => {
         grid:{ left:80, right:20, top:20, bottom:70 },
         xAxis:{ type:'category', data:cell.heures.map(h=>h+'h'), splitArea:{show:true},
                 axisLine:{show:false}, axisTick:{show:false},
-                axisLabel:{color:'#9aa3ad', interval:1} },
+                axisLabel:{color:'#9fb8bc', interval:1} },
         yAxis:{ type:'category', data:cell.jours, inverse:true,
-                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#eceef1'} },
+                axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:'#eef4f4'} },
         visualMap:{ min:0, max:maxV||1, calculable:false, orient:'horizontal', left:'center', bottom:6,
-          textStyle:{color:'#9aa3ad'},
-          inRange:{ color:['#fde725','#d0e11c','#a0da39','#73d056','#4ac16d','#2db27d','#1fa187',
-                           '#21918c','#277f8e','#2e6e8e','#365c8d','#3f4788','#46327e','#481b6d','#440154'] } },
+          textStyle:{color:'#9fb8bc'},
+          inRange:{ color:['#fde725','#f8e621','#f1e51d','#ece51b','#e5e419','#dfe318','#d8e219','#d0e11c',
+'#cae11f','#c2df23','#bddf26','#b5de2b','#addc30','#a8db34','#a0da39','#9bd93c',
+'#93d741','#8ed645','#86d549','#7fd34e','#7ad151','#73d056','#6ece58','#67cc5c',
+'#60ca60','#5cc863','#56c667','#52c569','#4cc26c','#48c16e','#42be71','#3dbc74',
+'#3aba76','#35b779','#32b67a','#2eb37c','#2ab07f','#28ae80','#25ac82','#24aa83',
+'#22a785','#20a486','#1fa287','#1fa088','#1f9e89','#1e9b8a','#1f998a','#1f968b',
+'#20938c','#20928c','#218f8d','#228d8d','#238a8d','#24878e','#25858e','#26828e',
+'#26818e','#277e8e','#287c8e','#29798e','#2a768e','#2b748e','#2c718e','#2d708e',
+'#2e6d8e','#306a8e','#31688e','#32658e','#33638d','#34608d','#365d8d','#375b8d',
+'#38588c','#39558c','#3b528b','#3c508b','#3d4d8a','#3e4989','#3f4788','#414487',
+'#424186','#433e85','#443a83','#453882','#463480','#46327e','#472e7c','#472c7a',
+'#482878','#482475','#482173','#481d6f','#481b6d','#481769','#471365','#471063',
+'#460b5e','#46085c','#450457','#440154'] } },
         series:[{ type:'heatmap', data, label:{show:false},
-          itemStyle:{ borderColor:'#14181e', borderWidth:2 },
-          emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(160,218,57,.6)' } } }]
+          itemStyle:{ borderColor:'#1b313b', borderWidth:2 },
+          emphasis:{ itemStyle:{ shadowBlur:10, shadowColor:'rgba(233,196,106,.6)' } } }]
       }, true);
       document.getElementById(`tk-heat-${i}`).innerHTML =
         `${anSel.value}, ${vtSel.value} : le créneau le plus chargé est ` +
@@ -731,10 +757,10 @@ P.datasets.forEach((ds, i) => {
       mk(`profil-${i}`).setOption({
         ...BASE,
         tooltip:{ trigger:'axis' },
-        legend:{ top:0, textStyle:{color:'#9aa3ad'} },
+        legend:{ top:0, textStyle:{color:'#9fb8bc'} },
         grid:{ left:70, right:24, top:40, bottom:40 },
         xAxis:{ type:'category', data:heures.map(h=>h+'h'), boundaryGap:false, ...AX },
-        yAxis:{ type:'value', axisLabel:{color:'#9aa3ad', formatter:v=>fmt(v)},
+        yAxis:{ type:'value', axisLabel:{color:'#9fb8bc', formatter:v=>fmt(v)},
                 splitLine:{lineStyle:{color:'rgba(255,255,255,.06)'}} },
         series
       }, true);

@@ -16,3 +16,6 @@ lake_local/
 Thumbs.db
 .idea/
 .vscode/
+
+.vercel
+.env*
