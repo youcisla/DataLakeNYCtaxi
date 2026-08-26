@@ -1,1 +1,1 @@
-{"dataset_id": "nyc-taxi-trips", "source_dir": "/data/raw", "sample_mode": false, "taille_octets": 23173047084, "spark_master": "spark://spark-master:7077", "lake": "minio", "buckets": {"bronze": "bronze", "silver": "silver", "gold": "gold"}, "genere_le": "2026-08-25T17:09:36+00:00"}
+{"dataset_id": "nyc-taxi-trips", "source_dir": "/data/raw", "sample_mode": false, "taille_octets": 79999149669, "spark_master": "spark://spark-master:7077", "lake": "minio", "buckets": {"bronze": "bronze", "silver": "silver", "gold": "gold"}, "genere_le": "2026-08-26T13:18:02+00:00"}

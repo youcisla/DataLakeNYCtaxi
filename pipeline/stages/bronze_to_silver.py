@@ -158,6 +158,29 @@ def build_weather(spark, s3):
           f"{len(keys)} mois sources)")
 
 
+def committed_years(s3):
+    """Ensemble des lots (vehicle_type, year) deja commites en silver.
+
+    Chaque lot est ecrit atomiquement : la presence d'au moins un part-*.parquet
+    commite suffit a le considerer termine. Un lot interrompu ne laisse que du
+    _temporary (ignore ici), donc il sera re-ecrit proprement au prochain run.
+    """
+    done = set()
+    for key in list_keys(s3, config.BUCKET_SILVER, f"{config.DATASET_ID}/trips/"):
+        if not key.endswith(".parquet"):
+            continue
+        parts = key.split("/")
+        if len(parts) < 6:
+            continue
+        try:
+            vt = parts[2].split("=", 1)[1]
+            year = int(parts[3].split("=", 1)[1])
+        except (IndexError, ValueError):
+            continue
+        done.add((vt, year))
+    return done
+
+
 def main():
     spark = get_spark("nyc-taxi-bronze-to-silver")
     s3 = client()
@@ -166,37 +189,55 @@ def main():
         build_weather(spark, s3)
         return
 
+    limit = 0
+    if "--limit" in sys.argv:
+        limit = int(sys.argv[sys.argv.index("--limit") + 1])
+
     manifests = [m for m in load_manifests(s3) if m.get("kind") == "trips"]
     if not manifests:
         print("[!] Aucun manifeste trips dans bronze/. Lance d'abord l'etape ingest.")
         sys.exit(1)
 
     entries = [f for m in manifests for f in m["files"]]
-    print(f">> silver <- bronze [{config.DATASET_ID}] : {len(entries)} fichiers")
-
-    frames = []
-    for entry in entries:
-        raw = spark.read.parquet(lake_uri(config.BUCKET_BRONZE, entry["key"]))
-        frames.append(normalize(raw, entry["vehicle_type"], entry["year"], entry["month"]))
-    trips = reduce(DataFrame.unionByName, frames)
-
-    # Validation temporelle : le brut contient des horodatages corrompus.
-    # On borne a la fenetre couverte par les fichiers sources.
     lo, hi = min(e["year"] for e in entries), max(e["year"] for e in entries)
-    before = trips.count()
-    trips = trips.filter(
-        (F.col("pickup_ts") >= F.to_timestamp(F.lit(f"{lo}-01-01 00:00:00"), TS_FORMAT))
-        & (F.col("pickup_ts") <= F.to_timestamp(F.lit(f"{hi}-12-31 23:59:59"), TS_FORMAT))
-    )
-    print(f"   - validation dates {lo}-01-01 → {hi}-12-31 : "
-          f"{before - trips.count():,} lignes hors fenetre ecartees")
+    lo_ts = f"{lo}-01-01 00:00:00"
+    hi_ts = f"{hi}-12-31 23:59:59"
 
-    out = f"{lake_uri(config.BUCKET_SILVER, config.DATASET_ID)}/trips"
-    trips.write.mode("overwrite").partitionBy("vehicle_type", "year", "month").parquet(out)
+    base = f"{lake_uri(config.BUCKET_SILVER, config.DATASET_ID)}/trips"
+    done = committed_years(s3)
 
-    total = spark.read.parquet(out).count()
-    print(f">> silver/{config.DATASET_ID}/trips ecrit en Parquet partitionne par "
-          f"vehicle_type/year/month : {total:,} courses")
+    groups = {}
+    for entry in entries:
+        groups.setdefault((entry["vehicle_type"], entry["year"]), []).append(entry)
+    ordered = sorted(groups.items())
+    if limit > 0:
+        ordered = ordered[:limit]
+
+    written = skipped = 0
+    for (vt, year), group in ordered:
+        if (vt, year) in done:
+            skipped += 1
+            continue
+        frames = []
+        for entry in sorted(group, key=lambda e: e["month"]):
+            raw = spark.read.parquet(lake_uri(config.BUCKET_BRONZE, entry["key"]))
+            frames.append(normalize(raw, vt, year, entry["month"]))
+        df = reduce(DataFrame.unionByName, frames)
+        df = (
+            df.filter(
+                (F.col("pickup_ts") >= F.to_timestamp(F.lit(lo_ts), TS_FORMAT))
+                & (F.col("pickup_ts") <= F.to_timestamp(F.lit(hi_ts), TS_FORMAT))
+            )
+            .drop("vehicle_type", "year")
+        )
+        df.write.mode("overwrite").partitionBy("month").parquet(
+            f"{base}/vehicle_type={vt}/year={year}")
+        written += 1
+        print(f"   - silver/trips/vehicle_type={vt}/year={year} ecrit "
+              f"({len(group)} mois)")
+
+    print(f">> silver/{config.DATASET_ID}/trips : {written} annees ecrites, "
+          f"{skipped} deja presentes (reprise), {len(ordered)} lots traites")
 
     build_weather(spark, s3)
 
