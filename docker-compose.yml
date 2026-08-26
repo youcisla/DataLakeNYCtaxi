@@ -67,8 +67,8 @@ services:
         condition: service_healthy
     environment:
       SPARK_NO_DAEMONIZE: "true"
-      SPARK_WORKER_CORES: "2"
-      SPARK_WORKER_MEMORY: "6G"
+      SPARK_WORKER_CORES: "4"
+      SPARK_WORKER_MEMORY: "10G"
 
   pipeline:
     image: datalake-spark:3.5.5
